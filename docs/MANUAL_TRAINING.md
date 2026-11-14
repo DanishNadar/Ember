@@ -65,6 +65,10 @@ state and `workflow.fz`. No job or upload occurs. Set it back to false.
 Set `STAGE_INPUTS=True` once to upload the new input object, then false again.
 No workflow is submitted. The CLI must be authenticated in your chosen shell:
 
+To repeat preflight after preparation from Python, pass `prepared=True`; the
+notebook does this when `RUN` exists. It verifies the frozen options rather than
+mistaking your own prepared directory for an accidental overwrite.
+
 ```powershell
 wsl --exec sh -lc '$HOME/.local/bin/fuzzball context show'
 ```

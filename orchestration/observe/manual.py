@@ -122,8 +122,18 @@ def preview(options):
     return wf
 
 
-def preflight(options, *, remote=False, require_inputs=True):
-    c, paths, manifest = validate(options)
+def preflight(options, *, remote=False, require_inputs=True, prepared=False):
+    check = options
+    target = Path(options["output_root"]) / options["experiment_name"]
+    if prepared and target.exists():
+        saved = target / "options.json"
+        if not saved.is_file() or json.loads(saved.read_text()) != options:
+            raise ValueError("Prepared options differ; use the frozen options or prepare a fresh experiment")
+        provenance = json.loads((target / "provenance.json").read_text())
+        if sha(saved) != provenance["options_sha256"]:
+            raise ValueError("Prepared options changed")
+        check = dict(options, output_root=str(target / "preflight-output-probe"))
+    c, paths, manifest = validate(check)
     wf = preview(options)
     report = {"experiment": options["experiment_name"], "dataset_manifest_sha256": sha(manifest),
               "sample_counts": {s: len(p) for s, p in paths.items()}, "config": c,
