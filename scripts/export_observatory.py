@@ -218,6 +218,19 @@ def export(root, experiment_id=None, notebook=None, output_root=None, allow_erro
             supplemental.setdefault("prediction_galleries", []).append(
                 json.loads(file.read_text(encoding="utf-8")))
     metrics.update(supplemental)
+    configurations, timing_events = [], []
+    for base in experiment_roots(root):
+        experiment = base if base.name == experiment_id else base / experiment_id
+        for file in sorted(experiment.glob("**/config_used.yaml")):
+            import yaml
+            configurations.append({"run": file.parent.name, "source_sha256": sha(file),
+                                   "configuration": yaml.safe_load(file.read_text(encoding="utf-8"))})
+        events = experiment / "collected/events.jsonl"
+        if events.is_file():
+            timing_events.extend(json.loads(line) for line in events.read_text(encoding="utf-8").splitlines() if line.strip())
+    metrics["experiment_configurations"] = configurations
+    if timing_events:
+        (destination / "timing_events.json").write_text(json.dumps(scrub(timing_events), indent=2), encoding="utf-8")
     (destination / "metrics.json").write_text(json.dumps(scrub(metrics), indent=2, allow_nan=False), encoding="utf-8")
     timings = [v for c in nb.cells for k, v in c.metadata.get("execution", {}).items() if k.endswith("idle")]
     metadata = {"experiment_id": experiment_id, "exported_at_utc": now.isoformat(),

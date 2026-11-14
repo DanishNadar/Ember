@@ -18,6 +18,17 @@ from orchestration.observe.build_workflow import make_workflow
 
 
 class ObservatoryContractTests(unittest.TestCase):
+    def test_progress_estimates_use_observed_epochs_and_keep_metrics(self):
+        events = [{"event":"training_started", "job":"a", "workflow_id":"w",
+                   "timestamp_utc":"2026-11-14T00:00:00Z", "epochs_requested":4, "sample_counts":{"train":8}},
+                  {"event":"epoch_finished", "job":"a", "workflow_id":"w", "epoch":1,
+                   "timestamp_utc":"2026-11-14T00:00:10Z", "train_seconds":2,
+                   "train":{"loss":.4}, "val":{"loss":.5, "iou":.2}, "learning_rate":.001}]
+        row = progress_report(events)[0]
+        self.assertEqual(row["remaining_seconds_estimate"],30)
+        self.assertEqual(row["training_samples_per_second"],4)
+        self.assertEqual(row["val_loss"],.5)
+
     def test_windows_cli_logs_are_decoded_as_utf8(self):
         from orchestration.observe.dashboard import fuzzball_log
         result = type("LogResult", (), {"returncode": 0, "stdout": "ForeFire ✓", "stderr": ""})()

@@ -194,7 +194,7 @@ def plot_timeline(events):
                           "test_evaluation_finished": "test_evaluation_started"}[kind]
             start = active.pop((key, start_type), None)
             if start is not None and t >= start:
-                spans.append((_label(key[:2]) + " / " + str(key[3] or start_type.replace("_started", "")), start, t))
+                spans.append((_label(key[:2]) + " / node=" + str(e.get("node_host", "unrecorded")) + " / " + str(key[3] or start_type.replace("_started", "")), start, t))
     if not spans:
         print("No complete, timestamped phase intervals yet. DDP is not assumed.")
         return None
@@ -245,7 +245,7 @@ def plot_resources(events):
 
 
 def progress_report(events):
-    """Compact, directly observed job progress; no estimated finish times."""
+    """Observed progress with explicitly labeled epoch-based time estimates."""
     jobs, simulations = {}, set()
     for e in _ordered(events):
         identity = _identity(e)
@@ -254,6 +254,19 @@ def progress_report(events):
                                     "physics_completed": 0, "physics_excluded": 0, "physics_attempts": 0,
                                     "finished": False})
         kind = e.get("event")
+        if e.get("resources", {}).get("host"):
+            item["reported_host"] = e["resources"]["host"]
+        if kind == "training_started":
+            item["total_epochs"] = e.get("epochs_requested")
+            item["train_samples"] = e.get("sample_counts", {}).get("train")
+            item["started_at_utc"] = e.get("timestamp_utc")
+        start, now = _timestamp(item.get("started_at_utc")), _timestamp(e.get("timestamp_utc"))
+        if start and now:
+            item["elapsed_observed_seconds"] = max(0, (now - start).total_seconds())
+        if kind == "checkpoint_saved":
+            item["checkpoint_epoch"] = e.get("epoch")
+        if kind in {"error", "job_failed", "gallery_failed"}:
+            item["diagnostic"] = e.get("error", e.get("message"))
         if kind in {"training_started", "cpu_shard_started", "ddp_finetune_started",
                     "ddp_training_started", "test_evaluation_started"}:
             item["phase"] = e.get("phase", kind)
@@ -262,6 +275,13 @@ def progress_report(events):
             if e.get("epoch", 0) >= (item["last_epoch"] or 0):
                 item["last_epoch"] = e.get("epoch")
                 item["val_iou"] = e.get("val", {}).get("iou", e.get("val_iou"))
+                item.update({"train_" + k: v for k, v in e.get("train", {}).items()})
+                item.update({"val_" + k: v for k, v in e.get("val", {}).items()})
+                item["learning_rate"] = e.get("learning_rate")
+                seconds = e.get("train_seconds")
+                item["training_samples_per_second"] = item.get("train_samples") / seconds if seconds and item.get("train_samples") else None
+                if item.get("total_epochs") and start and now and item["last_epoch"]:
+                    item["remaining_seconds_estimate"] = max(0, item["total_epochs"] - item["last_epoch"]) * item["elapsed_observed_seconds"] / item["last_epoch"]
         elif kind == "cpu_simulation_finished":
             key = (*identity, e.get("shard"), e.get("sample_id"))
             if key not in simulations:
@@ -354,6 +374,24 @@ def watch(workflows, *, cli=None, interval_s=8, cycles=45):
         for job_row in progress_report(events):
             print("  {job}: {phase}; epoch={last_epoch}; val_IoU={val_iou}; "
                   "physics_completed={physics_completed}, excluded={physics_excluded}".format(**job_row))
+        display(progress_report(events))
+        for workflow, jobs in workflows.items():
+            try:
+                command = cli if isinstance(cli, list) else [cli] if cli else fuzzball_command()
+                status = subprocess.run([*command, "workflow", "describe", workflow, "--output", "json"],
+                                        capture_output=True, text=True, encoding="utf-8", timeout=10)
+                if status.returncode == 0:
+                    stages = json.loads(status.stdout).get("status", {}).get("stages", [])
+                    for stage in stages:
+                        host = stage.get("details", {}).get("Host")
+                        if host:
+                            for event in events:
+                                if event.get("workflow_id") == workflow and event.get("job") == stage.get("name"):
+                                    event["node_host"] = host
+                    display([{k: s.get(k) for k in ("name", "status", "error", "startTime", "endTime")}
+                             for s in stages if s.get("kind") == "STAGE_KIND_JOB"])
+            except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+                print("Scheduler status unavailable:", exc)
         for identity, rows in histories_from_events(events).items():
             fig = plot_learning(rows)
             if fig is not None:
