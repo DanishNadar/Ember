@@ -1,0 +1,462 @@
+{
+  "name": "ember_init_v2",
+  "_comment": "Every range here is a team decision. Defaults span ForeFire's valid ranges or reuse values already in the harness; change them here, never in code. Corsica settings are identical to configs/init_corsica.json, so its rows equal ember_init_v1 apart from the sample_id prefix. US = six LANDFIRE sites (group 'us'); one whole site is held out as unseen terrain (test_ood).",
+  "grid": {
+    "n": 320,
+    "dx_m": 40.0,
+    "horizon_s": 3600.0
+  },
+  "_grid_comment": "Reference grid only. Samples are in absolute landscape metres; the labeller may use any grid.",
+  "max_window_m": 12800.0,
+  "ign_shape_weights": {
+    "point": 1.0,
+    "ellipse": 1.0
+  },
+  "ranges": {
+    "wind_speed": [
+      0.0,
+      20.0
+    ],
+    "wind_dir_deg": [
+      0.0,
+      360.0
+    ],
+    "wind_shift_deg": [
+      -180.0,
+      180.0
+    ],
+    "wind_shift_t_frac": [
+      0.0,
+      1.0
+    ],
+    "md": [
+      0.02,
+      0.29
+    ],
+    "ign_win_x": [
+      0.3,
+      0.7
+    ],
+    "ign_win_y": [
+      0.3,
+      0.7
+    ],
+    "ign_a_m": [
+      40.0,
+      1000.0
+    ],
+    "ign_aspect": [
+      0.05,
+      1.0
+    ],
+    "ign_orient_deg": [
+      0.0,
+      180.0
+    ]
+  },
+  "regions": {
+    "corsica": {
+      "landscape": {
+        "engine": "corsica_native",
+        "path": "data_real/aullene/data.nc",
+        "fuel_table": "ember_bench/data/corsica_fuels.csv",
+        "nonburnable": [
+          0,
+          62,
+          105,
+          106,
+          121,
+          162
+        ],
+        "fuel_source": "real (ForeFire Aullene data.nc)"
+      },
+      "holdout_box_m": {
+        "x": [
+          0,
+          64000
+        ],
+        "y": [
+          0,
+          16000
+        ]
+      },
+      "splits": {
+        "train": {
+          "count": 10000,
+          "seed": 100,
+          "region": "outside_holdout"
+        },
+        "val": {
+          "count": 1000,
+          "seed": 101,
+          "region": "outside_holdout"
+        },
+        "test": {
+          "count": 1000,
+          "seed": 102,
+          "region": "outside_holdout"
+        },
+        "test_ood": {
+          "count": 1000,
+          "seed": 103,
+          "region": "inside_holdout"
+        }
+      },
+      "group": "france"
+    },
+    "socal_chaparral": {
+      "group": "us",
+      "landscape": {
+        "engine": "farsite",
+        "path": "data_real/us/socal_chaparral.npz",
+        "fuel_table": "ember_bench/data/sb40_forefire_std.json",
+        "nonburnable": [
+          0,
+          91,
+          92,
+          93,
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "fuel_source": "LANDFIRE LF2025 FBFM40 (data_real/us/landfire/socal_chaparral_LF2025_FBFM40.tif) on AWS Terrain Tiles elevation"
+      },
+      "splits": {
+        "train": {
+          "count": 2000,
+          "seed": 300,
+          "region": "anywhere"
+        },
+        "val": {
+          "count": 200,
+          "seed": 301,
+          "region": "anywhere"
+        },
+        "test": {
+          "count": 200,
+          "seed": 302,
+          "region": "anywhere"
+        }
+      },
+      "ranges": {
+        "_comment": "md spans the highest S&B extinction moisture (40%). 10-h = 1-h + offset, 100-h = 10-h + offset. Live spans BehavePlus standard scenarios L1-L4.",
+        "md": [
+          0.02,
+          0.4
+        ],
+        "md_10h_offset": [
+          0.0,
+          0.03
+        ],
+        "md_100h_offset": [
+          0.0,
+          0.03
+        ],
+        "m_live_herb": [
+          0.3,
+          1.2
+        ],
+        "m_live_woody": [
+          0.6,
+          1.5
+        ]
+      }
+    },
+    "norcal_paradise": {
+      "group": "us",
+      "landscape": {
+        "engine": "farsite",
+        "path": "data_real/us/norcal_paradise.npz",
+        "fuel_table": "ember_bench/data/sb40_forefire_std.json",
+        "nonburnable": [
+          0,
+          91,
+          92,
+          93,
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "fuel_source": "LANDFIRE LF2025 FBFM40 (data_real/us/landfire/norcal_paradise_LF2025_FBFM40.tif) on AWS Terrain Tiles elevation"
+      },
+      "splits": {
+        "train": {
+          "count": 2000,
+          "seed": 310,
+          "region": "anywhere"
+        },
+        "val": {
+          "count": 200,
+          "seed": 311,
+          "region": "anywhere"
+        },
+        "test": {
+          "count": 200,
+          "seed": 312,
+          "region": "anywhere"
+        }
+      },
+      "ranges": {
+        "_comment": "md spans the highest S&B extinction moisture (40%). 10-h = 1-h + offset, 100-h = 10-h + offset. Live spans BehavePlus standard scenarios L1-L4.",
+        "md": [
+          0.02,
+          0.4
+        ],
+        "md_10h_offset": [
+          0.0,
+          0.03
+        ],
+        "md_100h_offset": [
+          0.0,
+          0.03
+        ],
+        "m_live_herb": [
+          0.3,
+          1.2
+        ],
+        "m_live_woody": [
+          0.6,
+          1.5
+        ]
+      }
+    },
+    "greatbasin_nv": {
+      "group": "us",
+      "landscape": {
+        "engine": "farsite",
+        "path": "data_real/us/greatbasin_nv.npz",
+        "fuel_table": "ember_bench/data/sb40_forefire_std.json",
+        "nonburnable": [
+          0,
+          91,
+          92,
+          93,
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "fuel_source": "LANDFIRE LF2025 FBFM40 (data_real/us/landfire/greatbasin_nv_LF2025_FBFM40.tif) on AWS Terrain Tiles elevation"
+      },
+      "splits": {
+        "train": {
+          "count": 2000,
+          "seed": 320,
+          "region": "anywhere"
+        },
+        "val": {
+          "count": 200,
+          "seed": 321,
+          "region": "anywhere"
+        },
+        "test": {
+          "count": 200,
+          "seed": 322,
+          "region": "anywhere"
+        }
+      },
+      "ranges": {
+        "_comment": "md spans the highest S&B extinction moisture (40%). 10-h = 1-h + offset, 100-h = 10-h + offset. Live spans BehavePlus standard scenarios L1-L4.",
+        "md": [
+          0.02,
+          0.4
+        ],
+        "md_10h_offset": [
+          0.0,
+          0.03
+        ],
+        "md_100h_offset": [
+          0.0,
+          0.03
+        ],
+        "m_live_herb": [
+          0.3,
+          1.2
+        ],
+        "m_live_woody": [
+          0.6,
+          1.5
+        ]
+      }
+    },
+    "arizona": {
+      "group": "us",
+      "landscape": {
+        "engine": "farsite",
+        "path": "data_real/us/arizona.npz",
+        "fuel_table": "ember_bench/data/sb40_forefire_std.json",
+        "nonburnable": [
+          0,
+          91,
+          92,
+          93,
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "fuel_source": "LANDFIRE LF2025 FBFM40 (data_real/us/landfire/arizona_LF2025_FBFM40.tif) on AWS Terrain Tiles elevation"
+      },
+      "splits": {
+        "test_ood": {
+          "count": 1000,
+          "seed": 333,
+          "region": "anywhere"
+        }
+      },
+      "ranges": {
+        "_comment": "md spans the highest S&B extinction moisture (40%). 10-h = 1-h + offset, 100-h = 10-h + offset. Live spans BehavePlus standard scenarios L1-L4.",
+        "md": [
+          0.02,
+          0.4
+        ],
+        "md_10h_offset": [
+          0.0,
+          0.03
+        ],
+        "md_100h_offset": [
+          0.0,
+          0.03
+        ],
+        "m_live_herb": [
+          0.3,
+          1.2
+        ],
+        "m_live_woody": [
+          0.6,
+          1.5
+        ]
+      }
+    },
+    "texas_panhandle": {
+      "group": "us",
+      "landscape": {
+        "engine": "farsite",
+        "path": "data_real/us/texas_panhandle.npz",
+        "fuel_table": "ember_bench/data/sb40_forefire_std.json",
+        "nonburnable": [
+          0,
+          91,
+          92,
+          93,
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "fuel_source": "LANDFIRE LF2025 FBFM40 (data_real/us/landfire/texas_panhandle_LF2025_FBFM40.tif) on AWS Terrain Tiles elevation"
+      },
+      "splits": {
+        "train": {
+          "count": 2000,
+          "seed": 340,
+          "region": "anywhere"
+        },
+        "val": {
+          "count": 200,
+          "seed": 341,
+          "region": "anywhere"
+        },
+        "test": {
+          "count": 200,
+          "seed": 342,
+          "region": "anywhere"
+        }
+      },
+      "ranges": {
+        "_comment": "md spans the highest S&B extinction moisture (40%). 10-h = 1-h + offset, 100-h = 10-h + offset. Live spans BehavePlus standard scenarios L1-L4.",
+        "md": [
+          0.02,
+          0.4
+        ],
+        "md_10h_offset": [
+          0.0,
+          0.03
+        ],
+        "md_100h_offset": [
+          0.0,
+          0.03
+        ],
+        "m_live_herb": [
+          0.3,
+          1.2
+        ],
+        "m_live_woody": [
+          0.6,
+          1.5
+        ]
+      }
+    },
+    "montana_timber": {
+      "group": "us",
+      "landscape": {
+        "engine": "farsite",
+        "path": "data_real/us/montana_timber.npz",
+        "fuel_table": "ember_bench/data/sb40_forefire_std.json",
+        "nonburnable": [
+          0,
+          91,
+          92,
+          93,
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "fuel_source": "LANDFIRE LF2025 FBFM40 (data_real/us/landfire/montana_timber_LF2025_FBFM40.tif) on AWS Terrain Tiles elevation"
+      },
+      "splits": {
+        "train": {
+          "count": 2000,
+          "seed": 350,
+          "region": "anywhere"
+        },
+        "val": {
+          "count": 200,
+          "seed": 351,
+          "region": "anywhere"
+        },
+        "test": {
+          "count": 200,
+          "seed": 352,
+          "region": "anywhere"
+        }
+      },
+      "ranges": {
+        "_comment": "md spans the highest S&B extinction moisture (40%). 10-h = 1-h + offset, 100-h = 10-h + offset. Live spans BehavePlus standard scenarios L1-L4.",
+        "md": [
+          0.02,
+          0.4
+        ],
+        "md_10h_offset": [
+          0.0,
+          0.03
+        ],
+        "md_100h_offset": [
+          0.0,
+          0.03
+        ],
+        "m_live_herb": [
+          0.3,
+          1.2
+        ],
+        "m_live_woody": [
+          0.6,
+          1.5
+        ]
+      }
+    }
+  },
+  "us_holdout_site": {
+    "_comment": "team decision: which US site is never trained on",
+    "site": "arizona"
+  }
+}
