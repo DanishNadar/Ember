@@ -69,7 +69,7 @@ def main():
         cfg = dict(loaded["meta"]["config"], _dir=initstates.ROOT)
         props = initstates.fuel_properties(
             initstates._p(cfg, cfg["landscape"]["fuel_table"]),
-            cfg["landscape"].get("nonburnable", []), cfg["landscape"]["engine"])
+            cfg["landscape"].get("nonburnable", []), cfg["landscape"].get("engine", "corsica_native"))
         rows = sorted(loaded["rows"], key=lambda r: hashlib.sha256(
             ("ember-cpu-shard-v1:" + r["sample_id"]).encode()).hexdigest())
         selected = [r for r in rows[:args.per_region] if owner(r["sample_id"], args.shards) == args.shard]
