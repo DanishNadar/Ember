@@ -1,0 +1,19 @@
+{
+  "dataset_kind": "forefire",
+  "grid_size": 320,
+  "horizon_seconds": 3600,
+  "cell_size_meters": 40,
+  "channel_names": ["burnable", "fuel_depth_m", "dead_load_kg_m2", "live_load_kg_m2", "sav_1_m", "mext", "alt_rel_m", "dzdx", "dzdy", "wind_u0", "wind_v0", "wind_u1", "wind_v1", "shift_t_frac", "md", "md_10h", "md_100h", "ignition", "engine"],
+  "binary_channels": ["burnable", "ignition", "engine"],
+  "data_dir": "data/ready",
+  "seed": 42,
+  "base_filters": 16,
+  "depth": 3,
+  "batch_size": 4,
+  "epochs": 5,
+  "learning_rate": 0.001,
+  "arrival_weight": 1.0,
+  "dice_weight": 1.0,
+  "threshold": 0.5,
+  "cpu_threads": 2
+}

@@ -1,0 +1,3 @@
+numpy>=1.26
+torch>=2.2
+# On the PGXs, use the organizer-provided CUDA/ARM64 PyTorch build.
