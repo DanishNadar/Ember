@@ -66,7 +66,7 @@ Set `STAGE_INPUTS=True` once to upload the new input object, then false again.
 No workflow is submitted. The CLI must be authenticated in your chosen shell:
 
 ```powershell
-wsl ~/.local/bin/fuzzball context show
+wsl --exec sh -lc '$HOME/.local/bin/fuzzball context show'
 ```
 
 ```bash
