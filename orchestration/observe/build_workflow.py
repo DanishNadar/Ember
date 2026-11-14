@@ -27,7 +27,7 @@ def volume(name, object_uri, result_uri):
 def gpu_script(config, label):
     return f"""#!/bin/bash
 set -euo pipefail
-export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4 PYTHONUNBUFFERED=1
+export EMBER_JOB=train-{label} OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4 PYTHONUNBUFFERED=1
 tar -xzf /work/input.tgz -C /work
 cd /work
 python3 -c 'import torch; assert torch.cuda.is_available(); print("CUDA", torch.cuda.get_device_name(0), flush=True)'
@@ -43,7 +43,7 @@ tar -czf /work/results.tgz -C /work pilot/outputs_{config} pilot/{config}.yaml p
 def cpu_script(index, shards, workers, per_region):
     return f"""#!/bin/bash
 set -euo pipefail
-export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONUNBUFFERED=1
+export EMBER_JOB=physics-{index} OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONUNBUFFERED=1
 tar -xzf /work/input.tgz -C /work
 cd /work
 # Published ForeFire 2.6 Linux aarch64 wheel is CPU-only.
@@ -53,14 +53,14 @@ tar -czf /work/results.tgz -C /work output physics_workflow.log
 """
 
 
-def make_workflow(training_uri, physics_uri, result_prefix, *, workers=12, per_region=80,
+def make_workflow(training_uri, physics_uri, result_prefix, *, workers=16, per_region=80,
                   parallel_gpu=True, image=GPU_IMAGE):
     if not result_prefix.startswith("fb://user/") or result_prefix.endswith("/"):
         raise ValueError("result_prefix must be fb://user/... without trailing slash")
     if not training_uri.startswith("fb://") or not physics_uri.startswith("fb://"):
         raise ValueError("Use uploaded Fuzzball object URIs for inputs")
-    if not (1 <= workers <= 12) or per_region <= 0:
-        raise ValueError("workers must be 1..12 and per_region > 0")
+    if not (1 <= workers <= 16) or per_region <= 0:
+        raise ValueError("workers must be 1..16 and per_region > 0")
     volumes, jobs = {}, {}
     for index in range(2):
         key = f"physics-{index}"
@@ -92,7 +92,7 @@ def main():
     p.add_argument("--physics-uri", required=True)
     p.add_argument("--result-prefix", required=True)
     p.add_argument("--output", type=Path, required=True)
-    p.add_argument("--cpu-workers", type=int, default=12)
+    p.add_argument("--cpu-workers", type=int, default=16)
     p.add_argument("--scenarios-per-region", type=int, default=80)
     p.add_argument("--one-gpu", action="store_true", help="Train baseline only (CPU shards still parallel)")
     a = p.parse_args()
