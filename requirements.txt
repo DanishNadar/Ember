@@ -1,4 +1,55 @@
-numpy
-matplotlib
-psutil
-h5py
+# Ember runtime dependencies
+#
+# Target interpreter: CPython 3.10-3.12.  Python 3.12 is the local baseline.
+# Upper bounds deliberately avoid unreviewed major-version upgrades while
+# retaining wheels for Windows ARM64 development and Linux worker images.
+
+# Portable numerical core
+numpy>=2.0,<3
+scipy>=1.13,<2
+
+# ForeFire artifacts and scientific arrays
+h5py>=3.12,<4
+fsspec>=2024.10,<2026
+
+# Geometry, visualisation, and image output
+matplotlib>=3.9,<4
+shapely>=2.0,<3
+pillow>=10,<13
+imageio>=2.36,<3
+
+# Reproducibility, configuration, diagnostics, and HTTP integration
+psutil>=6,<8
+pydantic>=2.9,<3
+PyYAML>=6,<7
+httpx>=0.27,<1
+tenacity>=9,<10
+tqdm>=4.66,<5
+rich>=13,<15
+
+# Quality and test tooling
+pytest>=8,<9
+ruff>=0.8,<1
+
+# Linux / Fuzzball worker-image extensions. These are intentionally not
+# installed on native Windows ARM64, where the required binary wheels and
+# geospatial native libraries are not consistently available.
+netCDF4>=1.7,<2; platform_system == "Linux"
+pandas>=2.2,<3; platform_system == "Linux"
+xarray>=2024.10,<2026; platform_system == "Linux"
+zarr>=2.18,<3; platform_system == "Linux"
+numcodecs>=0.15,<0.17; platform_system == "Linux"
+pyarrow>=17,<20; platform_system == "Linux"
+rasterio>=1.4,<2; platform_system == "Linux"
+pyproj>=3.6,<4; platform_system == "Linux"
+geopandas>=1.0,<2; platform_system == "Linux"
+dask[array]>=2024.10,<2026; platform_system == "Linux"
+distributed>=2024.10,<2026; platform_system == "Linux"
+
+# Fuzzball notes
+# - Install the Fuzzball CLI separately through CIQ/WSL; it is not a PyPI
+#   package and must not be added here as an assumed dependency.
+# - Generate and install the deployment-specific Fuzzball Python SDK after
+#   cluster access is provisioned; CIQ generates it from that deployment's API.
+# - Install PyTorch inside the validated GB10/Fuzzball worker image, selecting
+#   the wheel or container tag for that image's CUDA and ARM64 environment.
