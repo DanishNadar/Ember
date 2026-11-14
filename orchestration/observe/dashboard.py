@@ -193,6 +193,33 @@ def plot_resources(events):
     return fig
 
 
+
+def progress_report(events):
+    """Compact, directly observed job progress; no estimated finish times."""
+    jobs = {}
+    for e in events:
+        job = e.get("job", "unknown")
+        item = jobs.setdefault(job, {"job": job, "phase": "unknown",
+                                    "last_epoch": None, "val_iou": None,
+                                    "physics_completed": 0, "physics_excluded": 0,
+                                    "finished": False})
+        kind = e.get("event")
+        if kind in {"training_started", "cpu_shard_started", "ddp_finetune_started",
+                    "ddp_training_started", "test_evaluation_started"}:
+            item["phase"] = e.get("phase", kind)
+        elif kind == "epoch_finished":
+            item["last_epoch"] = e.get("epoch")
+            item["val_iou"] = e.get("val", {}).get("iou", e.get("val_iou"))
+        elif kind == "cpu_simulation_finished":
+            field = "physics_completed" if e.get("status") == "complete" else "physics_excluded"
+            item[field] += 1
+        elif kind in {"training_finished", "cpu_shard_finished",
+                      "ddp_finetune_finished", "ddp_training_finished",
+                      "test_evaluation_finished"}:
+            item["phase"] = kind
+            item["finished"] = True
+    return [jobs[j] for j in sorted(jobs)]
+
 def bottleneck_report(events):
     epochs = [e for e in events if e.get("event") == "epoch_finished"]
     train = [float(e["train_seconds"]) for e in epochs if isinstance(e.get("train_seconds"), (int, float))]
@@ -201,7 +228,10 @@ def bottleneck_report(events):
               "mean_train_epoch_s": round(np.mean(train), 3) if train else None,
               "mean_validation_epoch_s": round(np.mean(val), 3) if val else None,
               "validation_fraction": sum(val)/(sum(val)+sum(train)) if train and val else None,
-              "gpu_utilization_average": None}
+              "gpu_utilization_average": None,
+              "cpu_shards": [e.get("summary") for e in events
+                             if e.get("event") == "cpu_shard_finished"
+                             and isinstance(e.get("summary"), dict)]}
     # Without a continuous, calibrated interval sampling process, do not infer average GPU use.
     return report
 
@@ -240,15 +270,23 @@ def watch(workflows, *, cli=None, interval_s=8, cycles=45):
         print("Live Ember observatory | observed events:", len(events))
         if errors:
             print("Connection/log status:", "; ".join(errors))
+        print("Per-job progress (observed):")
+        for job_row in progress_report(events):
+            print("  {job}: {phase}; epoch={last_epoch}; val_IoU={val_iou}; "
+                  "physics_completed={physics_completed}, excluded={physics_excluded}".format(**job_row))
         rows = history_from_events(events)
         if rows:
-            display(plot_learning(rows))
-            plt.show()
+            fig = plot_learning(rows)
+            if fig is not None:
+                display(fig)
+                plt.close(fig)
         if events:
             display(bottleneck_report(events))
             if any(e.get("event") in {"training_finished", "cpu_shard_finished", "ddp_finetune_finished"} for e in events):
-                display(plot_timeline(events))
-                plt.show()
+                fig = plot_timeline(events)
+                if fig is not None:
+                    display(fig)
+                    plt.close(fig)
         if not errors and events and all(any(e.get("event") in
                 ("training_finished", "cpu_shard_finished", "ddp_finetune_finished", "test_evaluation_finished")
                 for e in events if e.get("job") == job) for jobs in workflows.values() for job in jobs):
