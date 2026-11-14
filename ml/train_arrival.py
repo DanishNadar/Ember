@@ -16,7 +16,7 @@ import torch
 from torch.utils.data import DataLoader
 import yaml
 
-from arrival_dataset import ArrivalDataset, discover, fit_normalization
+from arrival_dataset import ArrivalDataset, discover, fit_normalization, split_manifest, validate_checkpoint_contract
 from arrival_model import ArrivalUNet, masked_arrival_loss
 from observability import emit, resources
 
@@ -97,6 +97,8 @@ def main():
             raise ValueError("output_dir is not empty: choose a new output_dir to preserve checkpoints")
         out.mkdir(parents=True, exist_ok=True)
         norm = fit_normalization(paths["train"], cfg)
+        identities = split_manifest(paths)
+        (out / "split_manifest.json").write_text(json.dumps(identities, indent=2), encoding="utf-8")
         (out / "normalization.json").write_text(json.dumps(norm, indent=2))
         emit("training_started", path=event_path, phase="gpu_training",
              sample_counts={key: len(files) for key, files in paths.items()},
@@ -106,8 +108,7 @@ def main():
         if not args.checkpoint:
             parser.error("evaluate requires --checkpoint")
         checkpoint = torch.load(args.checkpoint, map_location=device, weights_only=False)
-        if checkpoint["config"]["channel_names"] != cfg["channel_names"]:
-            raise ValueError("Checkpoint channel names differ from current config")
+        validate_checkpoint_contract(checkpoint, cfg, paths, args.checkpoint)
         norm = checkpoint["normalization"]
     loaders = {part: DataLoader(ArrivalDataset(files, cfg, norm),
                                batch_size=cfg["batch_size"], shuffle=(part == "train" and args.mode == "train"),
@@ -151,6 +152,7 @@ def main():
                 best = val["loss"]
                 torch.save({"model_state_dict": net.state_dict(), "config": cfg,
                             "normalization": norm, "epoch": epoch, "validation": val,
+                            "split_manifest": identities,
                             "model_kind": "direct_arrival_two_head"}, out / "best.pt")
                 emit("checkpoint_saved", path=event_path, epoch=epoch, checkpoint=str(out / "best.pt"),
                      validation_loss=val["loss"])

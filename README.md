@@ -8,7 +8,7 @@ The ForeFire initial-state dataset for the neural surrogate (26k fire starts, Co
 
 ## Current verified workflow
 
-The local host cannot currently build or run ForeFire, so the checked-in KML reference artifact can be processed without presenting it as a new simulation result:
+The original extraction smoke test processes a checked-in KML reference without presenting it as a new simulation result:
 
 ```powershell
 python scripts/extract_state.py forefire/tests/runff/real_case.kml.ref --scenario-id forefire_runff_reference --grid 256
@@ -30,3 +30,12 @@ python scripts/run_forefire.py forefire/tests/runff/real_case.ff --run-directory
 The runner writes a blocked manifest instead of substituting synthetic timings when the executable is absent. See `reports/` for observed limitations and the required environment setup.
 
 When real completed CLI manifests exist, create a performance chart with `python scripts/plot_performance.py`. The command intentionally exits with an explanation rather than charting blocked or missing measurements.
+
+## Development and verified experiments
+
+Use the canonical `HPC_Hacks/Ember` checkout and the workflow in
+[DEVELOPMENT.md](DEVELOPMENT.md). The [verified Fuzzball pilot](orchestration/fuzzball/RESULTS.md)
+trained and evaluated the direct-arrival model on 144 genuine ForeFire simulations.
+The [Observatory notebook](notebooks/Ember_Observatory.ipynb) replays saved results
+and can explicitly monitor jobs. Use `python scripts/export_observatory.py` to
+create a versioned local report; publishing requires a separate approved action.

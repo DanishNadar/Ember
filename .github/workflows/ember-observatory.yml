@@ -9,6 +9,9 @@ on:
       - 'orchestration/observe/**'
       - 'orchestration/fuzzball/execute_training.py'
       - 'notebooks/**'
+      - 'scripts/export_observatory.py'
+      - 'scripts/test_*observatory.py'
+      - 'scripts/test_arrival_checkpoint.py'
       - '.github/workflows/ember-observatory.yml'
 
 jobs:
@@ -21,7 +24,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install offline visualization dependencies
-        run: python -m pip install numpy matplotlib PyYAML nbformat
+        run: python -m pip install numpy matplotlib pandas PyYAML nbformat nbconvert
       - name: Compile Python source
         run: |
           python -m compileall -q ml/observability.py ml/train_arrival.py ml/train_arrival_ddp.py ml/export_gallery.py orchestration/observe orchestration/fuzzball/execute_training.py
@@ -34,4 +37,11 @@ jobs:
           print("Validated notebook cells:", len(nb.cells))
           PY
       - name: Run offline contract tests
-        run: python -m unittest discover -s orchestration/observe -p 'test_observatory.py' -v
+        run: python -m unittest scripts.test_export_observatory orchestration.observe.test_observatory -v
+      - name: Install CPU-only ML regression dependencies
+        run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Check checkpoint identities and original ML contract
+        run: |
+          python -m unittest scripts.test_arrival_checkpoint -v
+          cd ml
+          python -m unittest test_contract -v

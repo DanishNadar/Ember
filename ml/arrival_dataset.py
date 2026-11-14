@@ -1,5 +1,7 @@
 """Numeric arrival-time NPZ loader with split and geospatial-contract checks."""
 from pathlib import Path
+import json
+import warnings
 import numpy as np
 import torch
 from torch.utils.data import Dataset
@@ -99,3 +101,45 @@ class ArrivalDataset(Dataset):
         x, reached, arrival, _ = load_pair(self.files[index], self.cfg)
         x = ((x - self.mean) / self.std).astype(np.float32)
         return torch.from_numpy(x), torch.from_numpy(reached), torch.from_numpy(arrival)
+
+
+def split_manifest(paths):
+    """Read scalar identities only, after discover() validates the arrays."""
+    result = {}
+    for part, files in paths.items():
+        result[part] = []
+        for file in files:
+            with np.load(file, allow_pickle=False) as data:
+                result[part].append({k: data[k].item() for k in ("simulation_id", "scenario_family_id")})
+    return result
+
+
+def validate_checkpoint_contract(checkpoint, cfg, paths, checkpoint_path=None):
+    """Keep saved normalization/physics consistent and check historical test identities."""
+    for key in ("channel_names", "channel_types", "grid_size", "horizon_seconds", "unreached_sentinel",
+                "base_filters", "depth", "dropout", "ignition_channel"):
+        if checkpoint["config"].get(key) != cfg.get(key):
+            raise ValueError("Checkpoint contract differs: " + key)
+    norm = checkpoint["normalization"]
+    mean, std = np.asarray(norm["mean"], dtype=float), np.asarray(norm["std"], dtype=float)
+    if (norm.get("fit_split") != "train" or norm.get("channel_names") != cfg["channel_names"]
+            or mean.shape != (len(cfg["channel_names"]),) or std.shape != mean.shape
+            or not np.isfinite(mean).all() or not np.isfinite(std).all() or np.any(std <= 0)):
+        raise ValueError("Invalid checkpoint train-only normalization")
+    recorded = checkpoint.get("split_manifest")
+    sidecar = Path(checkpoint_path).parent / "dataset_manifest.json" if checkpoint_path else None
+    if not recorded and sidecar is not None and sidecar.is_file():
+        data = json.loads(sidecar.read_text(encoding="utf-8"))
+        recorded = {part: [r for r in data.get("simulations", []) if r.get("accepted") and r.get("split") == part]
+                    for part in ("train", "val", "test")}
+    if not recorded or not recorded.get("train"):
+        warnings.warn("Legacy checkpoint has no historical split identities; current splits were audited but historical held-out status cannot be verified", RuntimeWarning)
+        return
+    current = split_manifest(paths)
+    for field in ("simulation_id", "scenario_family_id"):
+        used = {r[field] for part in ("train", "val") for r in recorded.get(part, [])}
+        if any(r[field] in used for r in current["test"]):
+            raise ValueError("Held-out test leakage against checkpoint history: " + field)
+        reserved = {r[field] for r in recorded.get("test", [])}
+        if any(r[field] in reserved for part in ("train", "val") for r in current.get(part, [])):
+            raise ValueError("Historical held-out test moved into train/validation: " + field)

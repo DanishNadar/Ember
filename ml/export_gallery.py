@@ -15,7 +15,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from arrival_dataset import load_pair
+from arrival_dataset import load_pair, discover, validate_checkpoint_contract
 from arrival_model import ArrivalUNet
 
 
@@ -112,10 +112,14 @@ def main():
     # Only load checkpoints from your own trusted training run.
     ckpt = torch.load(args.checkpoint, map_location=device, weights_only=False)
     cfg, norm = ckpt["config"], ckpt["normalization"]
+    paths_by_split = discover(dict(cfg, data_dir=str(args.dataset.resolve())))
+    validate_checkpoint_contract(ckpt, cfg, paths_by_split, args.checkpoint)
     model = ArrivalUNet(len(cfg["channel_names"]), cfg["base_filters"], cfg["depth"], cfg["dropout"]).to(device)
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
     out = args.output
+    if out.exists() and any(out.iterdir()):
+        raise FileExistsError("Use a new gallery output directory to preserve previous results")
     out.mkdir(parents=True, exist_ok=True)
     horizons = np.linspace(cfg["horizon_seconds"] / 6, cfg["horizon_seconds"], 6)
     results = [render(file, cfg, model, norm, device, out / (file.stem + ".png"), horizons)

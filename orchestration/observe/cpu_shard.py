@@ -114,6 +114,7 @@ def main():
                 emit("cpu_simulation_finished", path=events, phase="cpu_physics",
                      shard=args.shard, region=region, sample_id=row["sample_id"],
                      status="complete" if "file" in rec else "excluded",
+                     simulation_ok=rec["ok"], edge_hit=rec["edge_hit"],
                      worker_seconds=rec["worker_seconds"])
             emit("cpu_batch_finished", path=events, phase="cpu_physics",
                  shard=args.shard, region=region, completed=len(records),

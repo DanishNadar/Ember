@@ -3,3 +3,9 @@ venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+artifacts/experiments/
+artifacts/local/
+reports/observatory/*/
+reports/observatory/*.zip

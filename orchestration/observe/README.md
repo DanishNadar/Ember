@@ -20,25 +20,28 @@ or merge anything into main.
   poll new Fuzzball logs with a working CLI.
 
 These are *implemented files*, not a claim that new cluster jobs have run.
-No Fuzzball tool is available to this ChatGPT session; new GPU and CPU
-scheduling is not verified until a team member runs the workflow.
+The historical pilot was retrieved and verified through the authenticated
+Fuzzball CLI. MCP availability is a separate connection check. The new
+instrumented CPU/GPU workflow has only passed CLI schema validation; its
+placement, concurrent execution and telemetry still need a real runtime check.
 
 ## Install notebook requirements
 
 Within a Jupyter-capable Python environment (Windows or WSL):
 
 ~~~bash
-python -m pip install jupyter ipykernel matplotlib numpy pandas pyyaml
-jupyter notebook notebooks/Ember_Observatory.ipynb
+python -m pip install -r notebooks/requirements.txt
+jupyter lab notebooks/Ember_Observatory.ipynb
 ~~~
 
 Select the kernel in VS Code or Jupyter. PyTorch is NOT required on this
 notebook machine if using retrieved PNGs and metrics.
 
-Set RUNS_DIR in section 1 to your retrieved pilot folder. For the original
-successful pilot, Codex retained files below
-orchestration/fuzzball/runs/arrival-pilot-20261114-02. Your local run may be
-in a sibling Ember-fuzzball-20261114 checkout rather than this Git worktree.
+Store retrieved experiments under `artifacts/experiments/<experiment-id>` in
+the canonical checkout. The notebook discovers registered experiment roots
+through ignored `artifacts/local/observatory.json` or `EMBER_RUNS_DIR`, with a
+legacy fallback to orchestration/fuzzball/runs. See [DEVELOPMENT.md](../../DEVELOPMENT.md)
+for cross-platform Git repair and explicit, versioned saved-output export.
 
 The notebook's live cell uses the Fuzzball CLI to obtain each job's stdout.
 Set WORKFLOWS to the **actual** returned workflow ID and job names, then enable
@@ -157,12 +160,15 @@ The live notebook uses those same commands.
   Pixel accuracy may be inflated by unburned background.
 - Arrival MAE is conditional on simulator-reached cells only. The PNG error
   panel and per-horizon false positives/negatives expose its blind spots.
-- GPU/CPU utilization fields are **point-in-time host snapshots** collected
-  at epochs/batches, not calibrated average utilization. The notebook leaves
-  missing values blank.
+- CPU utilization uses a recorded 100 ms host sampling window. GPU utilization
+  is a driver-reported snapshot, retained even when GPU memory counters are
+  unsupported. Neither measures whole-job average utilization. Missing values
+  remain blank. Histories are keyed by workflow/experiment, job and epoch.
 - Timeline uses real event timestamps. Container-pull time and scheduler wait
   are NOT measured by these Python events; correlate with Fuzzball lifecycle
-  logs when profiling those phases.
+  logs when profiling those phases. Jobs share one UTC time origin; actual
+  cross-node clock synchronization is still required. Summed paired epoch
+  durations measure work fractions, not concurrent wall-clock bottlenecks.
 - ForeFire labels measure agreement with a simulator; no operational real-fire
   prediction claim.
 - Results from the earlier pilot do not have structured new events or a
