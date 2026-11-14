@@ -1,0 +1,6 @@
+# Use the existing PyTorch build on ARM64/NVIDIA hosts; no CUDA/driver installation here.
+# If torch is missing, install a build suitable for that machine separately.
+torch>=2.2
+numpy>=1.24
+PyYAML>=6.0
+matplotlib>=3.7

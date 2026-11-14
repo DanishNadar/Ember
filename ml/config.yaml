@@ -1,0 +1,47 @@
+# All relative paths resolve beside this YAML file, regardless of the shell's cwd.
+data_dir: data                 # Root containing train/, val/, test/ NPZ files.
+output_dir: outputs            # Checkpoints, normalization, logs and evaluation artifacts.
+dataset_kind: forefire         # forefire or synthetic_mock; mock metrics are never benchmarks.
+image_size: 128                # Square grid side, pixels; usually 64–512, divisible by 2**depth.
+channel_names: [burned_mask]    # Exact ordered x channels; input count is inferred from this list.
+channel_types: [binary]        # Parallel list: binary (unchanged) or continuous (train mean/std).
+# Add only exported fields, e.g. wind_u_mps / continuous. For fuel categories, export
+# one binary channel per category, e.g. fuel_grass, fuel_shrub, fuel_other; never
+# pass raw integer fuel IDs as continuous values. Freeze the vocabulary across splits.
+current_burn_channel: burned_mask # Name of the binary cumulative burn channel at time t.
+forecast_horizon_seconds: 60   # Target lead time in seconds; coordinate with simulator team.
+split_policy: precreated      # Only precreated directories; no random splitting of time steps.
+split_group_key: scenario_family_id # Required metadata identifying related scenarios across splits.
+batch_size: 8                 # Samples per optimizer step; usually 1–32, limited by memory.
+learning_rate: 0.001          # Optimizer step size; try 0.0001–0.003.
+epochs: 50                    # Maximum full training passes; try 10–200.
+optimizer: adam               # adam or sgd.
+weight_decay: 0.0001          # L2 weight penalty; try 0–0.01.
+adam_betas: [0.9, 0.999]      # Adam moving-average decays; usually keep these defaults.
+optimizer_epsilon: 0.00000001 # Adam numerical stabilizer; usually 1e-8–1e-6.
+sgd_momentum: 0.9             # SGD momentum, ignored by Adam; range 0–0.99.
+base_filters: 16              # First U-Net feature count; try 8–32 for a small model.
+depth: 3                      # Number of pooling stages; try 2–4 (filters double each stage).
+dropout: 0.0                  # Feature dropout probability; try 0–0.3.
+random_seed: 42               # Integer random seed for initialization, shuffling and mock data.
+device: auto                  # auto selects CUDA when available; cpu or cuda forces a device.
+num_workers: 0                # Loader subprocesses; 0 is portable; try 0–4 on larger hosts.
+cpu_threads: 2                # PyTorch CPU compute threads; try 1–8 based on your machine.
+deterministic: true           # Request deterministic kernels; may slow CUDA or reject a kernel.
+threshold: 0.5                # Probability cutoff for binary metrics/masks; range 0–1.
+bce_weight: 1.0               # BCEWithLogits loss multiplier; usually 1, range 0–2.
+dice_weight: 1.0              # Soft Dice loss multiplier; try 0–1 (0 disables).
+dice_smoothing: 1.0           # Soft Dice numerator/denominator smoothing, pixel units; try 0.1–1.
+monotonicity_weight: 0.0      # Optional mean relu(current_burn - sigmoid(logits)); try 0–1.
+# This last loss is physical regularization, NOT a governing-equation PINN residual.
+save_frequency: 5             # Save an additional epoch checkpoint every N epochs; try 1–10.
+early_stopping_patience: 10   # Stop after N epochs without improved validation loss; try 5–20.
+early_stopping_min_delta: 0.0 # Required loss decrease to count as improvement; try 0–0.001.
+latency_warmup_steps: 3       # Untimed forwards before evaluation; try 1–10.
+latency_repeats: 10           # Timed forwards of first test batch; try 10–100.
+# Generator settings affect synthetic pipeline testing ONLY, never simulator exports.
+mock_train_simulations: 4     # Independent synthetic families in train; usually 2–8 for smoke tests.
+mock_val_simulations: 2       # Independent synthetic families in val; usually 1–4.
+mock_test_simulations: 2      # Independent synthetic families in test; usually 1–4.
+mock_steps_per_simulation: 2  # Temporal pairs per family; usually 1–4 for smoke tests.
+mock_cell_size_meters: 10.0   # Synthetic pixel width in meters; arbitrary, not ForeFire calibration.
