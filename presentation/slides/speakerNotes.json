@@ -1,0 +1,173 @@
+{
+  "spark": {
+    "durationSeconds": 20,
+    "main": "One spark can lead to many possible futures. Project Ember is about exploring them faster.",
+    "talkingPoints": [
+      "Let the animation breathe for about three seconds before speaking.",
+      "We are Project Ember: an adaptive wildfire surrogate.",
+      "Our goal is to go from simulating one future to exploring thousands."
+    ],
+    "interaction": "No clicks needed. The ember lands, the fire spreads, and alternative fronts flash in cyan. The logo appears at about 6 s. Press → once the logo is up.",
+    "evidence": "Opening visual is an architectural illustration from the deck's own toy spread model, not simulator output (badge bottom-left).",
+    "transition": "But why does one spark have so many futures? Because conditions change."
+  },
+  "humanProblem": {
+    "durationSeconds": 25,
+    "main": "The same starting point can produce very different simulated outcomes when conditions change.",
+    "talkingPoints": [
+      "Wildfire threatens ecosystems, communities, infrastructure and livelihoods.",
+      "Watch the same ignition under four condition sets: wind direction, wind speed, fuel moisture.",
+      "The burned footprint near the structures changes every time. These are illustrations, not forecasts."
+    ],
+    "interaction": "The scene cycles through condition presets automatically. Press → to reveal the closing statement: 'When conditions change, the questions multiply.'",
+    "evidence": "Illustrative only; condition panel values drive the toy model and are labeled as such.",
+    "transition": "A physics simulator answers exactly one of these questions at a time."
+  },
+  "oneSimulation": {
+    "durationSeconds": 25,
+    "main": "A simulation is one answer to one set of assumptions. Covering the uncertainty takes many runs.",
+    "talkingPoints": [
+      "On the left: one deterministic run with its input assumptions.",
+      "Each uncertain input we vary multiplies the number of runs: 1, then 3, then 9, then 27.",
+      "A simulated trajectory is a model of what could happen under assumptions, not a record of what will happen."
+    ],
+    "interaction": "Press → twice to grow the scenario tree one level at a time.",
+    "evidence": "Conceptual diagram. Branch counts show combinatorics, not measured workloads.",
+    "transition": "And every branch costs compute."
+  },
+  "computeChallenge": {
+    "durationSeconds": 20,
+    "main": "Each question we ask adds another independent simulation job.",
+    "talkingPoints": [
+      "Scenario requests pile up faster than a fixed pool of workers can drain them.",
+      "This is normalized and conceptual: no timings are shown here because none are claimed.",
+      "So the question becomes: what if the physics could be approximated?"
+    ],
+    "interaction": "Let the queue fill for about 5 s, then press → to reveal the question.",
+    "evidence": "Normalized conceptual animation. Measured runtimes appear only on the Performance slide.",
+    "transition": "That question is Project Ember."
+  },
+  "meetEmber": {
+    "durationSeconds": 35,
+    "main": "Ember is a pipeline: physics teaches, AI learns, Fuzzball coordinates, and we explore.",
+    "talkingPoints": [
+      "Simulation generates examples. Examples become a dataset. A U-Net-style surrogate learns from it.",
+      "We evaluate against held-out simulator outputs, and Fuzzball orchestrates the stages.",
+      "Each status chip shows what is implemented and what is proposed."
+    ],
+    "interaction": "The pipeline draws itself. Click 'Neural surrogate' to open its card (role, inputs, outputs, compute, status), then click 'Fuzzball orchestration'.",
+    "evidence": "Status chips come from snapshot.components. Until confirmed they read 'unconfirmed'.",
+    "transition": "Let's start where the knowledge comes from: the physics."
+  },
+  "physicsEngine": {
+    "durationSeconds": 30,
+    "main": "First, we let physics teach. The simulator produces the ground truth the surrogate learns from.",
+    "talkingPoints": [
+      "Name the simulator exactly as configured (ForeFire, or our simplified simulator, as the badge states).",
+      "Inputs: initial burned area, wind, fuel, moisture and slope layers. Output: burned-area masks over time.",
+      "Use the scrubber to show progression."
+    ],
+    "interaction": "Press play, then drag the time scrubber. Toggle 'Environment layers' and 'Progression lines'.",
+    "evidence": "With a recorded replay ingested, frames are simulator output (orange badge). Otherwise the viewer shows a labeled illustrative stand-in.",
+    "transition": "Each of those frames becomes a training lesson."
+  },
+  "simulationToData": {
+    "durationSeconds": 25,
+    "main": "Every completed simulation becomes supervised training examples: input channels in, future mask out.",
+    "talkingPoints": [
+      "One snapshot splits into aligned channels: burned mask, wind U/V, fuel, moisture, slope.",
+      "The target is the burned-area mask at a fixed horizon later.",
+      "We split by scenario, not by frame, so test scenarios are never seen in training."
+    ],
+    "interaction": "Press → to explode the snapshot into channels, then again to show the dataset split.",
+    "evidence": "Split counts come from data/manifest.json. Thumbnails are illustrative unless real samples are ingested.",
+    "transition": "Now the model learns from those pairs."
+  },
+  "neuralSurrogate": {
+    "durationSeconds": 30,
+    "main": "A lightweight U-Net learns the mapping from conditions to the next fire extent.",
+    "talkingPoints": [
+      "The encoder compresses spatial context, and the decoder rebuilds a full-resolution mask.",
+      "Skip connections keep fine edges of the fire front.",
+      "The spec panel reads from model metadata: parameter count, resolution, training config, device."
+    ],
+    "interaction": "Toggle 'Architecture / Prediction' at the top right. Prediction view shows real held-out predictions when ingested.",
+    "evidence": "All numbers come from model metadata and the checkpoint. A dash means not yet ingested.",
+    "transition": "Training and simulation have to run somewhere. Here's the cluster."
+  },
+  "twoNodes": {
+    "durationSeconds": 35,
+    "main": "Two GB10 nodes, one continuous experiment: simulation produces while training consumes.",
+    "talkingPoints": [
+      "Planned architecture: Node A generates simulation shards, and Node B trains and evaluates.",
+      "Fuzzball coordinates dependencies, staging and artifact handoff.",
+      "Switch to Verified Execution to show what the logs actually recorded, including placement."
+    ],
+    "interaction": "Start in 'Planned architecture', then click 'Verified execution'. If logs are ingested it shows real job placement. Otherwise it says so.",
+    "evidence": "Verified view is built only from Fuzzball workflow logs (snapshot.workflow).",
+    "transition": "Let's look at that execution on a timeline."
+  },
+  "fuzzball": {
+    "durationSeconds": 30,
+    "main": "Fuzzball turned a multi-stage experiment into a reproducible, dependency-aware workflow.",
+    "talkingPoints": [
+      "Each bar is a recorded job, with start, end, state and node.",
+      "Arrows show dependencies. Training starts only when its data exists.",
+      "Fuzzball orchestrates. It does not optimize the model."
+    ],
+    "interaction": "Hover a bar for job details. Point out overlap between simulation and training if present.",
+    "evidence": "Timeline is reconstructed from recorded workflow logs. It is labeled 'Recorded playback', never live.",
+    "transition": "So did the AI actually learn the physics?"
+  },
+  "momentOfTruth": {
+    "durationSeconds": 45,
+    "main": "On held-out simulated scenarios, here's how closely the surrogate matches the simulator, including where it misses.",
+    "talkingPoints": [
+      "Left: simulator reference. Middle: surrogate prediction. Right: error map (orange = over-predicted, cyan = missed).",
+      "Read the IoU, precision, recall and F2 for the held-out split.",
+      "Show a hard case on purpose. Honesty about failure modes is part of the result.",
+      "This is fidelity to simulation, not real-world forecast skill."
+    ],
+    "interaction": "Click through the scenario selector, including the weakest example.",
+    "evidence": "metrics/results.json via snapshot.fidelity. Per-example metrics are recomputed from masks when masks are provided.",
+    "transition": "Accuracy is half the story. Did we save compute?"
+  },
+  "performance": {
+    "durationSeconds": 40,
+    "main": "We report three separate accelerations, and training cost on its own.",
+    "talkingPoints": [
+      "Surrogate acceleration: simulator runtime vs neural inference per scenario.",
+      "Parallel throughput: one node vs two nodes.",
+      "Workflow acceleration: sequential vs overlapping pipeline.",
+      "We never multiply these into one headline number. Training cost is shown separately, so the comparison is honest."
+    ],
+    "interaction": "Point at each of the three cards in turn. Any card without measurements shows 'Awaiting'.",
+    "evidence": "Each card cites snapshot.benchmarks.source. Speedups are computed only when both measurements exist.",
+    "transition": "Faster evaluation changes which questions we can afford to ask."
+  },
+  "computeUnlocks": {
+    "durationSeconds": 30,
+    "main": "More compute means more scenarios, and an ensemble shows where outcomes agree and where they don't.",
+    "talkingPoints": [
+      "One footprint, then many footprints, then an agreement map.",
+      "Agreement is the fraction of ensemble members that burn a cell. It is not a calibrated probability.",
+      "This is a proposed extension unless an ensemble result is ingested (see badge)."
+    ],
+    "interaction": "Drag 'Ensemble size' from 1 to 24, then toggle 'Agreement heatmap'. Optionally select individual members.",
+    "evidence": "Marked as proposed future work and illustrative unless snapshot.ensemble exists.",
+    "transition": "So what did we actually build?"
+  },
+  "conclusion": {
+    "durationSeconds": 30,
+    "main": "We didn't replace physics. We made it reusable.",
+    "talkingPoints": [
+      "Read the checkmarks: only evidenced contributions are marked complete.",
+      "Next: real environmental data, physics-informed learning, adaptive simulation requests, larger ensembles.",
+      "Quantum-enhanced probability estimation is a future research direction, not part of Ember today.",
+      "Close: Project Ember, from one simulation to a scalable scientific-AI workflow."
+    ],
+    "interaction": "Press → once to bring back the ember and logo for the close. Leave it on screen for questions, and open Explore mode (E) for deep dives.",
+    "evidence": "Contribution status derives from snapshot evidence. Future items are badged 'Proposed'.",
+    "transition": "Thank you. Questions?"
+  }
+}

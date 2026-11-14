@@ -1,0 +1,14 @@
+{
+  "$comment": "Paths are relative to the experiment repository (EMBER_REPO). Edit to match your actual layout. Missing files leave their section null (awaiting).",
+  "results": ["metrics/results.json", "outputs/metrics/results.json"],
+  "manifest": ["data/manifest.json"],
+  "modelMetadata": ["models/metadata.json", "models/best.json", "models/model_card.json"],
+  "checkpoint": ["models/best.pt"],
+  "simulator": ["sim/simulator.json", "simulation/config.json"],
+  "replay": ["sim/replay.json", "outputs/replay.json"],
+  "fuzzballWorkflow": ["fuzzball/workflow_status.json", "logs/fuzzball/workflow.json"],
+  "benchmarks": ["metrics/benchmarks.json", "metrics/benchmarks.csv"],
+  "ensemble": ["outputs/ensemble.json"],
+  "components": ["presentation/components.json"],
+  "copyAssets": ["outputs/comparison.png"]
+}

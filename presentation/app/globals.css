@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --void: #080b10;
+  --basalt: #111722;
+  --ember: #ff6b35;
+  --fire: #e53935;
+  --cyan: #48d8ff;
+  --verified: #35d6a0;
+  --ink: #f3f6fa;
+  --mute: #94a3b8;
+}
+
+html,
+body {
+  background: var(--void);
+  color: var(--ink);
+  font-family: Inter, system-ui, sans-serif;
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+html.allowScroll,
+html.allowScroll body {
+  overflow: auto;
+  height: auto;
+}
+
+::selection {
+  background: rgba(255, 107, 53, 0.35);
+}
+
+.fontDisplay {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.fontMono {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-feature-settings: "zero" 1;
+}
+
+/* Glass panel used for cards across the deck. */
+.glassPanel {
+  background: linear-gradient(180deg, rgba(26, 34, 48, 0.72), rgba(17, 23, 34, 0.72));
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 30px 80px -40px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.emberText {
+  background: linear-gradient(92deg, #ffd29a 0%, #ff6b35 45%, #e53935 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cyanText {
+  background: linear-gradient(92deg, #c8f4ff 0%, #48d8ff 60%, #1c8fb8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gridBackdrop {
+  background-image: linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.awaitingBorder {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(148, 163, 184, 0.06) 0,
+    rgba(148, 163, 184, 0.06) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+@keyframes dashMarch {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+.flowDash {
+  stroke-dasharray: 6 14;
+  animation: dashMarch 1.4s linear infinite;
+}
+
+@keyframes slowPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.slowPulse {
+  animation: slowPulse 2.6s ease-in-out infinite;
+}
+
+.reducedMotion .flowDash,
+.reducedMotion .slowPulse {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flowDash,
+  .slowPulse {
+    animation: none;
+  }
+}
+
+input[type="range"].emberRange {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  outline: none;
+}
+
+input[type="range"].emberRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff6b35;
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.25), 0 0 18px rgba(255, 107, 53, 0.6);
+  cursor: pointer;
+}
+
+input[type="range"].emberRange.cyanRange::-webkit-slider-thumb {
+  background: #48d8ff;
+  box-shadow: 0 0 0 4px rgba(72, 216, 255, 0.25), 0 0 18px rgba(72, 216, 255, 0.6);
+}
+
+input[type="range"].emberRange::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: #ff6b35;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #48d8ff;
+  outline-offset: 2px;
+}
