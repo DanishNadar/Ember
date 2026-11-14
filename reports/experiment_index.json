@@ -1,0 +1,37 @@
+{
+  "project": "Ember",
+  "records": [
+    {
+      "id": "forefire_runff_reference",
+      "kind": "checked-in ForeFire reference-artifact extraction",
+      "status": "complete",
+      "source": "forefire/tests/runff/real_case.kml.ref",
+      "manifest": "artifacts/manifests/forefire_runff_reference.json",
+      "analysis": "artifacts/analysis/forefire_runff_reference.json",
+      "figures": [
+        "artifacts/figures/forefire_runff_reference_front_and_mask.png",
+        "artifacts/figures/forefire_runff_reference_environment.png",
+        "artifacts/figures/forefire_runff_reference_landscape_front.png",
+        "artifacts/figures/forefire_runff_reference_fuel_composition.png",
+        "artifacts/figures/forefire_runff_reference_arrival_story.png"
+      ],
+      "caveat": "Not a locally executed ForeFire simulation."
+    },
+    {
+      "id": "runff_cli_probe_20261114",
+      "kind": "ForeFire CLI availability probe",
+      "status": "blocked",
+      "manifest": "artifacts/runs/runff/run_manifest.json",
+      "reason": "forefire executable not found on PATH"
+    },
+    {
+      "id": "forefire_runff_arrival_reference",
+      "kind": "checked-in ForeFire arrival-time reference extraction",
+      "status": "complete",
+      "source": "forefire/tests/runff/ForeFire.0.nc.ref",
+      "manifest": "artifacts/arrival/forefire_runff_arrival_reference.json",
+      "figure": "artifacts/figures/forefire_runff_arrival_reference_arrival_time.png",
+      "caveat": "Not a locally executed ForeFire simulation."
+    }
+  ]
+}

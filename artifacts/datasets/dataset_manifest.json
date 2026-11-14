@@ -1,0 +1,28 @@
+{
+  "artifacts": {},
+  "feature_definitions": {
+    "current_burned_mask": "binary rasterized front/extent at t",
+    "next_burned_mask": "binary rasterized front/extent at t + delta_t"
+  },
+  "objective": "X_t -> burned_mask_(t+delta_t)",
+  "reason": "No temporal pairs: extract at least two timestamped states from one scenario.",
+  "rejected": [
+    {
+      "manifest": "artifacts\\manifests\\forefire_runff_reference.json",
+      "reason": "requires a completed state with valid_at"
+    }
+  ],
+  "sample_counts": {
+    "test": 0,
+    "train": 0,
+    "validation": 0
+  },
+  "schema_version": "1.0",
+  "split_policy": "SHA-256 scenario-id assignment, never time-step-level random splitting",
+  "split_scenarios": {
+    "test": [],
+    "train": [],
+    "validation": []
+  },
+  "status": "blocked"
+}

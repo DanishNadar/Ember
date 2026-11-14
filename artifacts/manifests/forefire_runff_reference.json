@@ -1,0 +1,149 @@
+{
+  "artifacts": {
+    "front_geojson": "artifacts\\processed\\forefire_runff_reference\\front.geojson",
+    "raw_source": "artifacts\\raw\\forefire_runff_reference\\real_case.kml.ref",
+    "state_npz": "artifacts\\processed\\forefire_runff_reference\\state.npz"
+  },
+  "configuration": {
+    "grid_shape": [
+      256,
+      256
+    ]
+  },
+  "created_at_utc": "2026-11-14T15:22:55.870923+00:00",
+  "environment": {
+    "alignment": {
+      "method": "nearest-neighbour sampling through BBoxWSEN",
+      "row_axis_assumption": "native row order is south-to-north; validate against a ForeFire render before metric interpretation",
+      "target_bbox": [
+        8.78649,
+        41.96646,
+        8.80824,
+        41.97348
+      ],
+      "temporal_alignment": "not established: source geometry has no timestamp and wind time index was retained"
+    },
+    "domain": {
+      "Lx": 64000.0,
+      "Ly": 64000.0,
+      "SWx": 0.0,
+      "SWy": 0.0,
+      "bbox_wsen": [
+        8.362158754362039,
+        41.71112528183019,
+        9.136631132547048,
+        42.28667403094839
+      ],
+      "native_crs": "not declared in this fixture"
+    },
+    "layers": {
+      "altitude": {
+        "dtype": "int16",
+        "finite_count": 65536,
+        "max": 115.0,
+        "mean": 89.21504211425781,
+        "min": 55.0,
+        "shape": [
+          1,
+          1,
+          256,
+          256
+        ]
+      },
+      "fuel": {
+        "dtype": "int16",
+        "finite_count": 65536,
+        "max": 121.0,
+        "mean": 94.677978515625,
+        "min": 62.0,
+        "shape": [
+          1,
+          1,
+          256,
+          256
+        ],
+        "value_counts": {
+          "102": 32396,
+          "103": 692,
+          "104": 11829,
+          "105": 981,
+          "121": 1142,
+          "62": 1871,
+          "73": 6927,
+          "75": 8455,
+          "82": 1222,
+          "83": 21
+        }
+      },
+      "wind": {
+        "dtype": "float32",
+        "finite_count": 262144,
+        "max": 1.0454379320144653,
+        "mean": 0.5159910917282104,
+        "min": 0.016417739912867546,
+        "shape": [
+          2,
+          2,
+          256,
+          256
+        ]
+      }
+    },
+    "output": "artifacts\\processed\\forefire_runff_reference\\environment.npz",
+    "source_landscape": "forefire\\tests\\runff\\data.nc",
+    "status": "complete"
+  },
+  "geometry_metrics": {
+    "area_coordinate_squared": 8.41703998162302e-05,
+    "bbox": [
+      8.78649,
+      41.96646,
+      8.80824,
+      41.97348
+    ],
+    "perimeter_coordinate_units": 0.0938002008428497,
+    "polygon_count": 1,
+    "vertex_count": 637
+  },
+  "grid": {
+    "bbox": [
+      8.78649,
+      41.96646,
+      8.80824,
+      41.97348
+    ],
+    "coordinate_units": "source units"
+  },
+  "inspection": {
+    "exists": true,
+    "format": "kml",
+    "path": "artifacts\\raw\\forefire_runff_reference\\real_case.kml.ref",
+    "polygon_count": 1,
+    "size_bytes": 12661,
+    "status": "readable",
+    "suffix": ".ref"
+  },
+  "runtime": {
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10"
+  },
+  "scenario_id": "forefire_runff_reference",
+  "schema_version": "1.0",
+  "source": {
+    "path": "artifacts\\raw\\forefire_runff_reference\\real_case.kml.ref",
+    "sha256": "b3d483a73911521aaf1eeca7005dcf8ef093a00176ecf16938c88be2ef3dec89",
+    "size_bytes": 12661
+  },
+  "source_metadata": {
+    "crs": "unspecified",
+    "format": "kml"
+  },
+  "status": "complete",
+  "validation": {
+    "burned_cells": 36132,
+    "problems": [],
+    "total_cells": 65536,
+    "valid": true
+  }
+}

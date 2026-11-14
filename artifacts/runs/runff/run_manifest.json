@@ -1,0 +1,9 @@
+{
+  "executable": "forefire",
+  "measurement_method": "psutil RSS sampling every 0.1 seconds",
+  "reason": "Executable not found on PATH: forefire",
+  "script": "forefire\\tests\\runff\\real_case.ff",
+  "started_at_utc": "2026-11-14T14:37:52.700862+00:00",
+  "status": "blocked",
+  "working_directory": "artifacts\\runs\\runff"
+}

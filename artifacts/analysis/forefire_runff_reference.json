@@ -1,0 +1,104 @@
+{
+  "artifacts": {
+    "environment_figure": "artifacts\\figures\\forefire_runff_reference_environment.png",
+    "front_and_mask_figure": "artifacts\\figures\\forefire_runff_reference_front_and_mask.png"
+  },
+  "computational": {
+    "engine_runtime": "not measured: supplied reference artifact was analyzed without an engine run",
+    "extraction_runtime": "not captured in this first reference-artifact analysis"
+  },
+  "data_quality": {
+    "class_imbalance_burned_fraction": 0.55133056640625,
+    "empty_state": false,
+    "environmental_analysis": "available with recorded spatial/temporal alignment caveats; no causal inference is made",
+    "missing_values": 0,
+    "temporal_analysis": "not available: one extracted state"
+  },
+  "environmental": {
+    "alignment": {
+      "method": "nearest-neighbour sampling through BBoxWSEN",
+      "row_axis_assumption": "native row order is south-to-north; validate against a ForeFire render before metric interpretation",
+      "target_bbox": [
+        8.78649,
+        41.96646,
+        8.80824,
+        41.97348
+      ],
+      "temporal_alignment": "not established: source geometry has no timestamp and wind time index was retained"
+    },
+    "layers": {
+      "altitude": {
+        "dtype": "int16",
+        "finite_count": 65536,
+        "max": 115.0,
+        "mean": 89.21504211425781,
+        "min": 55.0,
+        "shape": [
+          1,
+          1,
+          256,
+          256
+        ]
+      },
+      "fuel": {
+        "dtype": "int16",
+        "finite_count": 65536,
+        "max": 121.0,
+        "mean": 94.677978515625,
+        "min": 62.0,
+        "shape": [
+          1,
+          1,
+          256,
+          256
+        ],
+        "value_counts": {
+          "102": 32396,
+          "103": 692,
+          "104": 11829,
+          "105": 981,
+          "121": 1142,
+          "62": 1871,
+          "73": 6927,
+          "75": 8455,
+          "82": 1222,
+          "83": 21
+        }
+      },
+      "wind": {
+        "dtype": "float32",
+        "finite_count": 262144,
+        "max": 1.0454379320144653,
+        "mean": 0.5159910917282104,
+        "min": 0.016417739912867546,
+        "shape": [
+          2,
+          2,
+          256,
+          256
+        ]
+      }
+    }
+  },
+  "scenario_id": "forefire_runff_reference",
+  "source_manifest": "artifacts\\manifests\\forefire_runff_reference.json",
+  "spatial": {
+    "area_coordinate_squared": 8.41703998162302e-05,
+    "area_units": "source coordinate units squared; do not interpret as square metres without a projected CRS",
+    "bbox": [
+      8.78649,
+      41.96646,
+      8.80824,
+      41.97348
+    ],
+    "perimeter_coordinate_units": 0.0938002008428497,
+    "polygon_count": 1,
+    "raster_burned_fraction": 0.55133056640625,
+    "raster_shape": [
+      256,
+      256
+    ],
+    "vertex_count": 637
+  },
+  "status": "complete"
+}

@@ -1,0 +1,8 @@
+{
+  "scenario_id": "forefire_example_t3600",
+  "source_format": "geojson",
+  "grid_shape": [256, 256],
+  "snapshot_interval_seconds": 600,
+  "coordinate_reference_system": "record explicitly for every scenario",
+  "notes": "Use one scenario identifier per simulation trajectory; do not mix its time steps with another trajectory before splitting datasets."
+}

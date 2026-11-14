@@ -1,0 +1,43 @@
+{
+  "arrival_time": {
+    "fill_cells": 10238540,
+    "max_seconds": 2399.214233135443,
+    "mean_seconds": 1782.1609139565142,
+    "min_seconds": 32.333451537221244,
+    "shape": [
+      3200,
+      3200
+    ],
+    "total_cells": 10240000,
+    "valid_cells": 1460
+  },
+  "artifacts": {
+    "arrival_npz": "artifacts\\processed\\forefire_runff_arrival_reference\\arrival_time.npz",
+    "figure": "artifacts\\figures\\forefire_runff_arrival_reference_arrival_time.png"
+  },
+  "caveat": "This is a checked-in reference output; Ember did not create it by running ForeFire locally.",
+  "configuration": {
+    "dataset": "arrival_time_of_front",
+    "fill_value": -9999.0
+  },
+  "created_at_utc": "2026-11-14T15:23:02.849879+00:00",
+  "domain": {
+    "Lx": 64000.0,
+    "Ly": 64000.0,
+    "SWx": 0.0,
+    "SWy": 0.0
+  },
+  "runtime": {
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10"
+  },
+  "scenario_id": "forefire_runff_arrival_reference",
+  "schema_version": "1.0",
+  "source": {
+    "path": "artifacts\\raw\\forefire_runff_arrival_reference\\ForeFire.0.nc.ref",
+    "sha256": "666b4d1f9bbcff131aa6188741455ce2eeb4ebe2640f985ec57a82b7a00f8462",
+    "size_bytes": 134658
+  },
+  "status": "complete"
+}
