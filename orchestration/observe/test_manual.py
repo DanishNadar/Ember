@@ -67,7 +67,7 @@ class ManualTests(unittest.TestCase):
                 if args[:2]==('object','describe'):return json.dumps({'digest':prov['input_sha256']})
                 if args[:2]==('workflow','start'):return '{"ID":"mock-only"}'
                 return 'validated'
-            with patch.object(manual,'preflight',return_value={'dataset_manifest_sha256':'fixture-manifest'}), patch.object(manual,'command',side_effect=cli) as call:
+            with patch.object(manual,'preflight',return_value={'dataset_manifest_sha256':'fixture-manifest'}), patch.object(manual,'fuzzball_command',return_value=['fuzzball']), patch.object(manual,'command',side_effect=cli) as call:
                 self.assertEqual(manual.launch(run,confirmation=o['experiment_name'],dry_run=False)['ID'],'mock-only')
                 with self.assertRaises(ValueError):manual.launch(run,confirmation=o['experiment_name'],dry_run=False)
                 self.assertEqual(sum(c.args[:2]==('workflow','start') for c in call.call_args_list),1)
