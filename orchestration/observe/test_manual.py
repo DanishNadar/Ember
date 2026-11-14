@@ -43,6 +43,19 @@ class ManualTests(unittest.TestCase):
         with patch.object(manual,'command') as cli, self.assertRaises(ValueError):manual.stage_inputs('unused')
         cli.assert_not_called()
 
+    def test_prepared_preflight_accepts_frozen_options_but_rejects_edits(self):
+        with tempfile.TemporaryDirectory() as t:
+            o=self.options();o['output_root']=t
+            target=Path(t)/o['experiment_name'];target.mkdir()
+            saved=target/'options.json';saved.write_text(json.dumps(o))
+            (target/'provenance.json').write_text(json.dumps({'options_sha256':manual.sha(saved)}))
+            manifest=target/'dataset_manifest.json';manifest.write_text('{}')
+            with patch.object(manual,'validate',return_value=(o['config'],{'train':[]},manifest)), patch.object(manual,'command') as cli:
+                self.assertEqual(manual.preflight(o,prepared=True)['output'],str(target))
+                cli.assert_not_called()
+                o['config']['epochs']=7
+                with self.assertRaisesRegex(ValueError,'Prepared options differ'):manual.preflight(o,prepared=True)
+
     def test_preflight_failure_never_submits(self):
         with tempfile.TemporaryDirectory() as t:
             run=Path(t);o=self.options();(run/'options.json').write_text(json.dumps(o))
