@@ -1,5 +1,5 @@
 {
- "schema_version": 2,
+ "schema_version": 3,
  "split": "test",
  "count": 1000,
  "grid": {
@@ -83,14 +83,6 @@
    "dead 100-h moisture (US only; 0 for Corsica)"
   ],
   [
-   "m_live_herb",
-   "live herb moisture (US only; 0 for Corsica)"
-  ],
-  [
-   "m_live_woody",
-   "live woody moisture (US only; 0 for Corsica)"
-  ],
-  [
    "ignition",
    "1 inside the initial burning area (point = its one cell), else 0"
   ],
@@ -135,8 +127,8 @@
     360.0
    ],
    "wind_shift_deg": [
-    -180.0,
-    180.0
+    -60.0,
+    60.0
    ],
    "wind_shift_t_frac": [
     0.0,
@@ -171,6 +163,8 @@
    "_comment": "team decision: which US site is never trained on",
    "site": "arizona"
   },
+  "wind_shift_ramp_s": 1800.0,
+  "_wind_comment": "Wind turns by wind_shift_deg starting at wind_shift_t_frac*horizon, linearly over wind_shift_ramp_s (60 s steps), like a frontal/sea-breeze passage.",
   "landscape": {
    "engine": "corsica_native",
    "path": "data_real/aullene/data.nc",
@@ -222,5 +216,5 @@
   "_multi": true
  },
  "ignition_rejection_tries": 3703,
- "built_s": 0.3
+ "built_s": 0.4
 }

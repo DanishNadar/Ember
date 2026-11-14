@@ -1,0 +1,65 @@
+{
+ "corsica": {
+  "split": "train",
+  "runs": 80,
+  "failed": 0,
+  "no_spread_pct": 7.5,
+  "median_km2": 2.67,
+  "p90_km2": 43.12,
+  "edge_pct": 15.0
+ },
+ "socal_chaparral": {
+  "split": "train",
+  "runs": 80,
+  "failed": 0,
+  "no_spread_pct": 26.2,
+  "median_km2": 0.22,
+  "p90_km2": 1.29,
+  "edge_pct": 0.0
+ },
+ "norcal_paradise": {
+  "split": "train",
+  "runs": 80,
+  "failed": 0,
+  "no_spread_pct": 25.0,
+  "median_km2": 0.16,
+  "p90_km2": 1.42,
+  "edge_pct": 0.0
+ },
+ "greatbasin_nv": {
+  "split": "train",
+  "runs": 80,
+  "failed": 0,
+  "no_spread_pct": 20.0,
+  "median_km2": 0.31,
+  "p90_km2": 2.07,
+  "edge_pct": 0.0
+ },
+ "arizona": {
+  "split": "test_ood",
+  "runs": 80,
+  "failed": 0,
+  "no_spread_pct": 26.2,
+  "median_km2": 0.33,
+  "p90_km2": 1.57,
+  "edge_pct": 0.0
+ },
+ "texas_panhandle": {
+  "split": "train",
+  "runs": 80,
+  "failed": 0,
+  "no_spread_pct": 18.8,
+  "median_km2": 0.36,
+  "p90_km2": 1.9,
+  "edge_pct": 0.0
+ },
+ "montana_timber": {
+  "split": "train",
+  "runs": 80,
+  "failed": 0,
+  "no_spread_pct": 32.5,
+  "median_km2": 0.32,
+  "p90_km2": 1.55,
+  "edge_pct": 0.0
+ }
+}
