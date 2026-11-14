@@ -2,6 +2,10 @@
 
 Ember is a reproducible extraction and analysis layer around the vendored ForeFire source checkout. It does not rename, fork, or replace the ForeFire engine. Install the local analysis dependencies with `python -m pip install -r requirements.txt`.
 
+## Surrogate dataset
+
+The ForeFire initial-state dataset for the neural surrogate (26k fire starts, Corsica + six US LANDFIRE sites, inputs only, labels pending) and the code that rebuilds it live in [`dataset/`](dataset/README.md).
+
 ## Current verified workflow
 
 The local host cannot currently build or run ForeFire, so the checked-in KML reference artifact can be processed without presenting it as a new simulation result:
