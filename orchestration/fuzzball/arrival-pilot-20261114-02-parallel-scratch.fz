@@ -1,0 +1,103 @@
+version: v4
+volumes:
+  baseline-data:
+    use: team15-scratch
+    size: 20GiB
+    ingress:
+    - source:
+        uri: fb://user/ember/arrival-pilot-20261114-02/input.tgz
+      destination:
+        uri: file://input.tgz
+    egress:
+    - source:
+        uri: file://results.tgz
+      destination:
+        uri: fb://user/ember/arrival-pilot-20261114-02/baseline-results.tgz
+  lower-lr-data:
+    use: team15-scratch
+    size: 20GiB
+    ingress:
+    - source:
+        uri: fb://user/ember/arrival-pilot-20261114-02/input.tgz
+      destination:
+        uri: file://input.tgz
+    egress:
+    - source:
+        uri: file://results.tgz
+      destination:
+        uri: fb://user/ember/arrival-pilot-20261114-02/lower-lr-results.tgz
+jobs:
+  baseline:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+    mounts:
+      /work: baseline-data
+    resource:
+      cpu:
+        cores: 4
+      memory:
+        size: 16GiB
+      devices:
+        nvidia.com/gpu: 1
+    script: '#!/bin/bash
+
+      set -euo pipefail
+
+      export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4 PYTHONUNBUFFERED=1
+
+      tar -xzf /work/input.tgz -C /work
+
+      cd /work
+
+      python3 -c ''import torch, numpy, yaml; print(torch.__version__)''
+
+      python3 -m pip freeze > /work/pilot/baseline_environment.txt
+
+      python3 orchestration/fuzzball/execute_training.py train --config /work/pilot/baseline.yaml
+      2>&1 | tee /work/pilot/baseline_workflow.log
+
+      python3 orchestration/fuzzball/execute_training.py evaluate --config /work/pilot/baseline.yaml
+      2>&1 | tee -a /work/pilot/baseline_workflow.log
+
+      tar -czf /work/results.tgz -C /work pilot/outputs_baseline pilot/baseline.yaml
+      pilot/dataset_manifest.json pilot/package_manifest.json pilot/baseline_workflow.log
+      pilot/baseline_environment.txt
+
+      '
+  lower-lr:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+    mounts:
+      /work: lower-lr-data
+    resource:
+      cpu:
+        cores: 4
+      memory:
+        size: 16GiB
+      devices:
+        nvidia.com/gpu: 1
+    script: '#!/bin/bash
+
+      set -euo pipefail
+
+      export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4 PYTHONUNBUFFERED=1
+
+      tar -xzf /work/input.tgz -C /work
+
+      cd /work
+
+      python3 -c ''import torch, numpy, yaml; print(torch.__version__)''
+
+      python3 -m pip freeze > /work/pilot/lower-lr_environment.txt
+
+      python3 orchestration/fuzzball/execute_training.py train --config /work/pilot/lower_lr.yaml
+      2>&1 | tee /work/pilot/lower-lr_workflow.log
+
+      python3 orchestration/fuzzball/execute_training.py evaluate --config /work/pilot/lower_lr.yaml
+      2>&1 | tee -a /work/pilot/lower-lr_workflow.log
+
+      tar -czf /work/results.tgz -C /work pilot/outputs_lower_lr pilot/lower_lr.yaml
+      pilot/dataset_manifest.json pilot/package_manifest.json pilot/lower-lr_workflow.log
+      pilot/lower-lr_environment.txt
+
+      '

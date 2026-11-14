@@ -1,0 +1,20 @@
+
+version: v4
+
+jobs:
+  gpu-test:
+    image:
+      uri: docker://ubuntu:22.04
+    resource:
+      cpu:
+        cores: 2
+      memory:
+        size: 4GB
+      devices:
+        nvidia.com/gpu: 1
+    script: |
+      #!/bin/sh
+      echo "Fuzzball GPU allocation test"
+      uname -m
+      echo "CUDA device paths:"
+      ls /dev/nvidia* 2>/dev/null || true

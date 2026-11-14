@@ -1,0 +1,65 @@
+
+version: v4
+
+volumes:
+  training:
+    use: ephemeral
+    size: 20GB
+
+    ingress:
+      - source:
+          uri: fb://user/ember/arrival-run01-input.tgz
+        destination:
+          uri: file://input.tgz
+
+    egress:
+      - source:
+          uri: file://ml/outputs_arrival/best.pt
+        destination:
+          uri: fb://user/ember/arrival-run01/best.pt
+
+      - source:
+          uri: file://ml/outputs_arrival/history.csv
+        destination:
+          uri: fb://user/ember/arrival-run01/history.csv
+
+      - source:
+          uri: file://ml/outputs_arrival/test_metrics.json
+        destination:
+          uri: fb://user/ember/arrival-run01/test_metrics.json
+
+jobs:
+  train-ember:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+
+    mounts:
+      /work: training
+
+    resource:
+      cpu:
+        cores: 4
+      memory:
+        size: 16GB
+      devices:
+        nvidia.com/gpu: 1
+
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+
+      mkdir -p /work/ml
+      tar -xzf /work/input.tgz -C /work/ml
+      cd /work/ml
+
+      python3 -c "import torch, yaml, numpy; assert torch.cuda.is_available(), 'CUDA unavailable'; print('Training on:', torch.cuda.get_device_name(0))"
+
+      sed -i 's/^device:.*/device: cuda/' arrival_config.yaml
+
+      python3 train_arrival.py train \
+        --config arrival_config.yaml
+
+      python3 train_arrival.py evaluate \
+        --config arrival_config.yaml \
+        --checkpoint outputs_arrival/best.pt \
+        | tee outputs_arrival/test_metrics.json
