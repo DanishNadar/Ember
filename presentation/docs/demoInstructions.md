@@ -30,7 +30,7 @@ Requires Node 18.18+ (tested on Node 22). The deck needs no GPU, Fuzzball cluste
 URLs deep-link: `/#/11` opens scene 11, and `/#/13.2` opens scene 13 at build 3.
 
 ## Presenter mode
-Press `P` (or the toolbar's Presenter button). A second window opens with the current slide, a next-slide preview, notes, a timer and a pace indicator against the ~7:00 target. The two windows stay in sync through BroadcastChannel, so either one can drive. Put the audience window on the projector and press `F`.
+Press `P`. A second window opens with the current slide, a next-slide preview, notes, a timer and a pace indicator against the ~7:00 target. The two windows stay in sync through BroadcastChannel, so either one can drive. Put the audience window on the projector and press `F`.
 
 ## Update metrics (no slide edits needed)
 1. Point the ingester at the experiment repo:

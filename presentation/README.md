@@ -20,7 +20,7 @@ Docs: [`docs/presentationScript.md`](docs/presentationScript.md) · [`docs/demoI
 ## Layout
 ```
 app/                    routes: / (deck), /presenter, /explore
-components/presentation deck engine, stage, toolbar, presenter, explore, badges
+components/presentation deck engine, stage, presenter, explore, badges
 components/visualizations fire canvas, spark cinematic, architecture, U-Net, nodes
 components/scientific   replay viewer, comparison triptych, ensemble, channels
 components/charts       Gantt, bars, latency histogram, utilization, metric stat
