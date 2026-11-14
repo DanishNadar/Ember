@@ -1,0 +1,103 @@
+{
+  "name": "ember_init_corsica_v1",
+  "_comment": "Every range here is a team decision. Defaults span ForeFire's valid ranges or reuse values already in the harness; change them here, never in code.",
+  "landscape": {
+    "path": "data_real/aullene/data.nc",
+    "fuel_table": "ember_bench/data/corsica_fuels.csv",
+    "nonburnable": [
+      0,
+      62,
+      105,
+      106,
+      121,
+      162
+    ],
+    "forefire_settings": "CORSICA_NATIVE"
+  },
+  "grid": {
+    "n": 320,
+    "dx_m": 40.0,
+    "horizon_s": 3600.0
+  },
+  "_grid_comment": "Reference grid only: places the ignition inside a window and builds the convenience layer shards. Samples are stored in absolute landscape metres, so the labeller can use any grid; tensors are rebuilt per grid with layers(r, cfg, grid).",
+  "max_window_m": 12800.0,
+  "splits": {
+    "train": {
+      "count": 10000,
+      "seed": 100,
+      "region": "outside_holdout"
+    },
+    "val": {
+      "count": 1000,
+      "seed": 101,
+      "region": "outside_holdout"
+    },
+    "test": {
+      "count": 1000,
+      "seed": 102,
+      "region": "outside_holdout"
+    },
+    "test_ood": {
+      "count": 1000,
+      "seed": 103,
+      "region": "inside_holdout"
+    }
+  },
+  "holdout_box_m": {
+    "_comment": "unseen-terrain test: windows of test_ood lie fully inside, all other windows fully outside",
+    "x": [
+      0,
+      64000
+    ],
+    "y": [
+      0,
+      16000
+    ]
+  },
+  "ranges": {
+    "wind_speed": [
+      0.0,
+      20.0
+    ],
+    "wind_dir_deg": [
+      0.0,
+      360.0
+    ],
+    "wind_shift_deg": [
+      -180.0,
+      180.0
+    ],
+    "wind_shift_t_frac": [
+      0.0,
+      1.0
+    ],
+    "md": [
+      0.02,
+      0.29
+    ],
+    "ign_win_x": [
+      0.3,
+      0.7
+    ],
+    "ign_win_y": [
+      0.3,
+      0.7
+    ],
+    "ign_a_m": [
+      40.0,
+      1000.0
+    ],
+    "ign_aspect": [
+      0.05,
+      1.0
+    ],
+    "ign_orient_deg": [
+      0.0,
+      180.0
+    ]
+  },
+  "ign_shape_weights": {
+    "point": 1.0,
+    "ellipse": 1.0
+  }
+}

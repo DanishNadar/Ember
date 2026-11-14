@@ -1,0 +1,50 @@
+# EXPERIMENT 01 — dependency-based resource handoff (reference Fuzzfile only).
+# Adapt images, commands, paths and actual simulation outputs before submission.
+# These jobs run independently. NOT DDP / elastic GPU scaling.
+# Source syntax: https://docs.ciq.com/fuzzball/4.2/appendices/workflow-syntax
+version: v4
+volumes:
+  ember:
+    use: persistent
+    name: ember-data
+defaults:
+  job:
+    mounts:
+      /data: ember
+jobs:
+  simulate:
+    # Image MUST include the ForeFire engine and scripts and write real complete
+    # simulator output to the shared /data directory. Supply correct registry/tag.
+    image:
+      uri: docker://REPLACE_REGISTRY/ember-sim:REPLACE_TAG
+    command: [python3, /app/sim/run_shard.py, --shard, "1"]
+    resource:
+      cpu: { cores: 8 }
+      memory: { size: 24GB }
+  baseline:
+    # Launch independently of simulate; requires an existing valid train/val/test
+    # dataset under the volume. Use a unique run-specific config/output path.
+    image:
+      uri: docker://REPLACE_REGISTRY/ember-ml:REPLACE_TAG
+    command: [python3, /app/ml/train.py, --config, /data/configs/baseline.yaml]
+    resource:
+      cpu: { cores: 4 }
+      memory: { size: 32GB }
+      devices:
+        nvidia.com/gpu: 1
+  secondary:
+    # Triggered only after successful simulation completion; this is an
+    # independent ML experiment (different LR/etc.), NOT continuation of baseline.
+    # Requires its own output_dir and valid dataset. The simulator does not
+    # automatically free a GPU if it only requested CPU.
+    image:
+      uri: docker://REPLACE_REGISTRY/ember-ml:REPLACE_TAG
+    command: [python3, /app/ml/train.py, --config, /data/configs/secondary.yaml]
+    resource:
+      cpu: { cores: 4 }
+      memory: { size: 32GB }
+      devices:
+        nvidia.com/gpu: 1
+    depends-on:
+      - name: simulate
+        status: FINISHED
