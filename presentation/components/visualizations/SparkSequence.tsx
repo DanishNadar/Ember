@@ -3,7 +3,7 @@
  * Opening/closing cinematic: an ember drifts down, lands, terrain emerges, fire spreads,
  * and alternative futures flash as cyan fronts. Fully deterministic from scene time.
  */
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FireCanvas, type FrontOverlay } from "./FireCanvas";
 import { simulateFireSpread, sparkScenario } from "@/lib/fireModel";
 
@@ -23,6 +23,24 @@ function emberPosition(t: number, landX: number, landY: number) {
   const x = startX + (landX - startX) * eased + Math.sin(p * Math.PI * 2.4) * 46 * (1 - p);
   const y = startY + (landY - startY) * eased;
   return { x, y, landed: p >= 1 };
+}
+
+/** Scales a fixed-size scene to cover its container (like object-fit: cover), centered. */
+function useCover(width: number, height: number) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [box, setBox] = useState({ w: width, h: height });
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // offsetWidth/Height are layout sizes, unaffected by the stage's CSS scale transform.
+    const measure = () => setBox({ w: el.offsetWidth || width, h: el.offsetHeight || height });
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [width, height]);
+  const scale = Math.max(box.w / width, box.h / height);
+  return { ref, scale };
 }
 
 export function SparkSequence({ time, width = 1920, height = 1080, showFutures = true }: {
@@ -62,8 +80,14 @@ export function SparkSequence({ time, width = 1920, height = 1080, showFutures =
   const flicker = 0.75 + 0.25 * Math.sin(time * 23) * Math.sin(time * 7.3);
   const emberOpacity = time < 0.4 ? time / 0.4 : ember.landed ? Math.max(0, 1 - (time - sparkTimeline.landAt) / 1.2) : 1;
 
+  const cover = useCover(width, height);
+
   return (
-    <div className="absolute inset-0">
+    <div ref={cover.ref} className="absolute inset-0 overflow-hidden">
+      <div
+        className="absolute left-1/2 top-1/2"
+        style={{ width, height, transform: `translate(-50%, -50%) scale(${cover.scale})`, transformOrigin: "center center" }}
+      >
       <FireCanvas
         run={run}
         time={time < sparkTimeline.fireStart ? -1 : modelTime}
@@ -89,6 +113,7 @@ export function SparkSequence({ time, width = 1920, height = 1080, showFutures =
           }}
         />
       ) : null}
+      </div>
     </div>
   );
 }

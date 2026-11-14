@@ -11,7 +11,8 @@ import { FuzzballMark } from "@/components/visualizations/BrandMarks";
 import { fuzzballGreen } from "@/lib/ecosystem";
 import type { SlideProps } from "./slideTypes";
 
-const plannedStages = ["Simulate scenarios", "Publish shards", "Stage dataset", "Train surrogate", "Evaluate", "Complete"];
+const plannedStages = ["Simulate scenarios", "Publish shards", "Stage dataset", "Train surrogate", "Distributed fine-tune", "Evaluate"];
+const fineTuneStage = plannedStages.indexOf("Distributed fine-tune");
 const stageColor: Record<WorkflowJob["stage"], string> = {
   simulation: "#FF6B35", dataset: "#FFB547", training: "#48D8FF", evaluation: "#35D6A0", inference: "#48D8FF", other: "#C2AFA4",
 };
@@ -25,6 +26,10 @@ function PlannedView({ time }: { time: number }) {
   const rightX = 1198;
   const nodeW = 470;
   const laneY = 330;
+  // During the fine-tune stage both GB10s train one model; the lane carries gradient sync both ways.
+  const fineTune = stageIndex === fineTuneStage;
+  const laneColor = fineTune ? "#48D8FF" : "#FFB547";
+  const laneSpan = rightX - leftX - nodeW - 40;
 
   return (
     <div className="relative h-full">
@@ -39,22 +44,22 @@ function PlannedView({ time }: { time: number }) {
       <svg className="absolute inset-0" width={1728} height={680}>
         <path d={`M864,86 C864,150 ${leftX + nodeW / 2},140 ${leftX + nodeW / 2},178`} stroke={fuzzballGreen} strokeOpacity={0.7} strokeWidth={2} fill="none" className="flowDash" />
         <path d={`M864,86 C864,150 ${rightX + nodeW / 2},140 ${rightX + nodeW / 2},178`} stroke={fuzzballGreen} strokeOpacity={0.7} strokeWidth={2} fill="none" className="flowDash" />
-        <line x1={leftX + nodeW + 10} y1={laneY} x2={rightX - 10} y2={laneY} stroke="#FFB547" strokeOpacity={0.2} strokeWidth={22} strokeLinecap="round" />
+        <line x1={leftX + nodeW + 10} y1={laneY} x2={rightX - 10} y2={laneY} stroke={laneColor} strokeOpacity={0.2} strokeWidth={22} strokeLinecap="round" />
         {packets.map((p, k) => (
-          <g key={k} transform={`translate(${leftX + nodeW + 20 + p * (rightX - leftX - nodeW - 40)}, ${laneY})`} opacity={Math.sin(p * Math.PI)}>
-            <rect x={-16} y={-11} width={32} height={22} rx={4} fill="#FFB547" />
+          <g key={k} transform={`translate(${leftX + nodeW + 20 + (fineTune && k % 2 ? 1 - p : p) * laneSpan}, ${laneY})`} opacity={Math.sin(p * Math.PI)}>
+            <rect x={-16} y={-11} width={32} height={22} rx={4} fill={laneColor} />
             <rect x={-10} y={-5} width={20} height={3} fill="#0B0606" opacity={0.6} />
             <rect x={-10} y={1} width={14} height={3} fill="#0B0606" opacity={0.6} />
           </g>
         ))}
-        <text x={864} y={laneY - 30} textAnchor="middle" className="fontMono" fontSize={17} fill="#FFB547">simulation shards → Fuzzball volume → dataset</text>
-        <text x={864} y={laneY + 46} textAnchor="middle" className="fontMono" fontSize={15} fill="#C2AFA4">produced, published, consumed while simulation continues</text>
+        <text x={864} y={laneY - 30} textAnchor="middle" className="fontMono" fontSize={17} fill={laneColor}>{fineTune ? "gradients ⇄ all-reduce across both GB10s" : "simulation shards → Fuzzball volume → dataset"}</text>
+        <text x={864} y={laneY + 46} textAnchor="middle" className="fontMono" fontSize={15} fill="#C2AFA4">{fineTune ? "distributed fine-tuning: one model, data-parallel over Node A + Node B" : "produced, published, consumed while simulation continues"}</text>
       </svg>
       <div className="absolute" style={{ left: leftX, top: 180 }}>
-        <ComputeNode label="Node A" role="Simulation" color="#FF6B35" activity={stageIndex <= 2 ? 0.9 : 0.55} />
+        <ComputeNode label="Node A" role={fineTune ? "Simulation → fine-tuning" : "Simulation"} color={fineTune ? "#48D8FF" : "#FF6B35"} activity={stageIndex <= 2 || fineTune ? 0.9 : 0.55} />
       </div>
       <div className="absolute" style={{ left: rightX, top: 180 }}>
-        <ComputeNode label="Node B" role="Neural optimization" color="#48D8FF" activity={stageIndex >= 3 ? 0.95 : 0.3} />
+        <ComputeNode label="Node B" role={fineTune ? "Distributed fine-tuning" : "Neural optimization"} color="#48D8FF" activity={stageIndex >= 3 ? 0.95 : 0.3} />
       </div>
       <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-3">
         {plannedStages.map((stage, k) => (
@@ -134,6 +139,7 @@ export function Slide09TwoNodes({ isActive, isPreview, reducedMotion, data }: Sl
       sceneNumber={9}
       kicker="The two-node experiment"
       headline={<>Two nodes. <span className="emberText">One continuous experiment.</span></>}
+      lede="Node A simulates while Node B trains. Then both GB10s join for distributed fine-tuning of the surrogate."
       aside={
         <div className="flex flex-col items-end gap-3">
           <SegmentedToggle options={[["planned", "Planned architecture"], ["verified", "Verified execution"]]} value={view} onChange={setView} />

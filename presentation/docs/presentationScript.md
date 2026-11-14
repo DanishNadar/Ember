@@ -96,8 +96,9 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 **Transition:** “Training and simulation have to run somewhere. Here's the cluster.”
 
 ## 10 · The Two-Node Experiment (~30 s)
-**Message:** Two GB10 nodes, one continuous experiment: simulation produces while training consumes.
+**Message:** Two GB10 nodes, one continuous experiment: simulation produces while training consumes, then both nodes fine-tune the surrogate together.
 - Planned architecture: Node A generates simulation shards, and Node B trains and evaluates.
+- Once the base surrogate is trained, both GB10s join for distributed fine-tuning: one model, data-parallel across Node A and Node B, with gradients synchronized between them.
 - Fuzzball Orchestrate coordinates dependencies, and shards move through a Fuzzball volume. Both nodes run RLC Pro AI 9.8 and Fuzzball Substrate.
 - Switch to Verified Execution to show what the logs actually recorded, including placement.
 
