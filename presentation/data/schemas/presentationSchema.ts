@@ -180,6 +180,8 @@ export interface PresentationSnapshot {
   workflow: WorkflowExecution | null;
   benchmarks: BenchmarkResults | null;
   ensemble: EnsembleResults | null;
+  /** The team's real Fuzzfile, verbatim (optional). */
+  workflowDefinition?: { path: string; text: string; source: SourceReference } | null;
 }
 
 export type SectionName = "simulator" | "dataset" | "model" | "fidelity" | "workflow" | "benchmarks" | "ensemble";

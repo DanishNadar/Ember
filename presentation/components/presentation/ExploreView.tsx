@@ -19,6 +19,9 @@ import { LatencyHistogram } from "@/components/charts/LatencyHistogram";
 import { UtilizationChart } from "@/components/charts/UtilizationChart";
 import { GanttChart } from "@/components/charts/GanttChart";
 import { architectureComponents } from "@/lib/architecture";
+import { stackLayers, layerStatus, usageStatusStyle } from "@/lib/ecosystem";
+import { emberFuzzfileText } from "@/lib/emberFuzzfile";
+import { FuzzballLogo } from "@/components/visualizations/BrandMarks";
 import { formatNumber, formatSeconds, formatSignedPercent } from "@/lib/format";
 import { sectionNames } from "@/data/schemas/validateSnapshot";
 import { expectedArtifacts } from "@/data/schemas/presentationSchema";
@@ -174,6 +177,27 @@ function ArchitectureTab() {
   const data = usePresentationData();
   return (
     <div className="space-y-4">
+      <Section title="Hackathon stack: provided vs used" aside={<FuzzballLogo height={56} />}>
+        <table className="w-full text-left text-sm">
+          <thead className="fontMono text-mute"><tr><th className="py-2">layer</th><th>what the hackathon provides</th><th>how Ember uses it</th><th>status</th></tr></thead>
+          <tbody>
+            {stackLayers.map((l) => {
+              const st = layerStatus(l.id, data.snapshot);
+              return (
+                <tr key={l.id} className="border-t border-white/5 align-top">
+                  <td className="py-2 pr-4 text-ink">{l.title}<div className="fontMono text-xs text-mute">{l.vendor}</div></td>
+                  <td className="pr-4 text-ink/80">{l.environmentFact}<div className="fontMono text-xs text-dim">{l.source}</div></td>
+                  <td className="pr-4 text-ink/80">{l.emberUse}</td>
+                  <td className="fontMono text-xs" style={{ color: usageStatusStyle[st.status].color }}>{usageStatusStyle[st.status].label}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </Section>
+      <Section title="Fuzzfile" aside={<span className="fontMono text-xs text-mute">{data.snapshot.workflowDefinition ? data.snapshot.workflowDefinition.path : "reference template · fuzzball/ember.fuzzfile.yaml"}</span>}>
+        <pre className="fontMono max-h-[520px] overflow-auto rounded-lg bg-black/40 p-4 text-sm text-ink/90">{data.snapshot.workflowDefinition?.text ?? emberFuzzfileText}</pre>
+      </Section>
       {architectureComponents.map((c) => (
         <section key={c.id} className="glassPanel rounded-2xl p-6" style={{ borderLeft: `3px solid ${c.color}` }}>
           <ArchitectureDetail component={c} data={data} />

@@ -11,6 +11,7 @@ import type {
   SectionName,
 } from "../schemas/presentationSchema";
 import { validateSnapshot, type ValidationIssue } from "../schemas/validateSnapshot";
+import ecosystemUsage from "../verified/ecosystemUsage.json";
 
 export interface DerivedComparison {
   ratio: number;
@@ -94,8 +95,17 @@ export function buildPresentationData(raw: unknown): PresentationData {
     return "verified";
   };
 
-  const componentStatus = (id: ComponentStatus["id"]): ComponentStatus =>
-    snapshot.components.find((c) => c.id === id) ?? { id, status: "unconfirmed", sourceFiles: [], note: null };
+  const componentStatus = (id: ComponentStatus["id"]): ComponentStatus => {
+    const explicit = snapshot.components.find((c) => c.id === id);
+    if (explicit) return explicit;
+    // Orchestration falls back to the team-declared ecosystem usage (or verified logs).
+    if (id === "orchestration") {
+      if (snapshot.workflow && !snapshot.isFixture) return { id, status: "implemented", sourceFiles: [snapshot.workflow.source.path], note: "verified from Fuzzball logs" };
+      const declared = (ecosystemUsage as { layers: Record<string, { status: string }> }).layers.orchestrate?.status;
+      if (declared === "teamStated") return { id, status: "implemented", sourceFiles: ["data/verified/ecosystemUsage.json"], note: "team-stated" };
+    }
+    return { id, status: "unconfirmed", sourceFiles: [], note: null };
+  };
 
   const sections: SectionName[] = ["simulator", "dataset", "model", "fidelity", "workflow", "benchmarks", "ensemble"];
 

@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Flame, Database, BrainCircuit, Gauge, Network, Sparkles, type LucideIcon } from "lucide-react";
 import { architectureComponents, statusStyles, type ArchitectureComponent } from "@/lib/architecture";
 import type { PresentationData } from "@/data/adapters/presentationData";
+import { FuzzballMark } from "./BrandMarks";
+import { fuzzballGreen } from "@/lib/ecosystem";
 
 const icons: Record<ArchitectureComponent["id"], LucideIcon> = {
   simulation: Flame,
@@ -98,8 +100,8 @@ export function ArchitectureDiagram({ selectedId, onSelect, revealed, data, redu
               y1={190}
               x2={k * (cardWidth + gap) + cardWidth / 2}
               y2={262}
-              stroke="#A3B8D9"
-              strokeOpacity={revealed >= 6 ? 0.6 : 0}
+              stroke={fuzzballGreen}
+              strokeOpacity={revealed >= 6 ? 0.7 : 0}
               strokeWidth={2}
               strokeDasharray="4 6"
               style={{ transition: "stroke-opacity .5s" }}
@@ -138,9 +140,9 @@ export function ArchitectureDiagram({ selectedId, onSelect, revealed, data, redu
           style={{ left: 0, top: 262, width, height: 74, ...(selectedId === "orchestration" ? { boxShadow: `0 0 0 2px ${orchestration.color}, 0 0 40px -6px ${orchestration.color}` } : {}) }}
         >
           <div className="flex items-center gap-4">
-            <Network size={26} className="text-[#A3B8D9]" />
-            <span className="fontDisplay text-[23px] font-semibold text-ink">CIQ Fuzzball orchestration</span>
-            <span className="text-[18px] text-mute">dependencies · resources · staging · artifacts</span>
+            <FuzzballMark size={40} />
+            <span className="fontDisplay text-[23px] font-semibold text-ink">Fuzzball orchestration</span>
+            <span className="text-[18px] text-mute">Orchestrate schedules · Substrate executes · volumes carry data between stages</span>
           </div>
           <StatusChip status={data.componentStatus("orchestration").status} />
         </motion.button>

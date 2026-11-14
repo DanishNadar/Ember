@@ -5,6 +5,8 @@ import { EvidenceBadge } from "@/components/presentation/EvidenceBadge";
 import { AwaitingResults } from "@/components/presentation/AwaitingResults";
 import { GanttChart } from "@/components/charts/GanttChart";
 import { useSceneClock } from "@/hooks/useSceneClock";
+import { FuzzballLogo } from "@/components/visualizations/BrandMarks";
+import { fuzzballGreen } from "@/lib/ecosystem";
 import type { SlideProps } from "./slideTypes";
 
 const contributions = [
@@ -57,8 +59,9 @@ export function Slide10Fuzzball({ isActive, isPreview, reducedMotion, data }: Sl
     <SlideFrame
       sceneNumber={10}
       kicker="Fuzzball orchestration"
-      headline={<>Computation, <span className="cyanText">coordinated.</span></>}
-      accent="#A3B8D9"
+      headline={<>Computation, <span style={{ color: fuzzballGreen }}>coordinated.</span></>}
+      accent={fuzzballGreen}
+      aside={<FuzzballLogo height={104} />}
       reducedMotion={reducedMotion}
     >
       <div className="flex h-full flex-col gap-6">
@@ -87,8 +90,8 @@ export function Slide10Fuzzball({ isActive, isPreview, reducedMotion, data }: Sl
         <div className="flex items-center gap-4">
           <span className="fontMono text-[15px] uppercase tracking-[0.2em] text-mute">What Fuzzball contributed</span>
           {contributions.map(({ Icon, label }) => (
-            <span key={label} className="flex items-center gap-2 rounded-full border border-[#A3B8D9]/30 bg-[#A3B8D9]/10 px-4 py-2 text-[16px] text-ink">
-              <Icon size={16} className="text-[#A3B8D9]" /> {label}
+            <span key={label} className="flex items-center gap-2 rounded-full border border-[#11A66E]/40 bg-[#11A66E]/10 px-4 py-2 text-[16px] text-ink">
+              <Icon size={16} className="text-[#11A66E]" /> {label}
             </span>
           ))}
         </div>

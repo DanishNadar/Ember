@@ -4,6 +4,8 @@ import { EmberWordmark } from "@/components/visualizations/EmberLogo";
 import { Reveal } from "@/components/presentation/Reveal";
 import { EvidenceBadge } from "@/components/presentation/EvidenceBadge";
 import { useSceneClock } from "@/hooks/useSceneClock";
+import { FuzzballMark, PartnerStrip } from "@/components/visualizations/BrandMarks";
+import { fuzzballGreen } from "@/lib/ecosystem";
 import type { SlideProps } from "./slideTypes";
 
 export function Slide01Spark({ isActive, isPreview, reducedMotion }: SlideProps) {
@@ -34,6 +36,15 @@ export function Slide01Spark({ isActive, isPreview, reducedMotion }: SlideProps)
           <div className="fontDisplay text-[34px] font-medium text-ink/90">From Simulating One Future to Exploring Thousands.</div>
         </Reveal>
       </div>
+      <Reveal show={time > 7.6} reducedMotion={reducedMotion} className="absolute right-[90px] top-[86px] flex flex-col items-end gap-4">
+        <div className="glassPanel flex items-center gap-4 rounded-2xl px-5 py-3">
+          <span className="fontMono text-[14px] uppercase tracking-[0.2em] text-mute">Orchestrated with</span>
+          <FuzzballMark size={40} />
+          <span className="fontDisplay text-[30px] font-semibold text-ink">Fuzzball</span>
+          <span className="fontMono text-[14px] tracking-[0.12em]" style={{ color: fuzzballGreen }}>on 2 × NVIDIA GB10</span>
+        </div>
+        <PartnerStrip height={44} className="opacity-85" />
+      </Reveal>
       <Reveal show={time > 5.2} reducedMotion={reducedMotion} className="absolute bottom-[56px] left-[110px] flex items-center gap-4">
         <EvidenceBadge kind="illustration" detail="deck's toy spread model, not simulator output" />
         <span className="fontMono flex items-center gap-2 text-[15px] text-[#48D8FF]"><span className="inline-block h-[3px] w-6 bg-[#48D8FF]" /> alternative futures</span>

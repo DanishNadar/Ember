@@ -82,7 +82,22 @@ const next = {
   isFixture: false,
   components: [],
   simulator: null, dataset: null, model: null, fidelity: null, workflow: null, benchmarks: null, ensemble: null,
+  workflowDefinition: null,
 };
+
+// The team's real Fuzzfile, shown verbatim on the "workflow as code" slide.
+const fuzzfile = locate("fuzzfile");
+if (fuzzfile) {
+  next.workflowDefinition = { path: fuzzfile.rel, text: readFileSync(fuzzfile.abs, "utf8"), source: sourceRef(fuzzfile) };
+  log("fuzzfile ←", fuzzfile.rel);
+}
+
+// Team-declared ecosystem usage (copied, never inferred).
+const ecosystemFile = locate("ecosystemUsage");
+if (ecosystemFile && !dryRun) {
+  copyFileSync(ecosystemFile.abs, path.join(projectRoot, "data/verified/ecosystemUsage.json"));
+  log("ecosystem usage ←", ecosystemFile.rel);
+}
 
 // Components (implementation status) — only from an explicit file written by the team.
 const componentsFile = locate("components");

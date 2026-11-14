@@ -175,7 +175,17 @@ export function validateSnapshot(raw: unknown): { snapshot: PresentationSnapshot
     workflow: null,
     benchmarks: null,
     ensemble: null,
+    workflowDefinition: null,
   };
+
+  const definition = root.workflowDefinition;
+  if (isObject(definition)) {
+    if (typeof definition.text === "string" && definition.text.length > 0 && isObject(definition.source) && typeof definition.source.path === "string") {
+      cleaned.workflowDefinition = definition as unknown as PresentationSnapshot["workflowDefinition"];
+    } else {
+      issues.push({ section: "workflow", message: "workflowDefinition needs text and source.path" });
+    }
+  }
 
   for (const name of sectionNames) {
     const value = root[name];

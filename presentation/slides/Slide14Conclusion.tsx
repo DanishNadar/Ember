@@ -6,6 +6,7 @@ import { Reveal } from "@/components/presentation/Reveal";
 import { SparkSequence } from "@/components/visualizations/SparkSequence";
 import { EmberWordmark } from "@/components/visualizations/EmberLogo";
 import { useSceneClock } from "@/hooks/useSceneClock";
+import { FuzzballLogo, CiqLogo, PartnerStrip } from "@/components/visualizations/BrandMarks";
 import { deriveContributions, futureDirections } from "@/lib/contributions";
 import type { SlideProps } from "./slideTypes";
 
@@ -55,8 +56,14 @@ export function Slide14Conclusion({ step, isActive, isPreview, reducedMotion, da
                   {futureDirections.map((f) => <li key={f} className="text-[21px] text-ink/90">→ {f}</li>)}
                 </ul>
               </div>
-              <div className="fontDisplay text-[30px] font-medium leading-snug text-ink">
+              <div className="fontDisplay text-[28px] font-medium leading-snug text-ink">
                 Project Ember: from one simulation to a <span className="emberText">scalable scientific-AI workflow.</span>
+              </div>
+              <div className="glassPanel flex items-center gap-6 rounded-2xl px-6 py-4">
+                <span className="fontMono text-[13px] uppercase tracking-[0.2em] text-mute">Built with</span>
+                <FuzzballLogo height={70} />
+                <CiqLogo height={30} />
+                <PartnerStrip height={38} className="opacity-85" />
               </div>
             </div>
           </div>
@@ -78,6 +85,12 @@ export function Slide14Conclusion({ step, isActive, isPreview, reducedMotion, da
             </Reveal>
             <Reveal show={outroTime > 4.8} reducedMotion={reducedMotion} className="mt-8">
               <div className="fontMono text-[20px] uppercase tracking-[0.3em] text-mute">Thank you · Questions?</div>
+            </Reveal>
+            <Reveal show={outroTime > 5.6} reducedMotion={reducedMotion} className="mt-14 flex items-center gap-8">
+              <span className="fontMono text-[14px] uppercase tracking-[0.2em] text-mute">Orchestrated with</span>
+              <FuzzballLogo height={88} />
+              <CiqLogo height={34} />
+              <PartnerStrip height={44} className="opacity-85" />
             </Reveal>
           </div>
         </div>

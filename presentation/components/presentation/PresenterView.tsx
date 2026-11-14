@@ -52,7 +52,7 @@ export function PresenterView() {
             CURRENT · {String(deck.slideIndex + 1).padStart(2, "0")}/{slides.length} · build {deck.step + 1}/{slide.steps}
           </div>
           <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-ember/40">
-            <Stage><SlideRenderer slide={slide} step={deck.step} isActive /></Stage>
+            <Stage><SlideRenderer slide={slide} sceneNumber={deck.slideIndex + 1} step={deck.step} isActive /></Stage>
           </div>
           <div className="flex items-center justify-center gap-3">
             <button onClick={deck.previous} className="flex items-center gap-2 rounded-xl border border-white/10 px-6 py-3 hover:bg-white/5"><ChevronLeft /> Prev</button>
@@ -66,7 +66,7 @@ export function PresenterView() {
             {isLast ? (
               <div className="flex h-full items-center justify-center text-mute">Questions · Explore mode (E in audience window)</div>
             ) : (
-              <Stage><SlideRenderer slide={nextSlide} step={0} isActive={false} isPreview /></Stage>
+              <Stage><SlideRenderer slide={nextSlide} sceneNumber={deck.slideIndex + 2} step={0} isActive={false} isPreview /></Stage>
             )}
           </div>
           <div className="glassPanel min-h-0 flex-1 overflow-y-auto rounded-xl p-5">

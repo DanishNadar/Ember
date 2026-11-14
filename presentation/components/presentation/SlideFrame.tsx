@@ -1,10 +1,14 @@
 "use client";
 /** Consistent slide chrome: scene kicker, headline, optional lede, then content. */
 import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import { createContext, useContext, type ReactNode } from "react";
+import { PlatformFooter } from "@/components/visualizations/BrandMarks";
 
-export function SlideFrame({ sceneNumber, kicker, headline, lede, accent = "#FF6B35", children, aside, reducedMotion = false }: {
-  sceneNumber: number;
+/** Scene number comes from the registry order, so inserting slides never needs renumbering. */
+export const SceneNumberContext = createContext<number | null>(null);
+
+export function SlideFrame({ sceneNumber: fallbackNumber, kicker, headline, lede, accent = "#FF6B35", children, aside, reducedMotion = false, showFooter = true }: {
+  sceneNumber?: number;
   kicker: string;
   headline: ReactNode;
   lede?: ReactNode;
@@ -12,7 +16,9 @@ export function SlideFrame({ sceneNumber, kicker, headline, lede, accent = "#FF6
   children?: ReactNode;
   aside?: ReactNode;
   reducedMotion?: boolean;
+  showFooter?: boolean;
 }) {
+  const sceneNumber = useContext(SceneNumberContext) ?? fallbackNumber ?? 0;
   const enter = (delay: number) =>
     reducedMotion
       ? { initial: false as const, animate: { opacity: 1, y: 0 } }
@@ -38,6 +44,7 @@ export function SlideFrame({ sceneNumber, kicker, headline, lede, accent = "#FF6
         {aside ? <motion.div {...enter(0.2)}>{aside}</motion.div> : null}
       </div>
       <div className="relative mt-10 min-h-0 flex-1">{children}</div>
+      {showFooter ? <PlatformFooter /> : null}
     </div>
   );
 }

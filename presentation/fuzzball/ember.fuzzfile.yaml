@@ -1,0 +1,54 @@
+# Project Ember: Fuzzball workflow (reference template; replace <registry>/<tag>)
+version: v4
+volumes:
+  ember:                 # shared by both nodes
+    use: persistent
+    name: ember-data
+defaults:
+  job:
+    mounts:
+      /data: ember
+jobs:
+  simulate:              # physics teaches
+    image:
+      uri: docker://<registry>/ember-sim:<tag>
+    script: |
+      python3 sim/run_shard.py --shard ${FB_TASK_ID}
+    resource:
+      cpu: { cores: 16 }
+      memory: { size: 32GB }
+    task-array:          # one shard per task
+      start: 1
+      end: 48
+      concurrency: 16
+  build-dataset:
+    image:
+      uri: docker://<registry>/ember-ml:<tag>
+    command: [python3, build_dataset.py, /data]
+    depends-on:
+      - name: simulate
+        status: RUNNING      # consume while producing
+  train:                 # AI learns
+    image:
+      uri: docker://<registry>/ember-ml:<tag>
+    command: [python3, train.py, /data]
+    resource:
+      cpu: { cores: 8 }
+      memory: { size: 64GB }
+      devices:
+        nvidia.com/gpu: 1  # GB10 GPU
+    depends-on:
+      - name: build-dataset
+        status: RUNNING
+  evaluate:
+    image:
+      uri: docker://<registry>/ember-ml:<tag>
+    command: [python3, evaluate.py, /data]
+    resource:
+      devices:
+        nvidia.com/gpu: 1
+    depends-on:
+      - name: train
+        status: FINISHED
+      - name: simulate
+        status: FINISHED

@@ -29,6 +29,7 @@ export function ComputeNode({ label, role, color, activity, width = 470, height 
         <div className="fontMono text-[14px] uppercase tracking-[0.2em]" style={{ color }}>{role}</div>
         <div className="fontDisplay mt-1 text-[32px] font-semibold text-ink">{label}</div>
         <div className="fontMono mt-1 text-[15px] text-mute">Lenovo ThinkStation PGX · NVIDIA GB10</div>
+        <div className="fontMono text-[13px] text-[#11A66E]">RLC Pro AI 9.8 · Fuzzball Substrate</div>
       </div>
       <div className="absolute bottom-6 left-7 right-7 flex items-center gap-3">
         <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/5">

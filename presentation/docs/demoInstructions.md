@@ -50,10 +50,13 @@ Accepted shapes (flexible key names are documented in the script):
 - Benchmarks: JSON, or CSV with `metric,value,unit` rows (e.g. `simulator_seconds_per_scenario`).
 - `presentation/components.json`: `[{ "id": "surrogate", "status": "implemented", "sourceFiles": ["model/unet.py"] }]`.
 
+- **Your Fuzzfile** (`fuzzball/ember.yaml`, etc.): shown verbatim on scene 11 in place of the reference template. `npm run export:fuzzfile` writes the template to `fuzzball/ember.fuzzfile.yaml` as a starting point.
+- **Ecosystem usage** (`presentation/ecosystemUsage.json`, or edit `data/verified/ecosystemUsage.json` directly): set each stack layer to `teamStated`, `planned`, `environment` or `unconfirmed`. **Confirm VAST Data and volumes before presenting.** Orchestrate, Substrate and hardware upgrade to "verified" automatically when Fuzzball logs are ingested.
+
 A missing file leaves its section **awaiting**. Nothing is filled with zeros.
 
 ## Preview layouts before results exist
-`/?fixture=sample` loads a synthetic fixture so you can rehearse slides 8–12. Every slide then shows an **"Illustrative fixture — not experiment results"** banner. **Never present with `?fixture`.**
+`/?fixture=sample` loads a synthetic fixture so you can rehearse scenes 9–14. Every slide then shows an **"Illustrative fixture — not experiment results"** banner. **Never present with `?fixture`.**
 
 ## Offline backup
 - `out/` is fully self-contained. Copy it to a USB stick and open it with any static server, or run `npx serve out`.
@@ -61,13 +64,15 @@ A missing file leaves its section **awaiting**. Nothing is filled with zeros.
 - Keep the PNGs from `outputs/` in `public/experiment-assets/` as a last-resort visual.
 
 ## Demonstrate the interactive elements
+- **Scene 6:** click stack layers (Fuzzball Orchestrate, volumes) to show what the hackathon provides vs how Ember uses it.
+- **Scene 11:** step through the Fuzzfile highlights with → or click the callouts.
 - **Scene 5:** click a pipeline card for role, I/O, compute and status.
-- **Scene 6:** play, scrub, and toggle layers and progression lines.
-- **Scene 8:** switch between Architecture and Prediction view.
-- **Scene 9:** switch between Planned and Verified execution.
-- **Scene 10:** hover a Gantt bar.
-- **Scene 11:** pick scenarios, including the one tagged *weakest*.
-- **Scene 13:** ensemble size slider, member picker and heatmap.
+- **Scene 7:** play, scrub, and toggle layers and progression lines.
+- **Scene 9:** switch between Architecture and Prediction view.
+- **Scene 10:** switch between Planned and Verified execution.
+- **Scene 12:** hover a Gantt bar.
+- **Scene 13:** pick scenarios, including the one tagged *weakest*.
+- **Scene 15:** ensemble size slider, member picker and heatmap.
 - **Explore (`E`):** simulation viewer plus an illustrative what-if sandbox, model comparison with overlay opacity, a performance explorer (latency, utilization, breakdown, Gantt), an architecture explorer with the data contract, and data diagnostics.
 
 ## Deploy (only when authorized)

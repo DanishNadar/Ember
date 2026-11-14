@@ -4,9 +4,11 @@ import type { SlideDefinition } from "@/slides/slideTypes";
 import { SlideBackdrop } from "./SlideBackdrop";
 import { usePresentationData } from "./DataProvider";
 import { useMotionPreference } from "@/hooks/useMotionPreference";
+import { SceneNumberContext } from "./SlideFrame";
 
-export function SlideRenderer({ slide, step, isActive, isPreview = false }: {
+export function SlideRenderer({ slide, sceneNumber, step, isActive, isPreview = false }: {
   slide: SlideDefinition;
+  sceneNumber: number;
   step: number;
   isActive: boolean;
   isPreview?: boolean;
@@ -17,7 +19,9 @@ export function SlideRenderer({ slide, step, isActive, isPreview = false }: {
   return (
     <div className="absolute inset-0 overflow-hidden">
       <SlideBackdrop tint={slide.accent} />
-      <Component step={step} isActive={isActive} reducedMotion={reducedMotion || isPreview} data={data} isPreview={isPreview} />
+      <SceneNumberContext.Provider value={sceneNumber}>
+        <Component step={step} isActive={isActive} reducedMotion={reducedMotion || isPreview} data={data} isPreview={isPreview} />
+      </SceneNumberContext.Provider>
     </div>
   );
 }

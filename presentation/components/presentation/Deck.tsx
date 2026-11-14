@@ -139,7 +139,7 @@ export function Deck() {
               exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.99, filter: "blur(4px)" }}
               transition={{ duration: reducedMotion ? 0.15 : 0.45, ease: [0.2, 0.7, 0.2, 1] }}
             >
-              <SlideRenderer slide={slide} step={deck.step} isActive />
+              <SlideRenderer slide={slide} sceneNumber={deck.slideIndex + 1} step={deck.step} isActive />
             </motion.div>
           </AnimatePresence>
           {data.isFixture ? <FixtureWatermark /> : null}

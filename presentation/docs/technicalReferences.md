@@ -9,6 +9,15 @@
 | ForeFire is an open-source (GPLv3) wildfire spread simulation engine from CNRS / Università di Corsica. | Slide 6 (only if the team used it) | Filippi et al. (2025), *ForeFire: A Modular, Scriptable C++ Simulation Engine and Library for Wildland-Fire Spread*, JOSS 10(116), 8680, doi:10.21105/joss.08680; github.com/forefireAPI/forefire |
 | U-Net encoder–decoder with skip connections. | Slide 8 | Ronneberger, Fischer & Brox (2015), *U-Net: Convolutional Networks for Biomedical Image Segmentation*, MICCAI |
 
+| Hackathon environment: each team has two GB10 systems running RLC Pro AI 9.8, a dedicated volume provisioner, and Fuzzball access via web UI, CLI, docs and MCP server | Scenes 6, 10, footer | Organizers' *SC26 Hackathon Introduction* deck, pp. 34, 42–47 |
+| Fuzzball Orchestrate (control plane) manages data, images and volumes, schedules the workflow and provisions resources; Substrate executes jobs | Scenes 5, 6, 10, 11 | Same deck, pp. 31, 36 |
+| Official evaluation criteria and the four tracks | Scene 16 | Same deck, pp. 3–5 |
+| Fuzzfile v4 syntax: `version: v4`, `volumes` (`use`, `name`), `task-array`, `depends-on` with `status: RUNNING/FINISHED`, `resource.devices: nvidia.com/gpu` | Scene 11, `fuzzball/ember.fuzzfile.yaml` | docs.ciq.com/fuzzball/4.0/appendices/workflow-syntax |
+| `fuzzball workflow validate / start / describe / log` | Scene 11 | CIQ blog, "fuzzball run: Immediate access to Fuzzball compute" |
+
+## Brand assets
+`public/images/brand/*` (Fuzzball mark and wordmark, CIQ logo, and the partner strip with NVIDIA, Cambridge Computer, VAST, Lenovo and DRIVE) were extracted unmodified from the organizers' *SC26 Hackathon Introduction* deck. They are used only to credit the hackathon platform.
+
 GB10 specs (memory, TOPS, core counts) are **not** shown on slides. They are the vendor's numbers, not project measurements.
 
 ## Metric definitions (lib/maskMetrics.ts)

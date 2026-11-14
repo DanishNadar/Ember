@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "project": "Project Ember — Adaptive Wildfire Surrogate",
+  "project": "Project Ember \u2014 Adaptive Wildfire Surrogate",
   "generatedAt": null,
   "isFixture": false,
   "components": [],
@@ -10,5 +10,6 @@
   "fidelity": null,
   "workflow": null,
   "benchmarks": null,
-  "ensemble": null
+  "ensemble": null,
+  "workflowDefinition": null
 }

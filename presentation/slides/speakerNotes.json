@@ -1,18 +1,19 @@
 {
   "spark": {
-    "durationSeconds": 20,
+    "durationSeconds": 15,
     "main": "One spark can lead to many possible futures. Project Ember is about exploring them faster.",
     "talkingPoints": [
       "Let the animation breathe for about three seconds before speaking.",
       "We are Project Ember: an adaptive wildfire surrogate.",
-      "Our goal is to go from simulating one future to exploring thousands."
+      "Our goal is to go from simulating one future to exploring thousands.",
+      "Built this weekend on two NVIDIA GB10 nodes, orchestrated end to end with CIQ Fuzzball."
     ],
     "interaction": "No clicks needed. The ember lands, the fire spreads, and alternative fronts flash in cyan. The logo appears at about 6 s. Press → once the logo is up.",
     "evidence": "Opening visual is an architectural illustration from the deck's own toy spread model, not simulator output (badge bottom-left).",
     "transition": "But why does one spark have so many futures? Because conditions change."
   },
   "humanProblem": {
-    "durationSeconds": 25,
+    "durationSeconds": 20,
     "main": "The same starting point can produce very different simulated outcomes when conditions change.",
     "talkingPoints": [
       "Wildfire threatens ecosystems, communities, infrastructure and livelihoods.",
@@ -24,7 +25,7 @@
     "transition": "A physics simulator answers exactly one of these questions at a time."
   },
   "oneSimulation": {
-    "durationSeconds": 25,
+    "durationSeconds": 20,
     "main": "A simulation is one answer to one set of assumptions. Covering the uncertainty takes many runs.",
     "talkingPoints": [
       "On the left: one deterministic run with its input assumptions.",
@@ -36,7 +37,7 @@
     "transition": "And every branch costs compute."
   },
   "computeChallenge": {
-    "durationSeconds": 20,
+    "durationSeconds": 15,
     "main": "Each question we ask adds another independent simulation job.",
     "talkingPoints": [
       "Scenario requests pile up faster than a fixed pool of workers can drain them.",
@@ -48,19 +49,19 @@
     "transition": "That question is Project Ember."
   },
   "meetEmber": {
-    "durationSeconds": 35,
+    "durationSeconds": 25,
     "main": "Ember is a pipeline: physics teaches, AI learns, Fuzzball coordinates, and we explore.",
     "talkingPoints": [
       "Simulation generates examples. Examples become a dataset. A U-Net-style surrogate learns from it.",
-      "We evaluate against held-out simulator outputs, and Fuzzball orchestrates the stages.",
+      "We evaluate against held-out simulator outputs. Fuzzball runs every stage as one workflow on our two GB10 nodes.",
       "Each status chip shows what is implemented and what is proposed."
     ],
     "interaction": "The pipeline draws itself. Click 'Neural surrogate' to open its card (role, inputs, outputs, compute, status), then click 'Fuzzball orchestration'.",
     "evidence": "Status chips come from snapshot.components. Until confirmed they read 'unconfirmed'.",
-    "transition": "Let's start where the knowledge comes from: the physics."
+    "transition": "Before the science, here's the stack we built it on."
   },
   "physicsEngine": {
-    "durationSeconds": 30,
+    "durationSeconds": 25,
     "main": "First, we let physics teach. The simulator produces the ground truth the surrogate learns from.",
     "talkingPoints": [
       "Name the simulator exactly as configured (ForeFire, or our simplified simulator, as the badge states).",
@@ -72,7 +73,7 @@
     "transition": "Each of those frames becomes a training lesson."
   },
   "simulationToData": {
-    "durationSeconds": 25,
+    "durationSeconds": 20,
     "main": "Every completed simulation becomes supervised training examples: input channels in, future mask out.",
     "talkingPoints": [
       "One snapshot splits into aligned channels: burned mask, wind U/V, fuel, moisture, slope.",
@@ -84,7 +85,7 @@
     "transition": "Now the model learns from those pairs."
   },
   "neuralSurrogate": {
-    "durationSeconds": 30,
+    "durationSeconds": 25,
     "main": "A lightweight U-Net learns the mapping from conditions to the next fire extent.",
     "talkingPoints": [
       "The encoder compresses spatial context, and the decoder rebuilds a full-resolution mask.",
@@ -96,20 +97,20 @@
     "transition": "Training and simulation have to run somewhere. Here's the cluster."
   },
   "twoNodes": {
-    "durationSeconds": 35,
+    "durationSeconds": 30,
     "main": "Two GB10 nodes, one continuous experiment: simulation produces while training consumes.",
     "talkingPoints": [
       "Planned architecture: Node A generates simulation shards, and Node B trains and evaluates.",
-      "Fuzzball coordinates dependencies, staging and artifact handoff.",
+      "Fuzzball Orchestrate coordinates dependencies, and shards move through a Fuzzball volume. Both nodes run RLC Pro AI 9.8 and Fuzzball Substrate.",
       "Switch to Verified Execution to show what the logs actually recorded, including placement."
     ],
     "interaction": "Start in 'Planned architecture', then click 'Verified execution'. If logs are ingested it shows real job placement. Otherwise it says so.",
     "evidence": "Verified view is built only from Fuzzball workflow logs (snapshot.workflow).",
-    "transition": "Let's look at that execution on a timeline."
+    "transition": "Here's how we told Fuzzball to do that: the workflow itself."
   },
   "fuzzball": {
-    "durationSeconds": 30,
-    "main": "Fuzzball turned a multi-stage experiment into a reproducible, dependency-aware workflow.",
+    "durationSeconds": 25,
+    "main": "Fuzzball turned the experiment into a recorded, dependency-aware run we can replay and reproduce.",
     "talkingPoints": [
       "Each bar is a recorded job, with start, end, state and node.",
       "Arrows show dependencies. Training starts only when its data exists.",
@@ -120,7 +121,7 @@
     "transition": "So did the AI actually learn the physics?"
   },
   "momentOfTruth": {
-    "durationSeconds": 45,
+    "durationSeconds": 40,
     "main": "On held-out simulated scenarios, here's how closely the surrogate matches the simulator, including where it misses.",
     "talkingPoints": [
       "Left: simulator reference. Middle: surrogate prediction. Right: error map (orange = over-predicted, cyan = missed).",
@@ -133,7 +134,7 @@
     "transition": "Accuracy is half the story. Did we save compute?"
   },
   "performance": {
-    "durationSeconds": 40,
+    "durationSeconds": 35,
     "main": "We report three separate accelerations, and training cost on its own.",
     "talkingPoints": [
       "Surrogate acceleration: simulator runtime vs neural inference per scenario.",
@@ -146,7 +147,7 @@
     "transition": "Faster evaluation changes which questions we can afford to ask."
   },
   "computeUnlocks": {
-    "durationSeconds": 30,
+    "durationSeconds": 25,
     "main": "More compute means more scenarios, and an ensemble shows where outcomes agree and where they don't.",
     "talkingPoints": [
       "One footprint, then many footprints, then an agreement map.",
@@ -158,10 +159,11 @@
     "transition": "So what did we actually build?"
   },
   "conclusion": {
-    "durationSeconds": 30,
+    "durationSeconds": 25,
     "main": "We didn't replace physics. We made it reusable.",
     "talkingPoints": [
       "Read the checkmarks: only evidenced contributions are marked complete.",
+      "Point at 'Built with': Fuzzball, CIQ, NVIDIA, Lenovo and VAST, the hackathon stack we built on.",
       "Next: real environmental data, physics-informed learning, adaptive simulation requests, larger ensembles.",
       "Quantum-enhanced probability estimation is a future research direction, not part of Ember today.",
       "Close: Project Ember, from one simulation to a scalable scientific-AI workflow."
@@ -169,5 +171,45 @@
     "interaction": "Press → once to bring back the ember and logo for the close. Leave it on screen for questions, and open Explore mode (E) for deep dives.",
     "evidence": "Contribution status derives from snapshot evidence. Future items are badged 'Proposed'.",
     "transition": "Thank you. Questions?"
+  },
+  "hackathonStack": {
+    "durationSeconds": 30,
+    "main": "Ember uses the whole hackathon stack: NVIDIA GB10 hardware, CIQ's RLC Pro AI, and Fuzzball as the backbone.",
+    "talkingPoints": [
+      "Bottom up: 2 × Lenovo ThinkStation PGX with NVIDIA GB10, running RLC Pro AI 9.8 with the CUDA stack ready on first boot.",
+      "Fuzzball Substrate runs our containers on both nodes, Orchestrate schedules them, and volumes carry shards and checkpoints between stages.",
+      "We drove it through the Fuzzball CLI, web UI and MCP server.",
+      "Each chip says how we used that layer. Green means used, and logs upgrade it to verified."
+    ],
+    "interaction": "Layers build bottom-up. Click 'Fuzzball Orchestrate', then 'Fuzzball volumes' to show what's provided vs how Ember uses it.",
+    "evidence": "Environment facts are cited to the organizers' SC26 Hackathon Introduction deck. Usage status comes from data/verified/ecosystemUsage.json, and only Fuzzball logs upgrade it to 'verified'.",
+    "transition": "Now the science, starting with the physics."
+  },
+  "fuzzfile": {
+    "durationSeconds": 35,
+    "main": "The entire experiment is one declarative Fuzzball workflow, which is why it's reproducible and scales across both nodes.",
+    "talkingPoints": [
+      "① A persistent Fuzzball volume is shared by every job on both nodes.",
+      "② Simulation fans out as a task-array: one scenario shard per task.",
+      "③ depends-on with status RUNNING lets the dataset build and training start while simulation is still producing. That's our producer–consumer overlap.",
+      "④ Training and evaluation request nvidia.com/gpu, so Orchestrate places them on a GB10 GPU.",
+      "We validate, start, watch and pull logs with the Fuzzball CLI."
+    ],
+    "interaction": "Press → three times to step through the four highlights, or click any callout.",
+    "evidence": "Until the team's real Fuzzfile is ingested this shows a reference template written to the documented v4 syntax (labeled). Once ingested, the real file is shown verbatim.",
+    "transition": "And here is what happened when we ran it."
+  },
+  "judgingCriteria": {
+    "durationSeconds": 30,
+    "main": "Ember was built against all four official criteria, and the deck shows evidence for each.",
+    "talkingPoints": [
+      "Technical execution: a complete simulate → learn → evaluate system, recorded as a Fuzzball workflow.",
+      "Ecosystem utility: NVIDIA GB10, CIQ RLC Pro AI and the full Fuzzball platform, each with its usage status.",
+      "Value and impact: faster what-if exploration for wildfire research, with honest limits.",
+      "Innovation: a physics-trained surrogate plus producer–consumer overlap across two nodes."
+    ],
+    "interaction": "Sweep left to right across the four columns. A green check means an ingested artifact backs it.",
+    "evidence": "Criteria text is quoted from the organizers' deck (pp. 3, 5). Checks are derived from the snapshot, never typed in.",
+    "transition": "So here's where Ember goes next."
   }
 }
