@@ -200,7 +200,7 @@ def bottleneck_report(events):
     report = {"epochs_observed": len(epochs),
               "mean_train_epoch_s": round(np.mean(train), 3) if train else None,
               "mean_validation_epoch_s": round(np.mean(val), 3) if val else None,
-              "validation_fraction": round(sum(val)/(sum(val)+sum(train)), 3) if train and val else None,
+              "validation_fraction": sum(val)/(sum(val)+sum(train)) if train and val else None,
               "gpu_utilization_average": None}
     # Without a continuous, calibrated interval sampling process, do not infer average GPU use.
     return report
