@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "experiment_id": "obs-live-20261114T225205Z",
+  "version": "20261114T231219.287360Z-d1a023189aee",
+  "source_notebook_sha256": "d1a023189aee84731c8231d131c0d4eb0b103f4dfe8740cec1efd2f79654638f",
+  "files": [
+    {
+      "path": "Ember_Observatory.executed.ipynb",
+      "bytes": 2430672,
+      "sha256": "913537e386552c9e2a493c12fe9dbed2549c251912eee47c3bf3ff81ef01647f"
+    },
+    {
+      "path": "figures/figure_001.png",
+      "bytes": 94182,
+      "sha256": "93fc84bf2401a9e147e6fe3b17575f1589ac092db8f7a2ad52c32643ee82e454"
+    },
+    {
+      "path": "figures/figure_002.png",
+      "bytes": 24447,
+      "sha256": "fca8eff5897f8336a85060c7daa612e4122df8d1aeecb21fe12d1bba4260ad57"
+    },
+    {
+      "path": "figures/figure_003.png",
+      "bytes": 35201,
+      "sha256": "e1e3c6b65c377cfa0ae622063aa4dfb08a6474dd80a6b44afd63b62e7e3febb1"
+    },
+    {
+      "path": "figures/figure_004.png",
+      "bytes": 90505,
+      "sha256": "cb6f9b55a50e8f0c6aeaeb4e45c3648665042a6da3d7434fc9994eac6a58c135"
+    },
+    {
+      "path": "figures/figure_005.png",
+      "bytes": 163992,
+      "sha256": "cbc6613ce61353c2b8ccda2329e1a07189d94ce8d9addb4dd29df4ad8ab9ffd3"
+    },
+    {
+      "path": "figures/figure_006.png",
+      "bytes": 164768,
+      "sha256": "5733c361913822f711c12f451dfd94ca034136fc2ec12f6f6a15918273a240ea"
+    },
+    {
+      "path": "figures/figure_007.png",
+      "bytes": 686936,
+      "sha256": "e6f0fe22c21e19a76869ed57d578b65ef71c87e103108245fb5117b706b7b4b7"
+    },
+    {
+      "path": "figures/figure_008.png",
+      "bytes": 492046,
+      "sha256": "adec2bb5b2aa9b7c58e6640d2988fc605bb7793ebc7bae7cf44b74c1e7b0ac51"
+    },
+    {
+      "path": "metadata.json",
+      "bytes": 1794,
+      "sha256": "ebabc8d8f7cd2303efa63d6b6d7dcb4e4428b48ff3f194771ac2d8230422d2fc"
+    },
+    {
+      "path": "metrics.json",
+      "bytes": 24206,
+      "sha256": "32992bbc074257d8f04d5e7b5a9dbb1035588fb559d3d7a5a541673acf567a60"
+    },
+    {
+      "path": "outputs_baseline_history.csv",
+      "bytes": 862,
+      "sha256": "ff6ab746dbf4c53d3ba381cc1f0b75fd217287c12e761cb8427634c8b123edf5"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1016,
+      "sha256": "daad4aba995d75b3e2ebec8e32528003057f6ad8136faf3b4aeac0cfeb7e4315"
+    },
+    {
+      "path": "report.html",
+      "bytes": 2437558,
+      "sha256": "6b043958dd2bc2c39f2789439b145124032554e0f11464c5ed7d9190ec552577"
+    },
+    {
+      "path": "timing_events.json",
+      "bytes": 14342,
+      "sha256": "339e5492280fbf6a56b7d1066dfed94c452b018945d3cf69eafc149a899ed5a0"
+    }
+  ]
+}

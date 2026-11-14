@@ -1,0 +1,758 @@
+{
+  "experiment_id": "obs-live-20261114T225205Z",
+  "runs": [
+    {
+      "run": "outputs_baseline",
+      "workflow_ids": [
+        "ba78b08b-632e-4de8-9d4b-fcb7e105c61e"
+      ],
+      "checkpoint_sha256": "217651301f868749e23e811398fc0ffa6ba8a6534517b43f5833c5dd32c188d4",
+      "node": null,
+      "completed_epochs": 2,
+      "best_epoch": 2,
+      "training_wall_seconds": 11.528835535998951,
+      "validation": {
+        "loss": 0.7391021251678467,
+        "iou": 0.0016162322896624104,
+        "dice": 0.0032272485959372993,
+        "precision": 0.0016298365930065193,
+        "recall": 0.1622191011235955,
+        "pixel_accuracy": 0.6516259765625,
+        "arrival_mae_seconds_on_reached": 979.217212119799
+      },
+      "test": {
+        "dataset_kind": "forefire",
+        "split": "test",
+        "loss": 0.7978208661079407,
+        "iou": 0.0003104551750489564,
+        "dice": 0.0006207176450927495,
+        "precision": 0.00031210986267166043,
+        "recall": 0.05531914893617021,
+        "pixel_accuracy": 0.7956005859375,
+        "arrival_mae_seconds_on_reached": 1664.0967835771276,
+        "evaluation_wall_seconds": 4.531267753998691,
+        "inference_latency": {
+          "batch_size": 1,
+          "warmup_steps": 5,
+          "repeats": 30,
+          "mean_ms": 1.6667185664118733,
+          "median_ms": 1.6133244989759987,
+          "scope": "resident-input CUDA forward only; excludes preprocessing, transfers and output writing"
+        }
+      },
+      "sample_counts": {
+        "train": 16,
+        "val": 4,
+        "test": 4
+      },
+      "families": {
+        "train": [
+          "region:corsica"
+        ],
+        "val": [
+          "region:texas_panhandle"
+        ],
+        "test": [
+          "region:montana_timber"
+        ]
+      },
+      "hardware": {
+        "gpu_name": "NVIDIA GB10",
+        "architecture": "aarch64",
+        "torch": "2.15.0a0+875d815502.nv26.10",
+        "cuda": "13.4",
+        "cudnn": 92700,
+        "compute_capability": [
+          12,
+          1
+        ]
+      },
+      "dataset": {
+        "dataset_kind": "forefire",
+        "scope": "minimal real observability verification: 24 unchanged samples from verified pilot",
+        "source_commit": "3d4c8ffdaae8da49c6c567716b4b62f36b7c5911",
+        "forefire_version": "2.6.0",
+        "grid_size": 320,
+        "cell_size_meters": 40,
+        "horizon_seconds": 3600,
+        "split_policy": "Entire regions are exclusive scenario families; Arizona remains unused",
+        "channel_names": [
+          "burnable",
+          "fuel_depth_m",
+          "dead_load_kg_m2",
+          "live_load_kg_m2",
+          "sav_1_m",
+          "mext",
+          "alt_rel_m",
+          "dzdx",
+          "dzdy",
+          "wind_u0",
+          "wind_v0",
+          "wind_u1",
+          "wind_v1",
+          "shift_t_frac",
+          "md",
+          "md_10h",
+          "md_100h",
+          "ignition",
+          "engine"
+        ]
+      },
+      "source_hashes": {
+        "run_summary": "7c43e6ad2cd0c25e88d231b4adaad791bc02a071075da439667565eb4d62fb8a",
+        "test_metrics": "ae8bb26751d797185386690be2b79b4915a7a0819ecabce52ee26427340a9f50",
+        "history_csv": "ff6ab746dbf4c53d3ba381cc1f0b75fd217287c12e761cb8427634c8b123edf5"
+      }
+    }
+  ],
+  "selection_criterion": "Lowest validation loss; held-out test is reporting only",
+  "selected_run": "outputs_baseline",
+  "scope": "Agreement with ForeFire simulator labels; not observed wildfire accuracy",
+  "runtime_verification": {
+    "workflow_id": "ba78b08b-632e-4de8-9d4b-fcb7e105c61e",
+    "status": "STAGE_STATUS_FINISHED",
+    "started_utc": "2026-11-14T22:53:53.610502Z",
+    "finished_utc": "2026-11-14T22:54:42.762320Z",
+    "jobs": [
+      {
+        "name": "physics-0",
+        "status": "STAGE_STATUS_FINISHED",
+        "startTime": "2026-11-14T22:53:56.970582Z",
+        "endTime": "2026-11-14T22:54:12.357839Z",
+        "error": ""
+      },
+      {
+        "name": "train-baseline",
+        "status": "STAGE_STATUS_FINISHED",
+        "startTime": "2026-11-14T22:53:57.018911Z",
+        "endTime": "2026-11-14T22:54:42.009285Z",
+        "error": ""
+      }
+    ],
+    "job_container_overlap_seconds": 15.338928,
+    "observed_physics_training_phase_overlap_seconds": 0.0,
+    "concurrency_note": "Containers overlapped, but CPU physics finished before GPU training started; no simultaneous physics/training compute demonstrated.",
+    "cpu_physics": {
+      "summary": {
+        "status": "complete",
+        "shard": 0,
+        "shards": 1,
+        "workers_requested": 4,
+        "host": "physics-0",
+        "wall_seconds": 4.960621520000132,
+        "attempts": 4,
+        "accepted": 4,
+        "rejected": 0,
+        "regions": [
+          "corsica",
+          "socal_chaparral",
+          "norcal_paradise",
+          "greatbasin_nv"
+        ],
+        "scope": "real ForeFire training-region runs only",
+        "notes": "Outputs require dataset-contract verification and a later training run"
+      },
+      "records": [
+        {
+          "sample_id": "corsica-train-008180",
+          "region": "corsica",
+          "split": "train",
+          "shard": 0,
+          "ok": true,
+          "edge_hit": false,
+          "worker_seconds": 0.3587711300024239,
+          "file": "data/train/corsica-train-008180.npz",
+          "sha256": "b85a0660e89a55ac4457385bdd992cf9495044760c41e6936ffb68d56b12e0e7"
+        },
+        {
+          "sample_id": "socal_chaparral-train-000546",
+          "region": "socal_chaparral",
+          "split": "train",
+          "shard": 0,
+          "ok": true,
+          "edge_hit": false,
+          "worker_seconds": 0.05278593299954082,
+          "file": "data/train/socal_chaparral-train-000546.npz",
+          "sha256": "ad9fd2a74295e8351c2d5c2a5de87ea29d5fd3b108973b1a31a89589c7938de3"
+        },
+        {
+          "sample_id": "norcal_paradise-train-001286",
+          "region": "norcal_paradise",
+          "split": "train",
+          "shard": 0,
+          "ok": true,
+          "edge_hit": false,
+          "worker_seconds": 0.06038569700103835,
+          "file": "data/train/norcal_paradise-train-001286.npz",
+          "sha256": "502b70bbfa07ce55bce4a7c5a655934fec87f0bb9bd6c8434e85f8dd6fd0c0c8"
+        },
+        {
+          "sample_id": "greatbasin_nv-train-001315",
+          "region": "greatbasin_nv",
+          "split": "train",
+          "shard": 0,
+          "ok": true,
+          "edge_hit": false,
+          "worker_seconds": 0.10087765999924159,
+          "file": "data/train/greatbasin_nv-train-001315.npz",
+          "sha256": "13b9fb80c351e42835b91159150c42a3245ba3714bb43c49b3b17d0573b49bde"
+        }
+      ]
+    },
+    "resource_snapshots": {
+      "physics-0": {
+        "host_cpu_percent_snapshot": [
+          5.0,
+          4.5,
+          5.0,
+          5.0,
+          5.4,
+          5.4
+        ],
+        "gpu_utilization_percent_snapshot": [],
+        "cpu_allocated": [
+          4,
+          4,
+          4,
+          4,
+          4,
+          4
+        ],
+        "cpu_sample_interval_seconds": [
+          0.1,
+          0.1,
+          0.1,
+          0.1,
+          0.1,
+          0.1
+        ]
+      },
+      "train-baseline": {
+        "host_cpu_percent_snapshot": [
+          0.0,
+          4.5,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "gpu_utilization_percent_snapshot": [
+          0.0,
+          0.0,
+          10.0,
+          0.0,
+          24.0
+        ],
+        "cpu_allocated": [
+          4,
+          4,
+          4,
+          4,
+          4
+        ],
+        "cpu_sample_interval_seconds": [
+          0.1,
+          0.1,
+          0.1,
+          0.1,
+          0.1
+        ]
+      }
+    },
+    "progress": [
+      {
+        "workflow_id": "ba78b08b-632e-4de8-9d4b-fcb7e105c61e",
+        "job": "physics-0",
+        "phase": "cpu_shard_finished",
+        "last_epoch": null,
+        "val_iou": null,
+        "physics_completed": 4,
+        "physics_excluded": 0,
+        "physics_attempts": 4,
+        "finished": true
+      },
+      {
+        "workflow_id": "ba78b08b-632e-4de8-9d4b-fcb7e105c61e",
+        "job": "train-baseline",
+        "phase": "test_evaluation_finished",
+        "last_epoch": 2,
+        "val_iou": 0.0016162322896624104,
+        "physics_completed": 0,
+        "physics_excluded": 0,
+        "physics_attempts": 0,
+        "finished": true
+      }
+    ],
+    "bottleneck": {
+      "epochs_observed": 2,
+      "mean_train_epoch_s": 1.841,
+      "mean_validation_epoch_s": 0.136,
+      "timed_epoch_pairs": 2,
+      "validation_fraction": 0.06889919335706778,
+      "duration_scope": "Summed paired epoch work; not elapsed overlap or average hardware utilization",
+      "gpu_utilization_average": null,
+      "cpu_shards": [
+        {
+          "status": "complete",
+          "shard": 0,
+          "shards": 1,
+          "workers_requested": 4,
+          "host": "physics-0",
+          "wall_seconds": 4.960621520000132,
+          "attempts": 4,
+          "accepted": 4,
+          "rejected": 0,
+          "regions": [
+            "corsica",
+            "socal_chaparral",
+            "norcal_paradise",
+            "greatbasin_nv"
+          ],
+          "scope": "real ForeFire training-region runs only",
+          "notes": "Outputs require dataset-contract verification and a later training run"
+        }
+      ]
+    },
+    "event_identity_note": "Raw runtime did not expose FUZZBALL_WORKFLOW_ID; collector binds actual CLI workflow ID and job to preserved events.",
+    "limitations": [
+      "Two-epoch verification is severely undertrained and is not an accuracy improvement.",
+      "Host CPU 100 ms and driver GPU snapshots are not whole-job averages.",
+      "Previous published pilot metadata still says local preview; remote correction requires separate approval.",
+      "No real NCCL DDP execution performed."
+    ],
+    "artifact_retrieval": "Both archives matched object-cache SHA-256; all four CPU NPZ hashes and GPU checkpoint hash verified."
+  },
+  "prediction_galleries": [
+    {
+      "kind": "forefire_held_out",
+      "split": "test",
+      "checkpoint": "[user-home]\\CompSci\\HPC_Hacks\\Ember\\artifacts\\experiments\\arrival-pilot-20261114-02\\retrieved_baseline\\pilot\\outputs_baseline\\best.pt",
+      "checkpoint_sha256": "1c91d5cd169f40430f698a13464a8686141ff5b90c1c1cff6f75f9b577aee55b",
+      "cases": [
+        {
+          "simulation_id": "montana_timber-test-000001",
+          "scenario_family_id": "region:montana_timber",
+          "image": "montana_timber-test-000001.png",
+          "horizons": [
+            {
+              "horizon_s": 600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 19
+            },
+            {
+              "horizon_s": 1200,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 24
+            },
+            {
+              "horizon_s": 1800,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 35
+            },
+            {
+              "horizon_s": 2400,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 41
+            },
+            {
+              "horizon_s": 3000,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 44
+            },
+            {
+              "horizon_s": 3600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 47
+            }
+          ],
+          "conditional_arrival_mae_seconds_on_true_reached": 1258.9749755859375,
+          "split": "test",
+          "sample_sha256": "c7bc57e7760c39c1aea5655fe759580c51c4efbf37c4218f461cc0d9f8c6295b"
+        }
+      ]
+    },
+    {
+      "kind": "forefire_held_out",
+      "split": "val",
+      "checkpoint": "[user-home]\\CompSci\\HPC_Hacks\\Ember\\artifacts\\experiments\\arrival-pilot-20261114-02\\retrieved_baseline\\pilot\\outputs_baseline\\best.pt",
+      "checkpoint_sha256": "1c91d5cd169f40430f698a13464a8686141ff5b90c1c1cff6f75f9b577aee55b",
+      "cases": [
+        {
+          "simulation_id": "texas_panhandle-val-000001",
+          "scenario_family_id": "region:texas_panhandle",
+          "image": "texas_panhandle-val-000001.png",
+          "horizons": [
+            {
+              "horizon_s": 600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 29
+            },
+            {
+              "horizon_s": 1200,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 38
+            },
+            {
+              "horizon_s": 1800,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 50
+            },
+            {
+              "horizon_s": 2400,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 64
+            },
+            {
+              "horizon_s": 3000,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 82
+            },
+            {
+              "horizon_s": 3600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 93
+            }
+          ],
+          "conditional_arrival_mae_seconds_on_true_reached": 953.4381713867188,
+          "split": "val",
+          "sample_sha256": "79f4fdac36433c25d6229483661470e068bdfbe5dc93478d5605e8f5f21584cf"
+        }
+      ]
+    },
+    {
+      "kind": "forefire_test_only",
+      "checkpoint": "/work/pilot/outputs_baseline/best.pt",
+      "cases": [
+        {
+          "simulation_id": "montana_timber-test-000001",
+          "scenario_family_id": "region:montana_timber",
+          "image": "montana_timber-test-000001.png",
+          "horizons": [
+            {
+              "horizon_s": 600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 19
+            },
+            {
+              "horizon_s": 1200,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 24
+            },
+            {
+              "horizon_s": 1800,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 275,
+              "false_negative_pixels": 35
+            },
+            {
+              "horizon_s": 2400,
+              "iou": 0.0003708314571027468,
+              "precision": 0.00037109685627948895,
+              "recall": 0.34146341463414637,
+              "false_positive_pixels": 37712,
+              "false_negative_pixels": 27
+            },
+            {
+              "horizon_s": 3000,
+              "iou": 0.000423796154049902,
+              "precision": 0.00042411069289084453,
+              "recall": 0.36363636363636365,
+              "false_positive_pixels": 37710,
+              "false_negative_pixels": 28
+            },
+            {
+              "horizon_s": 3600,
+              "iou": 0.0004767580452920143,
+              "precision": 0.00047712452950220006,
+              "recall": 0.3829787234042553,
+              "false_positive_pixels": 37708,
+              "false_negative_pixels": 29
+            }
+          ],
+          "conditional_arrival_mae_seconds_on_true_reached": 1137.4400634765625
+        },
+        {
+          "simulation_id": "montana_timber-test-000007",
+          "scenario_family_id": "region:montana_timber",
+          "image": "montana_timber-test-000007.png",
+          "horizons": [
+            {
+              "horizon_s": 600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 14
+            },
+            {
+              "horizon_s": 1200,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 16
+            },
+            {
+              "horizon_s": 1800,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 195,
+              "false_negative_pixels": 18
+            },
+            {
+              "horizon_s": 2400,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 16858,
+              "false_negative_pixels": 18
+            },
+            {
+              "horizon_s": 3000,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 16858,
+              "false_negative_pixels": 18
+            },
+            {
+              "horizon_s": 3600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 16858,
+              "false_negative_pixels": 18
+            }
+          ],
+          "conditional_arrival_mae_seconds_on_true_reached": 1584.1217041015625
+        },
+        {
+          "simulation_id": "montana_timber-test-000014",
+          "scenario_family_id": "region:montana_timber",
+          "image": "montana_timber-test-000014.png",
+          "horizons": [
+            {
+              "horizon_s": 600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 40
+            },
+            {
+              "horizon_s": 1200,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 40
+            },
+            {
+              "horizon_s": 1800,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 237,
+              "false_negative_pixels": 40
+            },
+            {
+              "horizon_s": 2400,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 20446,
+              "false_negative_pixels": 40
+            },
+            {
+              "horizon_s": 3000,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 20446,
+              "false_negative_pixels": 43
+            },
+            {
+              "horizon_s": 3600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 20446,
+              "false_negative_pixels": 44
+            }
+          ],
+          "conditional_arrival_mae_seconds_on_true_reached": 1758.5426025390625
+        },
+        {
+          "simulation_id": "montana_timber-test-000020",
+          "scenario_family_id": "region:montana_timber",
+          "image": "montana_timber-test-000020.png",
+          "horizons": [
+            {
+              "horizon_s": 600,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 317
+            },
+            {
+              "horizon_s": 1200,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 0,
+              "false_negative_pixels": 324
+            },
+            {
+              "horizon_s": 1800,
+              "iou": 0.0,
+              "precision": 0.0,
+              "recall": 0.0,
+              "false_positive_pixels": 273,
+              "false_negative_pixels": 334
+            },
+            {
+              "horizon_s": 2400,
+              "iou": 0.0008131970260223048,
+              "precision": 0.0008461259518916959,
+              "recall": 0.02046783625730994,
+              "false_positive_pixels": 8266,
+              "false_negative_pixels": 335
+            },
+            {
+              "horizon_s": 3000,
+              "iou": 0.0008121591831999072,
+              "precision": 0.0008461259518916959,
+              "recall": 0.019830028328611898,
+              "false_positive_pixels": 8266,
+              "false_negative_pixels": 346
+            },
+            {
+              "horizon_s": 3600,
+              "iou": 0.0009274287039183863,
+              "precision": 0.0009670010878762239,
+              "recall": 0.0221606648199446,
+              "false_positive_pixels": 8265,
+              "false_negative_pixels": 353
+            }
+          ],
+          "conditional_arrival_mae_seconds_on_true_reached": 1725.140625
+        }
+      ]
+    }
+  ],
+  "experiment_configurations": [
+    {
+      "run": "outputs_baseline",
+      "source_sha256": "2db6f64302c0414402444d0cfa921e82925226905fc475dfbb3cc478c21584cc",
+      "configuration": {
+        "data_dir": "/work/pilot/data",
+        "output_dir": "/work/pilot/outputs_baseline",
+        "grid_size": 320,
+        "horizon_seconds": 3600.0,
+        "unreached_sentinel": -9999.0,
+        "channel_names": [
+          "burnable",
+          "fuel_depth_m",
+          "dead_load_kg_m2",
+          "live_load_kg_m2",
+          "sav_1_m",
+          "mext",
+          "alt_rel_m",
+          "dzdx",
+          "dzdy",
+          "wind_u0",
+          "wind_v0",
+          "wind_u1",
+          "wind_v1",
+          "shift_t_frac",
+          "md",
+          "md_10h",
+          "md_100h",
+          "ignition",
+          "engine"
+        ],
+        "channel_types": [
+          "binary",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "continuous",
+          "binary",
+          "binary"
+        ],
+        "ignition_channel": "ignition",
+        "base_filters": 16,
+        "depth": 3,
+        "dropout": 0.0,
+        "batch_size": 4,
+        "epochs": 2,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001,
+        "burn_loss_weight": 1.0,
+        "arrival_loss_weight": 1.0,
+        "positive_weight": 1.0,
+        "threshold": 0.5,
+        "random_seed": 42,
+        "device": "cuda",
+        "num_workers": 0
+      }
+    }
+  ]
+}

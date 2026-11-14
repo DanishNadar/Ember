@@ -1,0 +1,8 @@
+{
+  "state": "published",
+  "published_at_utc": "2026-11-14T23:13:27.499327+00:00",
+  "repository": "DanishNadar/Ember",
+  "branch": "reports/observatory-smoke-20261114-verified",
+  "approved_manifest_sha256": "9b83eedb6907e95c9a884ad61d591af371b4200f505602cce2eb9dec1a16b0a6",
+  "scope": "Receipt is shared in the same commit as the approved snapshot"
+}

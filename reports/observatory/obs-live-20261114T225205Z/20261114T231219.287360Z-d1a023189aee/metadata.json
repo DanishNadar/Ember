@@ -1,0 +1,52 @@
+{
+  "experiment_id": "obs-live-20261114T225205Z",
+  "exported_at_utc": "2026-11-14T23:12:19.287360+00:00",
+  "source_notebook_sha256": "d1a023189aee84731c8231d131c0d4eb0b103f4dfe8740cec1efd2f79654638f",
+  "source_notebook_saved_at_utc": "2026-11-14T22:58:29.142188+00:00",
+  "execution_finished_at_utc": "2026-11-14T22:56:38.354969Z",
+  "execution_time_note": "Saved-file timestamp is not execution time; unknown execution timestamps remain null",
+  "source_git": {
+    "sha": "d4138ebc9879f14a333a2255242de6bc39d7b7bb",
+    "branch": "main",
+    "dirty": true
+  },
+  "exporter_git": {
+    "sha": "8117c930439a8f3bf50af04c58f6b8bdba5e6cfb",
+    "branch": "integration/ember-observatory-20261114",
+    "dirty": false
+  },
+  "exporter_script_sha256": "346e7cc7a2337215070dbf1cf7c7e963b7a1fc68c9ad9ec45209899c5c443ac8",
+  "notebook": {
+    "cells": 21,
+    "code_cells": 10,
+    "executed_cells": 10,
+    "output_types": {
+      "stream": 9,
+      "display_data": 20
+    },
+    "mime_types": {
+      "image/png": 9,
+      "text/plain": 20,
+      "text/html": 6,
+      "text/markdown": 4
+    },
+    "output_json_bytes": 2399200,
+    "errors": [],
+    "warning_streams": 0
+  },
+  "workflow_ids": [
+    "ba78b08b-632e-4de8-9d4b-fcb7e105c61e"
+  ],
+  "figures": [
+    "figures/figure_001.png",
+    "figures/figure_002.png",
+    "figures/figure_003.png",
+    "figures/figure_004.png",
+    "figures/figure_005.png",
+    "figures/figure_006.png",
+    "figures/figure_007.png",
+    "figures/figure_008.png"
+  ],
+  "publication": "Saved snapshot provenance; publication status is recorded separately in publication.json",
+  "redactions": "Home paths, private IPs and recognizable credentials removed from text/metadata; inspect images before publication"
+}
