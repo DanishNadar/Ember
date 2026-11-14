@@ -8,6 +8,7 @@ import argparse
 import csv
 import json
 import random
+import time
 from pathlib import Path
 
 import numpy as np
@@ -17,6 +18,7 @@ import yaml
 
 from arrival_dataset import ArrivalDataset, discover, fit_normalization
 from arrival_model import ArrivalUNet, masked_arrival_loss
+from observability import emit, resources
 
 
 def config_from(path):
@@ -40,6 +42,7 @@ def config_from(path):
 def run_loader(net, loader, cfg, device, optimizer=None):
     net.train(optimizer is not None)
     total_loss, intersection, union, correct_time, reached_count, seen = 0., 0., 0., 0., 0., 0
+    predicted_count, correct_count, pixel_count = 0., 0., 0.
     for x, burned, time in loader:
         x, burned, time = x.to(device), burned.to(device), time.to(device)
         with torch.set_grad_enabled(optimizer is not None):
@@ -56,10 +59,18 @@ def run_loader(net, loader, cfg, device, optimizer=None):
         truth = burned.bool()
         intersection += (pred & truth).sum().item()
         union += (pred | truth).sum().item()
+        predicted_count += pred.sum().item()
+        correct_count += (pred == truth).sum().item()
+        pixel_count += truth.numel()
         correct_time += ((predicted_t - time).abs() * burned).sum().item()
         reached_count += burned.sum().item()
         seen += len(x)
+    precision = intersection / predicted_count if predicted_count else (1.0 if not reached_count else 0.0)
+    recall = intersection / reached_count if reached_count else 1.0
     return {"loss": total_loss / seen, "iou": intersection / union if union else 1.,
+            "dice": 2 * intersection / (predicted_count + reached_count) if (predicted_count + reached_count) else 1.,
+            "precision": precision, "recall": recall,
+            "pixel_accuracy": correct_count / pixel_count if pixel_count else None,
             "arrival_mae_seconds_on_reached": cfg["horizon_seconds"] * correct_time / reached_count if reached_count else None}
 
 
@@ -80,12 +91,17 @@ def main():
         raise RuntimeError("CUDA requested but not available")
     paths = discover(cfg)
     out = Path(cfg["output_dir"])
+    event_path = out / "events.jsonl"
     if args.mode == "train":
         if out.exists() and any(out.iterdir()):
             raise ValueError("output_dir is not empty: choose a new output_dir to preserve checkpoints")
         out.mkdir(parents=True, exist_ok=True)
         norm = fit_normalization(paths["train"], cfg)
         (out / "normalization.json").write_text(json.dumps(norm, indent=2))
+        emit("training_started", path=event_path, phase="gpu_training",
+             sample_counts={key: len(files) for key, files in paths.items()},
+             epochs_requested=cfg["epochs"], learning_rate=cfg["learning_rate"],
+             device=str(device), resources=resources())
     else:
         if not args.checkpoint:
             parser.error("evaluate requires --checkpoint")
@@ -99,26 +115,47 @@ def main():
     net = ArrivalUNet(len(cfg["channel_names"]), cfg["base_filters"], cfg["depth"], cfg["dropout"]).to(device)
     if args.mode == "evaluate":
         net.load_state_dict(checkpoint["model_state_dict"])
+        emit("test_evaluation_started", path=event_path, echo=False, phase="final_test", resources=resources())
         stats = run_loader(net, loaders["test"], cfg, device)
+        emit("test_evaluation_finished", path=event_path, echo=False, phase="final_test",
+             metrics=stats, resources=resources())
         print(json.dumps({"dataset_kind": "forefire", "split": "test", **stats}, indent=2))
         return
     optimizer = torch.optim.Adam(net.parameters(), lr=cfg["learning_rate"], weight_decay=cfg["weight_decay"])
     best = float("inf")
     with (out / "history.csv").open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=["epoch", "train_loss", "val_loss", "val_iou", "val_arrival_mae_seconds_on_reached"])
+        fields = ["epoch"] + [p + "_" + k for p in ("train", "val") for k in
+                  ("loss", "iou", "dice", "precision", "recall", "pixel_accuracy", "arrival_mae_seconds_on_reached")]
+        fields += ["train_seconds", "validation_seconds", "learning_rate"]
+        writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
         for epoch in range(1, cfg["epochs"] + 1):
+            train_started = time.perf_counter()
             train = run_loader(net, loaders["train"], cfg, device, optimizer)
+            train_seconds = time.perf_counter() - train_started
+            val_started = time.perf_counter()
             val = run_loader(net, loaders["val"], cfg, device)
-            writer.writerow({"epoch": epoch, "train_loss": train["loss"], "val_loss": val["loss"],
-                             "val_iou": val["iou"], "val_arrival_mae_seconds_on_reached": val["arrival_mae_seconds_on_reached"]})
+            validation_seconds = time.perf_counter() - val_started
+            row = {"epoch": epoch, **{"train_" + k: v for k, v in train.items()},
+                   **{"val_" + k: v for k, v in val.items()},
+                   "train_seconds": train_seconds, "validation_seconds": validation_seconds,
+                   "learning_rate": optimizer.param_groups[0]["lr"]}
+            writer.writerow(row)
             handle.flush()
+            emit("epoch_finished", path=event_path, phase="gpu_training", epoch=epoch,
+                 train=train, val=val, train_seconds=train_seconds,
+                 validation_seconds=validation_seconds, learning_rate=row["learning_rate"],
+                 resources=resources())
             print(f"epoch {epoch}/{cfg['epochs']} train_loss={train['loss']:.4f} val_loss={val['loss']:.4f} IoU={val['iou']:.3f}", flush=True)
             if val["loss"] < best:
                 best = val["loss"]
                 torch.save({"model_state_dict": net.state_dict(), "config": cfg,
                             "normalization": norm, "epoch": epoch, "validation": val,
                             "model_kind": "direct_arrival_two_head"}, out / "best.pt")
+                emit("checkpoint_saved", path=event_path, epoch=epoch, checkpoint=str(out / "best.pt"),
+                     validation_loss=val["loss"])
+    emit("training_finished", path=event_path, phase="gpu_training",
+         best_checkpoint=str(out / "best.pt"), best_val_loss=best, resources=resources())
     print(f"Best checkpoint: {out / 'best.pt'}")
 
 
