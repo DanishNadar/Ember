@@ -325,10 +325,23 @@ def run_scenario(sc, out_n=None, capture_front=False):
     if shift:
         # default: frontal passage at horizon/2 (Ember-Synth v1); initial-state sets give wind_shift_t_s
         half = float(sc.get("wind_shift_t_s", sc["horizon_s"] / 2))
-        if half > 0:
-            ff.execute(f"goTo[t={half}]")
-        u2, v2 = wind_uv(sc["wind_dir_deg"] + shift)
-        ff.execute(f"trigger[wind;loc=(0.,0.,0.);vel=({u2},{v2},0.);t={max(half, 0.0)}]")
+        ramp = float(sc.get("wind_shift_ramp_s", 0.0))   # >0: direction turns linearly over this long
+        step = float(sc.get("wind_shift_step_s", 60.0))
+        if ramp <= 0:
+            if half > 0:
+                ff.execute(f"goTo[t={half}]")
+            u2, v2 = wind_uv(sc["wind_dir_deg"] + shift)
+            ff.execute(f"trigger[wind;loc=(0.,0.,0.);vel=({u2},{v2},0.);t={max(half, 0.0)}]")
+        else:   # staircase of uniform wind triggers, one per `step` seconds, until the turn is complete
+            k_n = max(1, int(math.ceil(ramp / step)))
+            for k in range(1, k_n + 1):
+                t_k = max(0.0, half + (k - 1) * ramp / k_n)
+                if t_k >= sc["horizon_s"]:
+                    break
+                if t_k > 0:
+                    ff.execute(f"goTo[t={t_k}]")
+                u2, v2 = wind_uv(sc["wind_dir_deg"] + shift * k / k_n)
+                ff.execute(f"trigger[wind;loc=(0.,0.,0.);vel=({u2},{v2},0.);t={t_k}]")
     ff.execute(f"goTo[t={sc['horizon_s']}]")
     t_sim = time.perf_counter()
     # ff["arrival_time"] comes back as [y, x] (row = y); transpose to the [x, y] order of our layers.

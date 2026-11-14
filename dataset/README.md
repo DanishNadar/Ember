@@ -8,7 +8,7 @@
 
 | path | what |
 |---|---|
-| `ember_init_v2/` | the dataset: `all_samples.csv` (every row, with `region` and `split`), plus `<region>/<split>/{samples.csv,meta.json}`. Full description, 21-channel tensor spec, evaluation protocol and known caveats in [`ember_init_v2/README.md`](ember_init_v2/README.md). |
+| `ember_init_v2/` | the dataset: `all_samples.csv` (every row, with `region` and `split`), plus `<region>/<split>/{samples.csv,meta.json}`. Full description, 19-channel tensor spec, evaluation protocol and known caveats in [`ember_init_v2/README.md`](ember_init_v2/README.md). |
 | `configs/init_v2.json` | the exact config that built v2 (`init_corsica.json` = Corsica-only v1). |
 | `ember_bench/` | generator + ForeFire wrapper (`initstates.py`, `sim.py`, `us_landscape.py`, `landfire.py`, …). |
 | `data_real/aullene/data.nc` | ForeFire's real Aullène (Corsica) landscape, 3.9 MB. |
@@ -53,9 +53,19 @@ python -m ember_bench.initstates build --config configs/init_v2.json --out ember
 Load samples as tensors with `ember_bench.initstates.TorchDataset("ember_init_v2", "<region>/<split>")`;
 layers are cropped from `data_real/` on the fly, so keep the folder layout as is.
 
-## Known caveats (team decisions pending)
+## v2.1 changes
 
-* **US moisture:** 46–66% of US samples start with 1-h moisture above the ignition fuel's
-  moisture of extinction, so they barely spread. Narrow the `md` range or keep them as no-spread cases.
+* **US dead moisture below extinction:** each sample's 1-h moisture is rescaled under the
+  extinction moisture of its ignition fuel. 0 US samples now start in fuel that can't burn (was
+  46–66%). Measured no-spread rate: 19–33% per US site and 7.5% in Corsica (`ember_init_v2/smoke_v2.1.json`).
+* **Wind shift:** ±60°, turning linearly over 30 min (it was an instant jump of up to ±180°).
+* **Live fuel moisture is not sampled:** ForeFire's Corsica Rothermel ignores live fuel, so it
+  can't vary in both regions. US runs use ForeFire's defaults (herb 0.70, woody 1.00). The tensor
+  has 19 channels.
+
+## Known caveats
+
+* **Edge hits:** in Corsica, 15% of 1 h runs (26% at wind ≥ 10 m/s) reach the 12.8 km window edge,
+  which gives invalid labels. Filter on `edge_hit` or label strong winds on a bigger window.
 * **Farsite downslope bug:** ForeFire's Farsite model still spreads downslope about as fast as upslope.
 * **Terrain variety** is limited (about 8 independent 12.8 km windows in Corsica, about 41 across US train sites).

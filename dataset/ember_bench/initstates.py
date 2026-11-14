@@ -34,7 +34,7 @@ import numpy as np
 
 from . import sim
 
-SCHEMA_VERSION = 2   # v2: multi-region (region column, Farsite US engine), 21 channels
+SCHEMA_VERSION = 3   # v3: multi-region, Farsite US engine, 19 channels, ramped wind shift, md below extinction
 SHARD = 1000
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -43,7 +43,7 @@ CONT = ["wind_speed", "wind_dir_deg", "wind_shift_deg", "wind_shift_t_frac", "md
 
 # US Farsite runs also need 10-h, 100-h and live moistures. They are drawn from a separate random
 # stream so that adding them never changes the core samples (Corsica rows stay identical to v1).
-EXTRA = ["md_10h_offset", "md_100h_offset", "m_live_herb", "m_live_woody"]
+EXTRA = ["md_10h_offset", "md_100h_offset"]
 ENGINES = {"corsica_native": 0, "farsite": 1}
 
 CHANNELS = [
@@ -64,8 +64,6 @@ CHANNELS = [
     ("md", "dead 1-h fuel moisture ratio (constant plane)"),
     ("md_10h", "dead 10-h moisture (US only; 0 for Corsica)"),
     ("md_100h", "dead 100-h moisture (US only; 0 for Corsica)"),
-    ("m_live_herb", "live herb moisture (US only; 0 for Corsica)"),
-    ("m_live_woody", "live woody moisture (US only; 0 for Corsica)"),
     ("ignition", "1 inside the initial burning area (point = its one cell), else 0"),
     ("engine", "0 = Corsica classic Rothermel, 1 = Farsite (US); constant plane"),
 ]
@@ -199,12 +197,23 @@ def sample_split(cfg, split, land=None):
             r.update(ign_a_m=0.0, ign_aspect=1.0, ign_orient_deg=0.0)
         r["ign_b_m"] = max(r["ign_a_m"] * r["ign_aspect"], g["dx_m"] / 2) if r["ign_shape"] != "point" else 0.0
         r["wind_shift_t_s"] = r["wind_shift_t_frac"] * g["horizon_s"]   # at the reference horizon
+        if cfg.get("md_below_extinction"):
+            # 1-h moisture as a fraction of the way from the range floor to the extinction moisture
+            # of the fuel at the ignition point (same LHS draw, rescaled): no sample starts in fuel
+            # that Rothermel cannot burn. Spread can still stop in wetter-extinction neighbours.
+            lo, hi = cfg["ranges"]["md"]
+            me = float(land.props["mext"][land.fuel[min(int(x / land.fdx), land.fuel.shape[0] - 1),
+                                                    min(int(y / land.fdx), land.fuel.shape[1] - 1)]])
+            u = (r["md"] - lo) / (hi - lo)
+            r["md"] = lo + u * (min(hi, me) - lo) * float(cfg["md_below_extinction"])
+            r["mext_ignition"] = me
         if extra:   # absolute 10-h / 100-h moistures = 1-h moisture + sampled offsets
             r["md_10h"] = r["md"] + float(extra["md_10h_offset"][i])
             r["md_100h"] = r["md_10h"] + float(extra["md_100h_offset"][i])
-            r["m_live_herb"], r["m_live_woody"] = float(extra["m_live_herb"][i]), float(extra["m_live_woody"][i])
         else:
-            r.update(md_10h=0.0, md_100h=0.0, m_live_herb=0.0, m_live_woody=0.0)
+            r.update(md_10h=0.0, md_100h=0.0)
+        fx_ = cfg.get("fixed", {})   # live moisture: not sampled (ForeFire's Corsica model has no live fuel)
+        r["m_live_herb"], r["m_live_woody"] = float(fx_.get("m_live_herb", 0.0)), float(fx_.get("m_live_woody", 0.0))
         r["engine"] = cfg["landscape"].get("engine", "corsica_native")
         r["fuel_source"] = cfg["landscape"].get("fuel_source", "real")
         rows.append(r)
@@ -247,6 +256,7 @@ def to_scenario(r, cfg, grid=None):
               landscape_nc=_p(cfg, cfg["landscape"]["path"]), crop_cx=r["crop_cx"], crop_cy=r["crop_cy"],
               terrain="landscape", wind_speed=r["wind_speed"], wind_dir_deg=r["wind_dir_deg"],
               wind_shift_deg=r["wind_shift_deg"], wind_shift_t_s=r["wind_shift_t_frac"] * float(g["horizon_s"]),
+              wind_shift_ramp_s=float(cfg.get("wind_shift_ramp_s", 0.0)),
               md=r["md"], ign_x=ix / L, ign_y=iy / L,
               # keys of the Ember-Synth schema that a real landscape does not use (dataset.Writer needs them)
               fuel=0, fuel2=0, fuel_patchiness=0.0, slope_deg=0.0, aspect_deg=0.0)
@@ -307,10 +317,10 @@ def input_tensor(r, fuel, alt, ign, props, dx):
         th = math.radians(d)
         ch[k], ch[k + 1] = r["wind_speed"] * math.sin(th), r["wind_speed"] * math.cos(th)
     ch[13] = r["wind_shift_t_frac"]
-    for c, k in enumerate(("md", "md_10h", "md_100h", "m_live_herb", "m_live_woody")):
+    for c, k in enumerate(("md", "md_10h", "md_100h")):
         ch[14 + c] = float(r.get(k, 0.0))
-    ch[19] = ign
-    ch[20] = ENGINES[r.get("engine", "corsica_native")]
+    ch[17] = ign
+    ch[18] = ENGINES[r.get("engine", "corsica_native")]
     return ch
 
 

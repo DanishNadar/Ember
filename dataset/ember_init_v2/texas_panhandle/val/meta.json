@@ -1,5 +1,5 @@
 {
- "schema_version": 2,
+ "schema_version": 3,
  "split": "val",
  "count": 200,
  "grid": {
@@ -83,14 +83,6 @@
    "dead 100-h moisture (US only; 0 for Corsica)"
   ],
   [
-   "m_live_herb",
-   "live herb moisture (US only; 0 for Corsica)"
-  ],
-  [
-   "m_live_woody",
-   "live woody moisture (US only; 0 for Corsica)"
-  ],
-  [
    "ignition",
    "1 inside the initial burning area (point = its one cell), else 0"
   ],
@@ -135,8 +127,8 @@
     360.0
    ],
    "wind_shift_deg": [
-    -180.0,
-    180.0
+    -60.0,
+    60.0
    ],
    "wind_shift_t_frac": [
     0.0,
@@ -166,7 +158,7 @@
     0.0,
     180.0
    ],
-   "_comment": "md spans the highest S&B extinction moisture (40%). 10-h = 1-h + offset, 100-h = 10-h + offset. Live spans BehavePlus standard scenarios L1-L4.",
+   "_comment": "md spans up to the highest S&B extinction (40%) but is rescaled per sample to stay below the extinction moisture of the ignition fuel (md_below_extinction). 10-h = 1-h + offset, 100-h = 10-h + offset.",
    "md_10h_offset": [
     0.0,
     0.03
@@ -174,20 +166,14 @@
    "md_100h_offset": [
     0.0,
     0.03
-   ],
-   "m_live_herb": [
-    0.3,
-    1.2
-   ],
-   "m_live_woody": [
-    0.6,
-    1.5
    ]
   },
   "us_holdout_site": {
    "_comment": "team decision: which US site is never trained on",
    "site": "arizona"
   },
+  "wind_shift_ramp_s": 1800.0,
+  "_wind_comment": "Wind turns by wind_shift_deg starting at wind_shift_t_frac*horizon, linearly over wind_shift_ramp_s (60 s steps), like a frontal/sea-breeze passage.",
   "group": "us",
   "landscape": {
    "engine": "farsite",
@@ -222,6 +208,12 @@
     "seed": 342,
     "region": "anywhere"
    }
+  },
+  "md_below_extinction": 1.0,
+  "fixed": {
+   "_comment": "live moisture is NOT sampled: ForeFire's Corsica Rothermel ignores live fuel, so it cannot vary in both regions. US runs use ForeFire's own defaults (DataBroker.cpp).",
+   "m_live_herb": 0.7,
+   "m_live_woody": 1.0
   },
   "region": "texas_panhandle",
   "_multi": true
