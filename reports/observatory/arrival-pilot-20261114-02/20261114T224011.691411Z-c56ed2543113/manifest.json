@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "experiment_id": "arrival-pilot-20261114-02",
+  "version": "20261114T224011.691411Z-c56ed2543113",
+  "source_notebook_sha256": "c56ed254311307a5e1f3341d100dbf51906a495d794fa11465d1c809f457005c",
+  "files": [
+    {
+      "path": "Ember_Observatory.executed.ipynb",
+      "bytes": 255014,
+      "sha256": "859b454df5dca208f4c739251c86e2ceb7f794bf8d4a9de4b0f75f82d70d6145"
+    },
+    {
+      "path": "figures/figure_001.png",
+      "bytes": 87877,
+      "sha256": "59a27d786a3f54b417cde05b83a28b408b7360e42517e0e74cc96daf7f16319a"
+    },
+    {
+      "path": "metadata.json",
+      "bytes": 1539,
+      "sha256": "006ac52d227ba543f0d397475756b9d440dd7a5c4b08800efbaecfcfea22d80d"
+    },
+    {
+      "path": "metrics.json",
+      "bytes": 9460,
+      "sha256": "febc0b0ae4ec95c06ddd342b96c73e02aed6bb55bc8fabd44d9e62ebb41fb5c9"
+    },
+    {
+      "path": "outputs_baseline_history.csv",
+      "bytes": 2367,
+      "sha256": "b531ce5fb3153c8583dff091e8db38823ce202e9bb1fc203aea376b29b3dddc6"
+    },
+    {
+      "path": "outputs_initial_history.csv",
+      "bytes": 2360,
+      "sha256": "0f1e7388fde47243feb34f4d79410274b4a4fb7b64d74bb85b4fbef93d690079"
+    },
+    {
+      "path": "outputs_lower_lr_history.csv",
+      "bytes": 2206,
+      "sha256": "7413597cacc34f4169df2908250ceb35c2aed5ea1d761b4afe7bcbecc696a359"
+    },
+    {
+      "path": "README.md",
+      "bytes": 734,
+      "sha256": "eecb3a9daea3a52558cf568c74a2739299e1ab94ec0dadc6c7031082ce13cf2b"
+    },
+    {
+      "path": "report.html",
+      "bytes": 277779,
+      "sha256": "82955889eb803abc6c2e15afff40280584f62cb038e7cc850e9b41d27fbc885c"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "experiment_id": "arrival-pilot-20261114-02",
+  "exported_at_utc": "2026-11-14T22:40:11.691411+00:00",
+  "source_notebook_sha256": "c56ed254311307a5e1f3341d100dbf51906a495d794fa11465d1c809f457005c",
+  "source_notebook_saved_at_utc": "2026-11-14T21:25:24.002625+00:00",
+  "execution_finished_at_utc": null,
+  "execution_time_note": "Saved-file timestamp is not execution time; unknown execution timestamps remain null",
+  "source_git": {
+    "sha": "c5f1a9610fc6754c2099cc0ed60c83324f355466",
+    "branch": "feature/ember-observatory",
+    "dirty": true
+  },
+  "exporter_git": {
+    "sha": "c1313c8c2b91544d86011641c1914ef6e3406d0c",
+    "branch": "integration/ember-observatory-20261114",
+    "dirty": false
+  },
+  "exporter_script_sha256": "90d2363555de52373d59a011cd6b16f2e00e420865857cc37b20b262ba32bd1e",
+  "notebook": {
+    "cells": 18,
+    "code_cells": 9,
+    "executed_cells": 9,
+    "output_types": {
+      "stream": 8,
+      "display_data": 3
+    },
+    "mime_types": {
+      "image/png": 2,
+      "text/plain": 3,
+      "text/html": 1
+    },
+    "output_json_bytes": 238976,
+    "errors": [],
+    "warning_streams": 0
+  },
+  "workflow_ids": [
+    "af697105-7739-4a20-823c-de303491edd9",
+    "be538996-01e2-446f-96a3-c380693f049f"
+  ],
+  "figures": [
+    "figures/figure_001.png"
+  ],
+  "publication": "local preview; explicit approval required",
+  "redactions": "Home paths, private IPs and recognizable credentials removed from text/metadata; inspect images before publication"
+}

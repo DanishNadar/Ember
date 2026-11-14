@@ -1,0 +1,302 @@
+{
+  "experiment_id": "arrival-pilot-20261114-02",
+  "runs": [
+    {
+      "run": "outputs_baseline",
+      "workflow_ids": [
+        "af697105-7739-4a20-823c-de303491edd9"
+      ],
+      "checkpoint_sha256": "1c91d5cd169f40430f698a13464a8686141ff5b90c1c1cff6f75f9b577aee55b",
+      "node": "[private-ip]:7331",
+      "completed_epochs": 30,
+      "best_epoch": 27,
+      "training_wall_seconds": 229.6992779409993,
+      "validation": {
+        "loss": 0.04912877889970938,
+        "iou": 0.32938099389712294,
+        "arrival_mae_seconds_on_reached": 594.6950002609631
+      },
+      "test": {
+        "dataset_kind": "forefire",
+        "split": "test",
+        "loss": 0.023161108916004498,
+        "iou": 0.7587134502923977,
+        "arrival_mae_seconds_on_reached": 236.55314509269542,
+        "evaluation_wall_seconds": 12.753520584999933,
+        "inference_latency": {
+          "batch_size": 1,
+          "warmup_steps": 5,
+          "repeats": 30,
+          "mean_ms": 3.939348433050327,
+          "median_ms": 3.935033000743715,
+          "scope": "resident-input CUDA forward only; excludes preprocessing, transfers and output writing"
+        }
+      },
+      "sample_counts": {
+        "train": 96,
+        "val": 24,
+        "test": 24
+      },
+      "families": {
+        "train": [
+          "region:corsica",
+          "region:greatbasin_nv",
+          "region:norcal_paradise",
+          "region:socal_chaparral"
+        ],
+        "val": [
+          "region:texas_panhandle"
+        ],
+        "test": [
+          "region:montana_timber"
+        ]
+      },
+      "hardware": {
+        "gpu_name": "NVIDIA GB10",
+        "architecture": "aarch64",
+        "torch": "2.15.0a0+875d815502.nv26.10",
+        "cuda": "13.4",
+        "cudnn": 92700,
+        "compute_capability": [
+          12,
+          1
+        ]
+      },
+      "dataset": {
+        "dataset_kind": "forefire",
+        "scope": "bounded pilot, not full 26000-scenario dataset",
+        "source_commit": "3d4c8ffdaae8da49c6c567716b4b62f36b7c5911",
+        "forefire_version": "2.6.0",
+        "grid_size": 320,
+        "cell_size_meters": 40,
+        "horizon_seconds": 3600,
+        "split_policy": "Entire regions are exclusive scenario families; Arizona remains unused",
+        "channel_names": [
+          "burnable",
+          "fuel_depth_m",
+          "dead_load_kg_m2",
+          "live_load_kg_m2",
+          "sav_1_m",
+          "mext",
+          "alt_rel_m",
+          "dzdx",
+          "dzdy",
+          "wind_u0",
+          "wind_v0",
+          "wind_u1",
+          "wind_v1",
+          "shift_t_frac",
+          "md",
+          "md_10h",
+          "md_100h",
+          "ignition",
+          "engine"
+        ]
+      },
+      "source_hashes": {
+        "run_summary": "2e0231cc5e06416fdda5b141f2a5f4b01fed25f7580674fde67ff1212e9426d5",
+        "test_metrics": "f2776033ad65feaab7305babb9fde956d4ac54f1006cd9a1a944241ee7697607",
+        "history_csv": "b531ce5fb3153c8583dff091e8db38823ce202e9bb1fc203aea376b29b3dddc6"
+      }
+    },
+    {
+      "run": "outputs_initial",
+      "workflow_ids": [
+        "be538996-01e2-446f-96a3-c380693f049f"
+      ],
+      "checkpoint_sha256": "28bffee266053a2362105df7454b331451c8a3d5e6289865410883145bb0d6ec",
+      "node": null,
+      "completed_epochs": 30,
+      "best_epoch": 27,
+      "training_wall_seconds": 239.74333569699957,
+      "validation": {
+        "loss": 0.049329945196708046,
+        "iou": 0.32070662682369483,
+        "arrival_mae_seconds_on_reached": 594.8647302957811
+      },
+      "test": {
+        "dataset_kind": "forefire",
+        "split": "test",
+        "loss": 0.023438228759914637,
+        "iou": 0.7434326775827541,
+        "arrival_mae_seconds_on_reached": 234.77628303570273,
+        "evaluation_wall_seconds": 12.755651932999172,
+        "inference_latency": {
+          "batch_size": 1,
+          "warmup_steps": 5,
+          "repeats": 30,
+          "mean_ms": 3.969360500195762,
+          "median_ms": 3.9664225005253684,
+          "scope": "resident-input CUDA forward only; excludes preprocessing, transfers and output writing"
+        }
+      },
+      "sample_counts": {
+        "train": 96,
+        "val": 24,
+        "test": 24
+      },
+      "families": {
+        "train": [
+          "region:corsica",
+          "region:greatbasin_nv",
+          "region:norcal_paradise",
+          "region:socal_chaparral"
+        ],
+        "val": [
+          "region:texas_panhandle"
+        ],
+        "test": [
+          "region:montana_timber"
+        ]
+      },
+      "hardware": {
+        "gpu_name": "NVIDIA GB10",
+        "architecture": "aarch64",
+        "torch": "2.15.0a0+875d815502.nv26.10",
+        "cuda": "13.4",
+        "cudnn": 92700,
+        "compute_capability": [
+          12,
+          1
+        ]
+      },
+      "dataset": {
+        "dataset_kind": "forefire",
+        "scope": "bounded pilot, not full 26000-scenario dataset",
+        "source_commit": "3d4c8ffdaae8da49c6c567716b4b62f36b7c5911",
+        "forefire_version": "2.6.0",
+        "grid_size": 320,
+        "cell_size_meters": 40,
+        "horizon_seconds": 3600,
+        "split_policy": "Entire regions are exclusive scenario families; Arizona remains unused",
+        "channel_names": [
+          "burnable",
+          "fuel_depth_m",
+          "dead_load_kg_m2",
+          "live_load_kg_m2",
+          "sav_1_m",
+          "mext",
+          "alt_rel_m",
+          "dzdx",
+          "dzdy",
+          "wind_u0",
+          "wind_v0",
+          "wind_u1",
+          "wind_v1",
+          "shift_t_frac",
+          "md",
+          "md_10h",
+          "md_100h",
+          "ignition",
+          "engine"
+        ]
+      },
+      "source_hashes": {
+        "run_summary": "da16279c94c20f29333c712d012cd6327a5de7320a20d644f6619cdbc424a37f",
+        "test_metrics": "a39aaad1d0fbca4ee025d926bc3fbb4c8b4a69f4eba01532ad2d910013c240be",
+        "history_csv": "0f1e7388fde47243feb34f4d79410274b4a4fb7b64d74bb85b4fbef93d690079"
+      }
+    },
+    {
+      "run": "outputs_lower_lr",
+      "workflow_ids": [
+        "af697105-7739-4a20-823c-de303491edd9"
+      ],
+      "checkpoint_sha256": "944e3f5213f12ca56cf9642fdd91041e11ed17d583eff51c249fe7966e5d4c77",
+      "node": "[private-ip]:7331",
+      "completed_epochs": 30,
+      "best_epoch": 30,
+      "training_wall_seconds": 232.6306956949993,
+      "validation": {
+        "loss": 0.05012432734171549,
+        "iou": 0.26908127208480564,
+        "arrival_mae_seconds_on_reached": 575.3487436678721
+      },
+      "test": {
+        "dataset_kind": "forefire",
+        "split": "test",
+        "loss": 0.022690654111405213,
+        "iou": 0.6364066753461948,
+        "arrival_mae_seconds_on_reached": 232.6196244996403,
+        "evaluation_wall_seconds": 12.778985945999011,
+        "inference_latency": {
+          "batch_size": 1,
+          "warmup_steps": 5,
+          "repeats": 30,
+          "mean_ms": 3.947434433575836,
+          "median_ms": 3.950786001951201,
+          "scope": "resident-input CUDA forward only; excludes preprocessing, transfers and output writing"
+        }
+      },
+      "sample_counts": {
+        "train": 96,
+        "val": 24,
+        "test": 24
+      },
+      "families": {
+        "train": [
+          "region:corsica",
+          "region:greatbasin_nv",
+          "region:norcal_paradise",
+          "region:socal_chaparral"
+        ],
+        "val": [
+          "region:texas_panhandle"
+        ],
+        "test": [
+          "region:montana_timber"
+        ]
+      },
+      "hardware": {
+        "gpu_name": "NVIDIA GB10",
+        "architecture": "aarch64",
+        "torch": "2.15.0a0+875d815502.nv26.10",
+        "cuda": "13.4",
+        "cudnn": 92700,
+        "compute_capability": [
+          12,
+          1
+        ]
+      },
+      "dataset": {
+        "dataset_kind": "forefire",
+        "scope": "bounded pilot, not full 26000-scenario dataset",
+        "source_commit": "3d4c8ffdaae8da49c6c567716b4b62f36b7c5911",
+        "forefire_version": "2.6.0",
+        "grid_size": 320,
+        "cell_size_meters": 40,
+        "horizon_seconds": 3600,
+        "split_policy": "Entire regions are exclusive scenario families; Arizona remains unused",
+        "channel_names": [
+          "burnable",
+          "fuel_depth_m",
+          "dead_load_kg_m2",
+          "live_load_kg_m2",
+          "sav_1_m",
+          "mext",
+          "alt_rel_m",
+          "dzdx",
+          "dzdy",
+          "wind_u0",
+          "wind_v0",
+          "wind_u1",
+          "wind_v1",
+          "shift_t_frac",
+          "md",
+          "md_10h",
+          "md_100h",
+          "ignition",
+          "engine"
+        ]
+      },
+      "source_hashes": {
+        "run_summary": "bdac757d0495ce12b1a48fd7deffb03137d5e38ebda9ee479e0c5daf02f3c7c6",
+        "test_metrics": "df86f2334bee65352852d5aea51a5aa200d2701da252c6d5e45c81ceb289778f",
+        "history_csv": "7413597cacc34f4169df2908250ceb35c2aed5ea1d761b4afe7bcbecc696a359"
+      }
+    }
+  ],
+  "selection_criterion": "Lowest validation loss; held-out test is reporting only",
+  "selected_run": "outputs_baseline",
+  "scope": "Agreement with ForeFire simulator labels; not observed wildfire accuracy"
+}
