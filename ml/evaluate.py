@@ -79,13 +79,17 @@ def evaluate(cfg, checkpoint_path):
     criterion = SurrogateLoss(cfg)
     total_loss, offset, latency = 0.0, 0, None
     burn_index = cfg["channel_names"].index(cfg["current_burn_channel"])
+
     with torch.inference_mode():
+
         for x, y in loader:
             x, y = x.to(device), y.to(device)
+
             if latency is None:
                 latency = benchmark(model, x, cfg, device)
             logits = model(x)
             loss = criterion(logits, y, x)
+
             if not torch.isfinite(logits).all() or not torch.isfinite(loss):
                 raise ValueError("Evaluation produced nonfinite logits/loss")
             paths = splits["test"][offset:offset + len(x)]

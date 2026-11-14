@@ -1,0 +1,223 @@
+{
+ "schema_version": 3,
+ "split": "val",
+ "count": 200,
+ "grid": {
+  "n": 320,
+  "dx_m": 40.0,
+  "horizon_s": 3600.0
+ },
+ "array_index_order": "[sample, x, y]; x = east, y = north; cell (i,j) centre = ((i+.5)dx, (j+.5)dx) in window metres",
+ "wind_convention": "wind_dir_deg = direction the wind blows TOWARD, 0 = +y (north), 90 = +x (east). Meteorological 'from' = (dir + 180) % 360",
+ "wind_height": "20-ft wind. Corsica: given to ForeFire as is, CORSICA_NATIVE applies windReductionFactor 0.4 inside Rothermel. US/Farsite: sim multiplies by WAF 0.4 and passes mph (Farsite unit bug)",
+ "region": "montana_timber",
+ "engine": "farsite",
+ "fuel_source": "LANDFIRE LF2025 FBFM40 (data_real/us/landfire/montana_timber_LF2025_FBFM40.tif) on AWS Terrain Tiles elevation",
+ "channels": [
+  [
+   "burnable",
+   "1 if the fuel class can burn, else 0"
+  ],
+  [
+   "fuel_depth_m",
+   "fuel bed depth (m)"
+  ],
+  [
+   "dead_load_kg_m2",
+   "dead fuel load (kg/m2): Corsica Sigmad; US 1h+10h+100h"
+  ],
+  [
+   "live_load_kg_m2",
+   "live fuel load (kg/m2): US herb+woody; 0 for Corsica (its Rothermel ignores live fuel)"
+  ],
+  [
+   "sav_1_m",
+   "dead 1-h surface-to-volume ratio (1/m)"
+  ],
+  [
+   "mext",
+   "dead fuel moisture of extinction (ratio)"
+  ],
+  [
+   "alt_rel_m",
+   "altitude above the window minimum (m)"
+  ],
+  [
+   "dzdx",
+   "terrain gradient along +x (east), m/m"
+  ],
+  [
+   "dzdy",
+   "terrain gradient along +y (north), m/m"
+  ],
+  [
+   "wind_u0",
+   "wind toward +x before the shift (m/s)"
+  ],
+  [
+   "wind_v0",
+   "wind toward +y before the shift (m/s)"
+  ],
+  [
+   "wind_u1",
+   "wind toward +x after the shift (m/s)"
+  ],
+  [
+   "wind_v1",
+   "wind toward +y after the shift (m/s)"
+  ],
+  [
+   "shift_t_frac",
+   "time of the shift as a fraction of the horizon (constant plane)"
+  ],
+  [
+   "md",
+   "dead 1-h fuel moisture ratio (constant plane)"
+  ],
+  [
+   "md_10h",
+   "dead 10-h moisture (US only; 0 for Corsica)"
+  ],
+  [
+   "md_100h",
+   "dead 100-h moisture (US only; 0 for Corsica)"
+  ],
+  [
+   "ignition",
+   "1 inside the initial burning area (point = its one cell), else 0"
+  ],
+  [
+   "engine",
+   "0 = Corsica classic Rothermel, 1 = Farsite (US); constant plane"
+  ]
+ ],
+ "continuous_params": [
+  "wind_speed",
+  "wind_dir_deg",
+  "wind_shift_deg",
+  "wind_shift_t_frac",
+  "md",
+  "ign_win_x",
+  "ign_win_y",
+  "ign_a_m",
+  "ign_aspect",
+  "ign_orient_deg"
+ ],
+ "config": {
+  "name": "ember_init_v2",
+  "_comment": "Every range here is a team decision. Defaults span ForeFire's valid ranges or reuse values already in the harness; change them here, never in code. Corsica settings are identical to configs/init_corsica.json, so its rows equal ember_init_v1 apart from the sample_id prefix. US = six LANDFIRE sites (group 'us'); one whole site is held out as unseen terrain (test_ood).",
+  "grid": {
+   "n": 320,
+   "dx_m": 40.0,
+   "horizon_s": 3600.0
+  },
+  "_grid_comment": "Reference grid only. Samples are in absolute landscape metres; the labeller may use any grid.",
+  "max_window_m": 12800.0,
+  "ign_shape_weights": {
+   "point": 1.0,
+   "ellipse": 1.0
+  },
+  "ranges": {
+   "wind_speed": [
+    0.0,
+    20.0
+   ],
+   "wind_dir_deg": [
+    0.0,
+    360.0
+   ],
+   "wind_shift_deg": [
+    -60.0,
+    60.0
+   ],
+   "wind_shift_t_frac": [
+    0.0,
+    1.0
+   ],
+   "md": [
+    0.02,
+    0.4
+   ],
+   "ign_win_x": [
+    0.3,
+    0.7
+   ],
+   "ign_win_y": [
+    0.3,
+    0.7
+   ],
+   "ign_a_m": [
+    40.0,
+    1000.0
+   ],
+   "ign_aspect": [
+    0.05,
+    1.0
+   ],
+   "ign_orient_deg": [
+    0.0,
+    180.0
+   ],
+   "_comment": "md spans up to the highest S&B extinction (40%) but is rescaled per sample to stay below the extinction moisture of the ignition fuel (md_below_extinction). 10-h = 1-h + offset, 100-h = 10-h + offset.",
+   "md_10h_offset": [
+    0.0,
+    0.03
+   ],
+   "md_100h_offset": [
+    0.0,
+    0.03
+   ]
+  },
+  "us_holdout_site": {
+   "_comment": "team decision: which US site is never trained on",
+   "site": "arizona"
+  },
+  "wind_shift_ramp_s": 1800.0,
+  "_wind_comment": "Wind turns by wind_shift_deg starting at wind_shift_t_frac*horizon, linearly over wind_shift_ramp_s (60 s steps), like a frontal/sea-breeze passage.",
+  "group": "us",
+  "landscape": {
+   "engine": "farsite",
+   "path": "data_real/us/montana_timber.npz",
+   "fuel_table": "ember_bench/data/sb40_forefire_std.json",
+   "nonburnable": [
+    0,
+    91,
+    92,
+    93,
+    95,
+    96,
+    97,
+    98,
+    99
+   ],
+   "fuel_source": "LANDFIRE LF2025 FBFM40 (data_real/us/landfire/montana_timber_LF2025_FBFM40.tif) on AWS Terrain Tiles elevation"
+  },
+  "splits": {
+   "train": {
+    "count": 2000,
+    "seed": 350,
+    "region": "anywhere"
+   },
+   "val": {
+    "count": 200,
+    "seed": 351,
+    "region": "anywhere"
+   },
+   "test": {
+    "count": 200,
+    "seed": 352,
+    "region": "anywhere"
+   }
+  },
+  "md_below_extinction": 1.0,
+  "fixed": {
+   "_comment": "live moisture is NOT sampled: ForeFire's Corsica Rothermel ignores live fuel, so it cannot vary in both regions. US runs use ForeFire's own defaults (DataBroker.cpp).",
+   "m_live_herb": 0.7,
+   "m_live_woody": 1.0
+  },
+  "region": "montana_timber",
+  "_multi": true
+ },
+ "ignition_rejection_tries": 396,
+ "built_s": 0.1
+}
