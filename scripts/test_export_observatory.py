@@ -13,6 +13,12 @@ from scripts import export_observatory as exporter
 
 
 class ExportTests(unittest.TestCase):
+    def test_published_receipt_identifies_approved_snapshot(self):
+        receipt = exporter.publication_receipt("a" * 64, "reports/observatory-fixture", "owner/repo")
+        self.assertEqual(receipt["state"], "published")
+        self.assertEqual(receipt["approved_manifest_sha256"], "a" * 64)
+        self.assertEqual(receipt["branch"], "reports/observatory-fixture")
+
     def fixture(self, root):
         directory = root / "notebooks"; directory.mkdir()
         notebook = nbformat.v4.new_notebook(cells=[nbformat.v4.new_code_cell(

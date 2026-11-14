@@ -206,6 +206,18 @@ def export(root, experiment_id=None, notebook=None, output_root=None, allow_erro
                "selection_criterion": "Lowest validation loss; held-out test is reporting only",
                "selected_run": min(runs, key=lambda r: r["validation"]["loss"])["run"] if runs else None,
                "scope": "Agreement with ForeFire simulator labels; not observed wildfire accuracy"}
+    # Runtime checks and held-out galleries are evidence alongside training,
+    # never an input to the validation-only checkpoint selection above.
+    supplemental = {}
+    for base in experiment_roots(root):
+        experiment = base if base.name == experiment_id else base / experiment_id
+        verification = experiment / "runtime_verification.json"
+        if verification.is_file():
+            supplemental["runtime_verification"] = json.loads(verification.read_text(encoding="utf-8"))
+        for file in sorted(experiment.glob("**/gallery_metrics.json")):
+            supplemental.setdefault("prediction_galleries", []).append(
+                json.loads(file.read_text(encoding="utf-8")))
+    metrics.update(supplemental)
     (destination / "metrics.json").write_text(json.dumps(scrub(metrics), indent=2, allow_nan=False), encoding="utf-8")
     timings = [v for c in nb.cells for k, v in c.metadata.get("execution", {}).items() if k.endswith("idle")]
     metadata = {"experiment_id": experiment_id, "exported_at_utc": now.isoformat(),
@@ -215,7 +227,8 @@ def export(root, experiment_id=None, notebook=None, output_root=None, allow_erro
                 "source_git": git_info(source.parent), "exporter_git": git_info(ROOT),
                 "exporter_script_sha256": sha(__file__), "notebook": stats,
                 "workflow_ids": sorted({w for r in runs for w in r["workflow_ids"]}),
-                "figures": sorted(set(figure_names)), "publication": "local preview; explicit approval required",
+                "figures": sorted(set(figure_names)),
+                "publication": "Saved snapshot provenance; publication status is recorded separately in publication.json",
                 "redactions": "Home paths, private IPs and recognizable credentials removed from text/metadata; inspect images before publication"}
     (destination / "metadata.json").write_text(json.dumps(scrub(metadata), indent=2), encoding="utf-8")
     # Basic nbconvert template has no remote JavaScript/CSS dependencies.
@@ -282,6 +295,14 @@ def verify_manifest(path, expected):
     return manifest
 
 
+def publication_receipt(manifest_sha256, branch, repository):
+    """Publication adds a receipt without rewriting approved snapshot bytes."""
+    return {"state": "published", "published_at_utc": datetime.now(timezone.utc).isoformat(),
+            "repository": repository, "branch": branch,
+            "approved_manifest_sha256": manifest_sha256,
+            "scope": "Receipt is shared in the same commit as the approved snapshot"}
+
+
 def publish(root, manifest_path, approved_sha256, branch):
     """Push ONLY a reviewed snapshot using a temporary index; leave main and files alone."""
     if not branch or not branch.startswith("reports/observatory-"):
@@ -319,6 +340,8 @@ def publish(root, manifest_path, approved_sha256, branch):
         if hashlib.sha256(payloads["manifest.json"]).hexdigest() != approved_sha256:
             raise ValueError("Manifest changed after approval")
         payloads["manifest.sha256"] = (approved_sha256 + "  manifest.json\n").encode()
+        payloads["publication.json"] = json.dumps(publication_receipt(
+            approved_sha256, branch, match.group(1)), indent=2).encode()
         for name, data in payloads.items():
             blob = git("hash-object", "-w", "--stdin", data=data).stdout.decode().strip()
             git("update-index", "--add", "--cacheinfo", "100644", blob, (prefix / name).as_posix(), env=env)

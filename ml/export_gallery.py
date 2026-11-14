@@ -5,6 +5,7 @@ is accompanied by sample metadata and per-horizon, held-out overlap metrics.
 """
 import argparse
 import csv
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -62,10 +63,10 @@ def render(sample_path, cfg, model, norm, device, output, horizons):
     from matplotlib.colors import ListedColormap, BoundaryNorm
     palette = ListedColormap(["#151824", "#20aa92", "#f29e4c", "#ee3c65"])
     axs[1, 0].imshow(error.T, origin="lower", cmap=palette, norm=BoundaryNorm(np.arange(-.5, 4.5), 4))
-    axs[1, 0].set_title("Final burn mask: dark=TN, teal=TP, orange=FP, pink=FN")
+    axs[1, 0].set_title("Final burn mask\ndark=TN, teal=TP, orange=FP, pink=FN", fontsize=10)
     abs_error = np.where(hit, np.abs(pred_time - truth_time) / 60, np.nan)
     em = axs[1, 1].imshow(abs_error.T, cmap="magma", origin="lower", vmin=0)
-    axs[1, 1].set_title("Absolute arrival error on true-reached cells (min)")
+    axs[1, 1].set_title("Absolute arrival error\non true-reached cells (min)", fontsize=10)
     fig.colorbar(em, ax=axs[1, 1], fraction=.045)
     measurements = []
     for h in horizons:
@@ -99,13 +100,15 @@ def main():
     p.add_argument("--dataset", type=Path, required=True, help="Root containing test/*.npz")
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--limit", type=int, default=6)
+    p.add_argument("--split", choices=["val", "test"], default="test",
+                   help="Held-out split to visualize; never used for checkpoint selection here")
     p.add_argument("--device", choices=["cpu", "cuda"], default="cuda")
     args = p.parse_args()
     if args.limit <= 0:
         p.error("limit must be positive")
-    paths = sorted((args.dataset / "test").glob("*.npz"))[:args.limit]
+    paths = sorted((args.dataset / args.split).glob("*.npz"))[:args.limit]
     if not paths:
-        raise ValueError("No genuine ForeFire test files found")
+        raise ValueError("No genuine ForeFire files found in " + args.split)
     device = torch.device(args.device)
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("GPU was requested but CUDA is unavailable")
@@ -124,9 +127,12 @@ def main():
     horizons = np.linspace(cfg["horizon_seconds"] / 6, cfg["horizon_seconds"], 6)
     results = [render(file, cfg, model, norm, device, out / (file.stem + ".png"), horizons)
                for file in paths]
+    for file, result in zip(paths, results):
+        result.update(split=args.split, sample_sha256=hashlib.sha256(file.read_bytes()).hexdigest())
     (out / "gallery_metrics.json").write_text(json.dumps(
-        {"kind": "forefire_test_only", "checkpoint": str(args.checkpoint), "cases": results}, indent=2))
-    print(f"Saved {len(results)} genuine test prediction galleries under {out}", flush=True)
+        {"kind": "forefire_held_out", "split": args.split, "checkpoint": str(args.checkpoint),
+         "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(), "cases": results}, indent=2))
+    print(f"Saved {len(results)} genuine {args.split} prediction galleries under {out}", flush=True)
 
 
 if __name__ == "__main__":

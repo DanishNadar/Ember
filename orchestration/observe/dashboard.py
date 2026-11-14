@@ -319,7 +319,7 @@ def fuzzball_log(workflow_id, job, *, cli=None, timeout=45):
     if not workflow_id or not job:
         raise ValueError("Supply an actual workflow ID and job name")
     p = subprocess.run([*cli, "workflow", "log", workflow_id, job],
-                       capture_output=True, text=True, timeout=timeout)
+                       capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
     if p.returncode:
         raise RuntimeError(p.stderr.strip() or p.stdout.strip() or "Fuzzball CLI failed")
     return p.stdout

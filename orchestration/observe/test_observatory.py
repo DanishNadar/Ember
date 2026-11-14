@@ -3,6 +3,7 @@ import json
 import tempfile
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 import matplotlib
 matplotlib.use("Agg")
@@ -17,6 +18,13 @@ from orchestration.observe.build_workflow import make_workflow
 
 
 class ObservatoryContractTests(unittest.TestCase):
+    def test_windows_cli_logs_are_decoded_as_utf8(self):
+        from orchestration.observe.dashboard import fuzzball_log
+        result = type("LogResult", (), {"returncode": 0, "stdout": "ForeFire ✓", "stderr": ""})()
+        with patch("orchestration.observe.dashboard.subprocess.run", return_value=result) as run:
+            self.assertEqual(fuzzball_log("workflow", "physics-0", cli=["fuzzball"]), "ForeFire ✓")
+        self.assertEqual(run.call_args.kwargs["encoding"], "utf-8")
+
     def test_identical_epoch_and_job_names_stay_separate_across_workflows(self):
         events = [{"event": "epoch_finished", "epoch": 1, "job": "baseline",
                    "workflow_id": workflow, "val": {"loss": loss}}
