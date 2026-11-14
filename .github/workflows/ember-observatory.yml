@@ -1,0 +1,37 @@
+name: Ember Observatory checks
+
+on:
+  push:
+    branches: [feature/ember-observatory]
+  pull_request:
+    paths:
+      - 'ml/**'
+      - 'orchestration/observe/**'
+      - 'orchestration/fuzzball/execute_training.py'
+      - 'notebooks/**'
+      - '.github/workflows/ember-observatory.yml'
+
+jobs:
+  offline-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install offline visualization dependencies
+        run: python -m pip install numpy matplotlib PyYAML nbformat
+      - name: Compile Python source
+        run: |
+          python -m compileall -q ml/observability.py ml/train_arrival.py ml/train_arrival_ddp.py ml/export_gallery.py orchestration/observe orchestration/fuzzball/execute_training.py
+      - name: Validate the notebook document
+        run: |
+          python - <<'PY'
+          import nbformat
+          nb = nbformat.read("notebooks/Ember_Observatory.ipynb", as_version=4)
+          nbformat.validate(nb)
+          print("Validated notebook cells:", len(nb.cells))
+          PY
+      - name: Run offline contract tests
+        run: python -m unittest discover -s orchestration/observe -p 'test_observatory.py' -v

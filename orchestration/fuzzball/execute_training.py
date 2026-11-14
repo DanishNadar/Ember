@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT / "ml"))
 from train_arrival import config_from
 from arrival_dataset import load_pair
 from arrival_model import ArrivalUNet
+from observability import emit, resources
 
 
 def hardware():
@@ -121,6 +122,23 @@ def main():
                      inference_latency=latency(checkpoint, cfg))
         (out / "test_metrics.json").write_text(json.dumps(stats, indent=2))
         (out / "evaluation.log").write_text(evaluated.stdout + evaluated.stderr)
+        emit("test_evaluation_finished", echo=True, phase="final_test", metrics=stats, resources=resources())
+        # The extra gallery is an additive artifact. Keep the verified checkpoint
+        # and test results even if image dependencies are unavailable.
+        gallery = out / "gallery"
+        gallery_cmd = [sys.executable, str(ROOT / "ml/export_gallery.py"),
+                       "--checkpoint", str(checkpoint_path),
+                       "--dataset", cfg["data_dir"], "--output", str(gallery),
+                       "--limit", "6", "--device", "cuda"]
+        gallery_run = subprocess.run(gallery_cmd, cwd=ROOT / "ml",
+                                     capture_output=True, text=True)
+        (out / "gallery.log").write_text(gallery_run.stdout + gallery_run.stderr)
+        if gallery_run.returncode == 0:
+            emit("gallery_exported", echo=True, phase="final_test",
+                 image_count=len(list(gallery.glob("*.png"))))
+        else:
+            emit("gallery_failed", echo=True, phase="final_test",
+                 error=gallery_run.stderr[-1000:], returncode=gallery_run.returncode)
         print("EVALUATION_COMPLETED " + json.dumps(stats), flush=True)
 
 
