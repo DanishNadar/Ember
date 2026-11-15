@@ -10,6 +10,7 @@ second GPU experiment is independent hyperparameter training, NOT DDP.
 import argparse
 from pathlib import Path
 import re
+import shlex
 
 import yaml
 
@@ -82,6 +83,9 @@ def make_workflow(training_uri, physics_uri, result_prefix, *, workers=16, per_r
             "resource": {"cpu": {"cores": 4}, "memory": {"size": "16GiB"},
                          "devices": {"nvidia.com/gpu": 1}},
             "script": gpu_script(config, job_name)}
+    for job in jobs.values():
+        job["script"] = job["script"].replace("set -euo pipefail\n", "set -euo pipefail\nexport EMBER_EXPERIMENT_ID="
+                                            + shlex.quote(result_prefix) + "\n", 1)
     # Deliberately no depends-on: independent CPU and GPU jobs overlap when scheduled.
     return {"version": "v4", "volumes": volumes, "jobs": jobs}
 

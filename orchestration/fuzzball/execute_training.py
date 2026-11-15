@@ -115,6 +115,8 @@ def main():
         command = [sys.executable, str(ROOT / "ml/train_arrival.py"), "evaluate", "--config", str(args.config),
                    "--checkpoint", str(checkpoint_path)]
         t0 = time.perf_counter()
+        emit("test_evaluation_started", echo=True, phase="test_pipeline",
+             scope="Original test CLI plus resident-input inference benchmark")
         evaluated = subprocess.run(command, cwd=ROOT / "ml", text=True, capture_output=True, check=True)
         stats = json.loads(evaluated.stdout)
         checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
@@ -122,7 +124,7 @@ def main():
                      inference_latency=latency(checkpoint, cfg))
         (out / "test_metrics.json").write_text(json.dumps(stats, indent=2))
         (out / "evaluation.log").write_text(evaluated.stdout + evaluated.stderr)
-        emit("test_evaluation_finished", echo=True, phase="final_test", metrics=stats, resources=resources())
+        emit("test_evaluation_finished", echo=True, phase="test_pipeline", metrics=stats, resources=resources())
         # The extra gallery is an additive artifact. Keep the verified checkpoint
         # and test results even if image dependencies are unavailable.
         gallery = out / "gallery"

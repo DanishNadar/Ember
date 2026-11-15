@@ -17,7 +17,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader, DistributedSampler, Subset
 
-from arrival_dataset import ArrivalDataset, discover, fit_normalization
+from arrival_dataset import ArrivalDataset, discover, fit_normalization, split_manifest, validate_checkpoint_contract
 from arrival_model import ArrivalUNet, masked_arrival_loss
 from observability import emit, resources
 from train_arrival import config_from
@@ -91,7 +91,10 @@ def main():
         np.random.seed(seed)
         random.seed(seed)
         paths = discover(cfg)
-        norm = fit_normalization(paths["train"], cfg) if rank == 0 else None
+        checkpoint = torch.load(args.resume, map_location="cpu", weights_only=False) if args.resume else None
+        if checkpoint is not None:
+            validate_checkpoint_contract(checkpoint, cfg, paths, args.resume)
+        norm = (checkpoint["normalization"] if checkpoint is not None else fit_normalization(paths["train"], cfg)) if rank == 0 else None
         obj = [norm]
         dist.broadcast_object_list(obj, src=0)
         norm = obj[0]
@@ -109,9 +112,6 @@ def main():
                                 shuffle=False, num_workers=cfg["num_workers"])
         core = ArrivalUNet(len(cfg["channel_names"]), cfg["base_filters"], cfg["depth"], cfg["dropout"]).to(device)
         if args.resume:
-            checkpoint = torch.load(args.resume, map_location="cpu", weights_only=False)
-            if checkpoint["config"]["channel_names"] != cfg["channel_names"]:
-                raise ValueError("Pretrained checkpoint channels differ")
             core.load_state_dict(checkpoint["model_state_dict"])
         model = DDP(core, device_ids=[local_rank])
         optimizer = torch.optim.Adam(model.parameters(), lr=cfg["learning_rate"],
@@ -140,7 +140,7 @@ def main():
                 train = compute(model, train_loader, cfg, device, optimizer)
                 train_seconds = time.perf_counter() - t0
                 t1 = time.perf_counter()
-                val = compute(model, val_loader, cfg, device)
+                val = compute(core, val_loader, cfg, device)
                 val_seconds = time.perf_counter() - t1
                 if rank == 0:
                     writer.writerow({"epoch": epoch, **{"train_" + k: v for k, v in train.items()},
@@ -155,6 +155,7 @@ def main():
                         best = val["loss"]
                         torch.save({"model_state_dict": model.module.state_dict(),
                                     "config": cfg, "normalization": norm, "epoch": epoch,
+                                    "split_manifest": split_manifest(paths),
                                     "validation": val, "model_kind": "direct_arrival_two_head",
                                     "training_mode": "ddp", "world_size": world},
                                    out / "best.pt")

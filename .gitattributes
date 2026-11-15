@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.csv -text whitespace=cr-at-eol
+*.png binary
+*.jpg binary
+*.tif binary
+*.npz binary
+*.npy binary
+*.nc binary
+*.tgz binary
+*.pt binary

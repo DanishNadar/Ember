@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import socket
 import subprocess
+import math
 from datetime import datetime, timezone
 
 
@@ -21,12 +22,14 @@ def utc_now():
 def resources():
     """A point-in-time snapshot, NOT average CPU/GPU utilization."""
     info = {"host": socket.gethostname(), "pid": os.getpid(),
-            "cpu_allocated": len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else os.cpu_count()}
+            "host_logical_cpus": os.cpu_count(),
+            "cpu_allocated": len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None}
     try:
         import psutil
         proc = psutil.Process()
         info.update(process_rss_mb=round(proc.memory_info().rss / 1048576, 2),
-                    host_cpu_percent_snapshot=psutil.cpu_percent(interval=None),
+                    host_cpu_percent_snapshot=psutil.cpu_percent(interval=0.1),
+                    cpu_sample_interval_seconds=0.1,
                     host_memory_percent_snapshot=psutil.virtual_memory().percent)
     except (ImportError, OSError):
         pass
@@ -36,9 +39,14 @@ def resources():
              "--format=csv,noheader,nounits"], capture_output=True, text=True, timeout=3)
         if p.returncode == 0 and p.stdout.strip():
             vals = [v.strip() for v in p.stdout.splitlines()[0].split(",")]
-            info.update(gpu_utilization_percent_snapshot=float(vals[0]),
-                        gpu_memory_used_mib_snapshot=float(vals[1]),
-                        gpu_memory_total_mib=float(vals[2]))
+            for key, value in zip(("gpu_utilization_percent_snapshot", "gpu_memory_used_mib_snapshot",
+                                   "gpu_memory_total_mib"), vals):
+                try:
+                    number = float(value)
+                    if math.isfinite(number) and number >= 0:
+                        info[key] = number
+                except ValueError:
+                    pass  # GB10 may report N/A for memory while utilization is valid.
     except (OSError, ValueError, subprocess.TimeoutExpired):
         pass
     return info
@@ -47,7 +55,8 @@ def resources():
 def emit(event, *, path=None, echo=True, **data):
     record = {"event": event, "timestamp_utc": utc_now(),
               "job": os.environ.get("EMBER_JOB", "unknown"),
-              "workflow_id": os.environ.get("EMBER_WORKFLOW_ID"),
+              "workflow_id": os.environ.get("EMBER_WORKFLOW_ID") or os.environ.get("FUZZBALL_WORKFLOW_ID"),
+              "experiment_id": os.environ.get("EMBER_EXPERIMENT_ID"),
               **data}
     line = json.dumps(record, allow_nan=False, separators=(",", ":"), default=str)
     if path is not None:
