@@ -1,6 +1,6 @@
 # Project Ember — Presentation Script
 
-Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 3:55 for 9 scenes; questions in Explore mode (`E`).
+Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 3:10 for 8 scenes; questions in Explore mode (`E`).
 Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds · `N` notes · `P` presenter.
 
 ## 01 · The Spark (~15 s)
@@ -74,20 +74,9 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 
 **Do:** None; bars animate in.
 **Evidence:** Earlier held-out evaluation on 180 ForeFire test simulations (separate from runs 1–4).
-**Transition:** “Getting the system to scale was the hard part.”
-
-## 08 · What Broke and How We Fixed It (~45 s)
-**Message:** Most of our time went into making physics and AI run together on real hardware. Four problems stood out.
-- We couldn't reach the Fuzzball cluster off-site, so we built and proved each stage in small test runs first and staged the Fuzzball workflow for the on-site GB10 nodes.
-- ForeFire and PyTorch lived in incompatible Python environments, so we built a launcher that gives each its own runtime on the same node.
-- Our first full two-node run failed: the merge step rejected a duplicate label. That's the validator doing its job. We fixed the shard assignment, kept the strict check, and the next run passed.
-- A shared storage mount refused permission, so we moved to node-local scratch with hash-checked handoffs.
-
-**Do:** The four test runs appear left to right, failure included, then the four fixes.
-**Evidence:** Runs 1–4 on Nov 15; run 3 failed at the merge step.
 **Transition:** “So where does that leave us?”
 
-## 09 · The Next Frontier (~25 s)
+## 08 · The Next Frontier (~25 s)
 **Message:** We didn't replace physics. We made it reusable.
 - Read the checkmarks: only evidenced contributions are marked complete.
 - Point at 'Built with': Fuzzball, CIQ, NVIDIA, Lenovo and VAST, the hackathon stack we built on.
