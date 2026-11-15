@@ -1,0 +1,94 @@
+version: v4
+
+# First two independent CPU label shards of the fixed regional research split.
+# They use no GPU.  A completed shard is immutable: records are written and
+# individually contract-checked before complete.json is written last.
+volumes:
+  corsica-train-input:
+    ingress:
+      - source:
+          uri: fb://user/ember/publications/ember_init_v2.1_source.tar.gz
+        destination:
+          uri: file://source.tar.gz
+      - source:
+          uri: fb://user/ember/publications/parallel_surrogate_training-forefire_research_v3.tar.gz
+        destination:
+          uri: file://code.tar.gz
+    egress:
+      - source:
+          uri: file://corsica_train.tar.gz
+        destination:
+          uri: fb://user/ember/research/forefire_research_v1/shards/corsica_train.tar.gz
+    size: 20GiB
+    use: team15-scratch
+  socal-train-input:
+    ingress:
+      - source:
+          uri: fb://user/ember/publications/ember_init_v2.1_source.tar.gz
+        destination:
+          uri: file://source.tar.gz
+      - source:
+          uri: fb://user/ember/publications/parallel_surrogate_training-forefire_research_v3.tar.gz
+        destination:
+          uri: file://code.tar.gz
+    egress:
+      - source:
+          uri: file://socal_train.tar.gz
+        destination:
+          uri: fb://user/ember/research/forefire_research_v1/shards/socal_train.tar.gz
+    size: 6GiB
+    use: team15-scratch
+
+jobs:
+  label-corsica-train:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+    mounts:
+      /work:
+        volume: corsica-train-input
+    resource:
+      cpu:
+        cores: 8
+      memory:
+        size: 16GiB
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+      export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+      mkdir -p /work/source /work/code /work/output
+      tar -xzf /work/source.tar.gz -C /work/source
+      tar -xzf /work/code.tar.gz -C /work/code
+      python3 -m pip install --no-cache-dir forefire==2.6.0 netCDF4==1.7.4
+      PYTHONPATH=/work/source/dataset timeout 4h python3 /work/code/experiments/parallel_surrogate_training/generate_forefire_shard.py \
+        --output /work/output/corsica_train --source-root /work/source/dataset/ember_init_v2 \
+        --source corsica/train --split train --workers 8 --dataset-version forefire_research_v1 \
+        --source-bundle-sha256 0b94adea5f450a7cb4b9b6b3198a66b0f6fab6424107b689a5c13b5e2474e5cd \
+        --code-bundle-sha256 5289e0aced304abe719844a28bea74f00e7b737b666ed1105b48bd3e6bb86016
+      test -s /work/output/corsica_train/complete.json
+      tar -czf /work/corsica_train.tar.gz -C /work/output corsica_train
+  label-socal-train:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+    mounts:
+      /work:
+        volume: socal-train-input
+    resource:
+      cpu:
+        cores: 8
+      memory:
+        size: 8GiB
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+      export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+      mkdir -p /work/source /work/code /work/output
+      tar -xzf /work/source.tar.gz -C /work/source
+      tar -xzf /work/code.tar.gz -C /work/code
+      python3 -m pip install --no-cache-dir forefire==2.6.0 netCDF4==1.7.4
+      PYTHONPATH=/work/source/dataset timeout 90m python3 /work/code/experiments/parallel_surrogate_training/generate_forefire_shard.py \
+        --output /work/output/socal_train --source-root /work/source/dataset/ember_init_v2 \
+        --source socal_chaparral/train --split train --workers 8 --dataset-version forefire_research_v1 \
+        --source-bundle-sha256 0b94adea5f450a7cb4b9b6b3198a66b0f6fab6424107b689a5c13b5e2474e5cd \
+        --code-bundle-sha256 5289e0aced304abe719844a28bea74f00e7b737b666ed1105b48bd3e6bb86016
+      test -s /work/output/socal_train/complete.json
+      tar -czf /work/socal_train.tar.gz -C /work/output socal_train

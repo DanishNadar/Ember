@@ -1,0 +1,45 @@
+version: v4
+
+# CPU-only preparation of a frozen candidate bundle for forefire_demo_v2.
+# Training is deliberately not part of this workflow.
+volumes:
+  prepare-input:
+    ingress:
+      - source:
+          uri: fb://user/ember/publications/forefire_demo_v2.tar.gz
+        destination:
+          uri: file://forefire_demo_v2.tar.gz
+      - source:
+          uri: fb://user/ember/publications/parallel_surrogate_training-forefire_demo_v2.tar.gz
+        destination:
+          uri: file://parallel_surrogate_training-forefire_demo_v2.tar.gz
+    egress:
+      - source:
+          uri: file://forefire_demo_v2_experiment_configs.tar.gz
+        destination:
+          uri: fb://user/ember/publications/forefire_demo_v2_experiment_configs.tar.gz
+    size: 2GiB
+    use: team15-scratch
+
+jobs:
+  freeze-candidates:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+    mounts:
+      /work:
+        volume: prepare-input
+    resource:
+      cpu:
+        cores: 2
+      memory:
+        size: 4GiB
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+      mkdir -p /work/dataset /work/code
+      tar -xzf /work/forefire_demo_v2.tar.gz -C /work/dataset
+      tar -xzf /work/parallel_surrogate_training-forefire_demo_v2.tar.gz -C /work/code
+      python3 /work/code/parallel_surrogate_training/prepare_configs.py \
+        --data /work/dataset/forefire_demo_v2/ready \
+        --output /work/forefire_demo_v2_experiment
+      tar -czf /work/forefire_demo_v2_experiment_configs.tar.gz -C /work forefire_demo_v2_experiment

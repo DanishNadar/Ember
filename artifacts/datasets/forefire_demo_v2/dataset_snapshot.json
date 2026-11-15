@@ -1,0 +1,247 @@
+{
+  "config": {
+    "path": "/mnt/c/Users/Danis/Documents/Development/Ember/experiments/parallel_surrogate_training/config.json",
+    "sha256": "d8472d22e884fae448905916cf5d3526b0679a0887cb68cabff5b4468ca26e0f"
+  },
+  "created_at_utc": "2026-11-14T22:47:49.555760+00:00",
+  "dataset_version": "forefire_demo_v2",
+  "forefire_version": "2.6.0",
+  "frozen_snapshot": {
+    "test": [
+      {
+        "file": "test-000-montana_timber-test-000000.npz",
+        "metadata": {
+          "array_order": "CXY",
+          "arrival_units": "seconds",
+          "cell_size_meters": 40,
+          "channel_names": [
+            "burnable",
+            "fuel_depth_m",
+            "dead_load_kg_m2",
+            "live_load_kg_m2",
+            "sav_1_m",
+            "mext",
+            "alt_rel_m",
+            "dzdx",
+            "dzdy",
+            "wind_u0",
+            "wind_v0",
+            "wind_u1",
+            "wind_v1",
+            "shift_t_frac",
+            "md",
+            "md_10h",
+            "md_100h",
+            "ignition",
+            "engine"
+          ],
+          "dataset_kind": "forefire",
+          "edge_hit": false,
+          "engine_version": "ForeFire 2.6.0; model=Farsite",
+          "forefire_timing_seconds": {
+            "t_extract": 0.0015825669997866498,
+            "t_import": 3.169000137859257e-06,
+            "t_setup": 0.11462840300009702,
+            "t_sim": 0.00024329699999725563,
+            "t_total": 0.11645743600001879
+          },
+          "horizon_seconds": 3600,
+          "region": "montana_timber",
+          "sample_id": "montana_timber-test-000000",
+          "scenario_family_id": "region:montana_timber",
+          "simulation_id": "montana_timber-test-000000",
+          "source_engine": "farsite",
+          "source_hashes": {
+            "landscape": "a54fdd705c8a536de9698d8f2483f50337b1719be98e33f10d042c55e8e4fc7b",
+            "meta_json": "a83ad8431669d4f314a564544e5a76b562c1b40566675b1e64c799b9acf2be12",
+            "samples_csv": "957a005cf7c8af77b7236850c3cfe3013ba3f30319a163bfba1f6163dbfe7955"
+          },
+          "source_landscape": "/mnt/c/Users/Danis/Documents/Development/Ember/dataset/data_real/us/montana_timber.npz",
+          "source_split": "montana_timber/test",
+          "split": "test"
+        },
+        "sha256": "b7be5093a189be97465a270ee583e2263fb0115f6f0b3b18680d98aa82d4edfb"
+      }
+    ],
+    "train": [
+      {
+        "file": "train-000-corsica-train-000000.npz",
+        "metadata": {
+          "array_order": "CXY",
+          "arrival_units": "seconds",
+          "cell_size_meters": 40,
+          "channel_names": [
+            "burnable",
+            "fuel_depth_m",
+            "dead_load_kg_m2",
+            "live_load_kg_m2",
+            "sav_1_m",
+            "mext",
+            "alt_rel_m",
+            "dzdx",
+            "dzdy",
+            "wind_u0",
+            "wind_v0",
+            "wind_u1",
+            "wind_v1",
+            "shift_t_frac",
+            "md",
+            "md_10h",
+            "md_100h",
+            "ignition",
+            "engine"
+          ],
+          "dataset_kind": "forefire",
+          "edge_hit": false,
+          "engine_version": "ForeFire 2.6.0; model=Rothermel",
+          "forefire_timing_seconds": {
+            "t_extract": 0.0014408299998649454,
+            "t_import": 4.103999799554003e-06,
+            "t_setup": 0.5011847140003738,
+            "t_sim": 0.02304822999985845,
+            "t_total": 0.5256778779998967
+          },
+          "horizon_seconds": 3600,
+          "region": "corsica",
+          "sample_id": "corsica-train-000000",
+          "scenario_family_id": "region:corsica",
+          "simulation_id": "corsica-train-000000",
+          "source_engine": "corsica_native",
+          "source_hashes": {
+            "landscape": "a6c756c4dfeb1f1a5838b1cfdc2ee130d300aa5d09d0a73475e8d30cd73490fb",
+            "meta_json": "3860c0bebb46a7002067cdc642825cb10289a269d1d1d0f7e63c29e09a65170b",
+            "samples_csv": "7547de15a4232689af0c62f1ca6d96d503dabee039b0b156575919fe82a424a6"
+          },
+          "source_landscape": "/mnt/c/Users/Danis/Documents/Development/Ember/dataset/data_real/aullene/data.nc",
+          "source_split": "corsica/train",
+          "split": "train"
+        },
+        "sha256": "5a49546766f4fa69f5f53e1e6632ec56656a25ed5a9608961ddc964d2eb17084"
+      }
+    ],
+    "val": [
+      {
+        "file": "val-000-texas_panhandle-val-000000.npz",
+        "metadata": {
+          "array_order": "CXY",
+          "arrival_units": "seconds",
+          "cell_size_meters": 40,
+          "channel_names": [
+            "burnable",
+            "fuel_depth_m",
+            "dead_load_kg_m2",
+            "live_load_kg_m2",
+            "sav_1_m",
+            "mext",
+            "alt_rel_m",
+            "dzdx",
+            "dzdy",
+            "wind_u0",
+            "wind_v0",
+            "wind_u1",
+            "wind_v1",
+            "shift_t_frac",
+            "md",
+            "md_10h",
+            "md_100h",
+            "ignition",
+            "engine"
+          ],
+          "dataset_kind": "forefire",
+          "edge_hit": false,
+          "engine_version": "ForeFire 2.6.0; model=Farsite",
+          "forefire_timing_seconds": {
+            "t_extract": 0.0019995739999103535,
+            "t_import": 4.060000264871633e-06,
+            "t_setup": 0.11666098699970462,
+            "t_sim": 0.0001115110003411246,
+            "t_total": 0.11877613200022097
+          },
+          "horizon_seconds": 3600,
+          "region": "texas_panhandle",
+          "sample_id": "texas_panhandle-val-000000",
+          "scenario_family_id": "region:texas_panhandle",
+          "simulation_id": "texas_panhandle-val-000000",
+          "source_engine": "farsite",
+          "source_hashes": {
+            "landscape": "20de6d1633aad4b88510f8875fde116f938abea0686e2ea924baab6da6a77a70",
+            "meta_json": "8c3118f157aa17d61b00e81836ec6d8abcf67386b030791b92e4096df8a8352c",
+            "samples_csv": "bd12f0d850eea0c258bd17551a2a16500f28c7351ecfa8e77a591da175b4faa6"
+          },
+          "source_landscape": "/mnt/c/Users/Danis/Documents/Development/Ember/dataset/data_real/us/texas_panhandle.npz",
+          "source_split": "texas_panhandle/val",
+          "split": "val"
+        },
+        "sha256": "eb1ae216349efb41c67796b20cffb99fab8813bc03ad089f1fa98c29f357974d"
+      }
+    ]
+  },
+  "generator": "experiments/parallel_surrogate_training/generate_demo_dataset.py",
+  "platform": "Linux-6.18.26.1-microsoft-standard-WSL2-aarch64-with-glibc2.43",
+  "published_manifest": {
+    "entries": [
+      {
+        "file": "test-000-montana_timber-test-000000.npz",
+        "sha256": "b7be5093a189be97465a270ee583e2263fb0115f6f0b3b18680d98aa82d4edfb",
+        "split": "test"
+      },
+      {
+        "file": "train-000-corsica-train-000000.npz",
+        "sha256": "5a49546766f4fa69f5f53e1e6632ec56656a25ed5a9608961ddc964d2eb17084",
+        "split": "train"
+      },
+      {
+        "file": "val-000-texas_panhandle-val-000000.npz",
+        "sha256": "eb1ae216349efb41c67796b20cffb99fab8813bc03ad089f1fa98c29f357974d",
+        "split": "val"
+      }
+    ],
+    "path": "ready/batch_000/complete.json",
+    "sha256": "6c082eff3691adabc24bdd20a9afcb516cc3537e63e1e7ae67d4b5eb918374d5"
+  },
+  "python": "3.14.4 (main, Jun 18 2026, 14:25:02) [GCC 15.2.0]",
+  "rejected": [],
+  "repository_commit": "241fa5546b053975c4b771240d02214627c2be85",
+  "selected": [
+    {
+      "file": "train-000-corsica-train-000000.npz",
+      "sample_id": "corsica-train-000000",
+      "source_hashes": {
+        "landscape": "a6c756c4dfeb1f1a5838b1cfdc2ee130d300aa5d09d0a73475e8d30cd73490fb",
+        "meta_json": "3860c0bebb46a7002067cdc642825cb10289a269d1d1d0f7e63c29e09a65170b",
+        "samples_csv": "7547de15a4232689af0c62f1ca6d96d503dabee039b0b156575919fe82a424a6"
+      },
+      "source_split": "corsica/train",
+      "split": "train"
+    },
+    {
+      "file": "val-000-texas_panhandle-val-000000.npz",
+      "sample_id": "texas_panhandle-val-000000",
+      "source_hashes": {
+        "landscape": "20de6d1633aad4b88510f8875fde116f938abea0686e2ea924baab6da6a77a70",
+        "meta_json": "8c3118f157aa17d61b00e81836ec6d8abcf67386b030791b92e4096df8a8352c",
+        "samples_csv": "bd12f0d850eea0c258bd17551a2a16500f28c7351ecfa8e77a591da175b4faa6"
+      },
+      "source_split": "texas_panhandle/val",
+      "split": "val"
+    },
+    {
+      "file": "test-000-montana_timber-test-000000.npz",
+      "sample_id": "montana_timber-test-000000",
+      "source_hashes": {
+        "landscape": "a54fdd705c8a536de9698d8f2483f50337b1719be98e33f10d042c55e8e4fc7b",
+        "meta_json": "a83ad8431669d4f314a564544e5a76b562c1b40566675b1e64c799b9acf2be12",
+        "samples_csv": "957a005cf7c8af77b7236850c3cfe3013ba3f30319a163bfba1f6163dbfe7955"
+      },
+      "source_split": "montana_timber/test",
+      "split": "test"
+    }
+  ],
+  "source_root": "/mnt/c/Users/Danis/Documents/Development/Ember/dataset/ember_init_v2",
+  "sources": {
+    "test": "montana_timber/test",
+    "train": "corsica/train",
+    "val": "texas_panhandle/val"
+  },
+  "status": "complete"
+}

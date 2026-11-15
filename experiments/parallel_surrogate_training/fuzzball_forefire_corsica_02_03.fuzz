@@ -1,0 +1,61 @@
+version: v4
+
+# The remaining two disjoint Corsica/train source ranges.  Submit only after
+# 00/01 complete so that the two-node CPU allocation remains bounded.
+volumes:
+  corsica-5000:
+    ingress:
+      - source: {uri: fb://user/ember/publications/ember_init_v2.1_source.tar.gz}
+        destination: {uri: file://source.tar.gz}
+      - source: {uri: fb://user/ember/publications/parallel_surrogate_training-forefire_research_v4.tar.gz}
+        destination: {uri: file://code.tar.gz}
+    egress:
+      - source: {uri: file://corsica_train_5000_7500.tar}
+        destination: {uri: fb://user/ember/research/forefire_research_v1/shards/corsica_train_5000_7500.tar}
+    size: 8GiB
+    use: team15-scratch
+  corsica-7500:
+    ingress:
+      - source: {uri: fb://user/ember/publications/ember_init_v2.1_source.tar.gz}
+        destination: {uri: file://source.tar.gz}
+      - source: {uri: fb://user/ember/publications/parallel_surrogate_training-forefire_research_v4.tar.gz}
+        destination: {uri: file://code.tar.gz}
+    egress:
+      - source: {uri: file://corsica_train_7500_10000.tar}
+        destination: {uri: fb://user/ember/research/forefire_research_v1/shards/corsica_train_7500_10000.tar}
+    size: 8GiB
+    use: team15-scratch
+
+jobs:
+  label-corsica-5000:
+    image: {uri: docker://nvcr.io/nvidia/pytorch:26.10-py3}
+    mounts: {/work: {volume: corsica-5000}}
+    resource: {cpu: {cores: 8}, memory: {size: 16GiB}}
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+      export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+      mkdir -p /work/source /work/code /work/output
+      tar -xzf /work/source.tar.gz -C /work/source; tar -xzf /work/code.tar.gz -C /work/code
+      python3 -m pip install --no-cache-dir forefire==2.6.0 netCDF4==1.7.4
+      PYTHONPATH=/work/source/dataset timeout 2h python3 /work/code/experiments/parallel_surrogate_training/generate_forefire_shard.py \
+        --output /work/output/corsica_train_5000_7500 --source-root /work/source/dataset/ember_init_v2 --source corsica/train --split train --workers 8 --start-index 5000 --max-samples 2500 --dataset-version forefire_research_v1 \
+        --source-bundle-sha256 0b94adea5f450a7cb4b9b6b3198a66b0f6fab6424107b689a5c13b5e2474e5cd --code-bundle-sha256 9c5f44a5b24aa4c719a0a350591a40835cc8090783fe68c6aaf98be64c5d9fce
+      test -s /work/output/corsica_train_5000_7500/complete.json
+      tar -cf /work/corsica_train_5000_7500.tar -C /work/output corsica_train_5000_7500
+  label-corsica-7500:
+    image: {uri: docker://nvcr.io/nvidia/pytorch:26.10-py3}
+    mounts: {/work: {volume: corsica-7500}}
+    resource: {cpu: {cores: 8}, memory: {size: 16GiB}}
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+      export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+      mkdir -p /work/source /work/code /work/output
+      tar -xzf /work/source.tar.gz -C /work/source; tar -xzf /work/code.tar.gz -C /work/code
+      python3 -m pip install --no-cache-dir forefire==2.6.0 netCDF4==1.7.4
+      PYTHONPATH=/work/source/dataset timeout 2h python3 /work/code/experiments/parallel_surrogate_training/generate_forefire_shard.py \
+        --output /work/output/corsica_train_7500_10000 --source-root /work/source/dataset/ember_init_v2 --source corsica/train --split train --workers 8 --start-index 7500 --max-samples 2500 --dataset-version forefire_research_v1 \
+        --source-bundle-sha256 0b94adea5f450a7cb4b9b6b3198a66b0f6fab6424107b689a5c13b5e2474e5cd --code-bundle-sha256 9c5f44a5b24aa4c719a0a350591a40835cc8090783fe68c6aaf98be64c5d9fce
+      test -s /work/output/corsica_train_7500_10000/complete.json
+      tar -cf /work/corsica_train_7500_10000.tar -C /work/output corsica_train_7500_10000

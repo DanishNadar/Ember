@@ -82,7 +82,7 @@
     ],
     "interaction": "Press → to explode the snapshot into channels, then again to show the dataset split.",
     "evidence": "Split counts come from data/manifest.json. Thumbnails are illustrative unless real samples are ingested.",
-    "transition": "Now the model learns from those pairs."
+    "transition": "A neural surrogate learns from those pairs, and Fuzzball runs the whole experiment."
   },
   "neuralSurrogate": {
     "durationSeconds": 25,
@@ -145,7 +145,7 @@
     ],
     "interaction": "Point at each of the three cards in turn. Any card without measurements shows 'Awaiting'.",
     "evidence": "Each card cites snapshot.benchmarks.source. Speedups are computed only when both measurements exist.",
-    "transition": "Faster evaluation changes which questions we can afford to ask."
+    "transition": "So here's how Ember measures up."
   },
   "computeUnlocks": {
     "durationSeconds": 25,
@@ -212,5 +212,68 @@
     "interaction": "Sweep left to right across the four columns. A green check means an ingested artifact backs it.",
     "evidence": "Criteria text is quoted from the organizers' deck (pp. 3, 5). Checks are derived from the snapshot, never typed in.",
     "transition": "So here's where Ember goes next."
+  },
+  "idea": {
+    "durationSeconds": 25,
+    "main": "Let physics teach, let AI learn: a simulator makes labeled examples, a neural surrogate learns from them.",
+    "talkingPoints": [
+      "ForeFire is a real fire-spread physics simulator. It is accurate, but each run answers one 'what if' and costs CPU time.",
+      "Each run becomes a labeled example: conditions in, where and when the fire arrives out.",
+      "A U-Net learns that mapping on the GPU, so new scenarios can be answered in one forward pass. And we run simulation and training at the same time across two nodes."
+    ],
+    "interaction": "The three stages and the loop build in on their own.",
+    "evidence": "Concept diagram.",
+    "transition": "So what did we actually feed it?"
+  },
+  "data": {
+    "durationSeconds": 30,
+    "main": "Real ForeFire simulations on real terrain, with a strict held-out test set.",
+    "talkingPoints": [
+      "We prepared about 26,000 candidate conditions and kept 2,880 completed ForeFire simulations: 2,400 train, 300 validation, 180 test.",
+      "Each sample is a 320 by 320 grid of 40-meter cells, about 13 km square, with 19 input channels: fuel, moisture, slope, wind including a mid-run shift, and the ignition.",
+      "The model predicts two things over 60 minutes: which cells burn and when the fire arrives. The test set is never used to train or pick the model."
+    ],
+    "interaction": "Let the split bar and fact tiles animate in.",
+    "evidence": "File counts checked directly, Nov 15.",
+    "transition": "Here's how well the model learned it."
+  },
+  "surrogateResults": {
+    "durationSeconds": 35,
+    "main": "On 180 simulations it never saw, the surrogate matches the physics reasonably well and errs on the cautious side.",
+    "talkingPoints": [
+      "Precision 0.78: when it says a cell burns, it is usually right. Recall 0.55: it misses some burned area. Dice 0.65, IoU 0.48.",
+      "Arrival time is off by about 7 minutes on average over a 60-minute horizon.",
+      "It trained in about 11 minutes on a single GPU and the whole model is under 2 MB.",
+      "To be clear: this is agreement with the simulator, not real-world forecast accuracy."
+    ],
+    "interaction": "None; bars animate in.",
+    "evidence": "180-sample held-out ForeFire test (run 1).",
+    "transition": "Getting the system to scale was the hard part."
+  },
+  "journey": {
+    "durationSeconds": 45,
+    "main": "Most of our time went into making physics and AI run together on real hardware. Four problems stood out.",
+    "talkingPoints": [
+      "We couldn't reach the Fuzzball cluster off-site, so we built and proved each stage in small test runs first and staged the Fuzzball workflow for the on-site GB10 nodes.",
+      "ForeFire and PyTorch lived in incompatible Python environments, so we built a launcher that gives each its own runtime on the same node.",
+      "Our first full two-node run failed: the merge step rejected a duplicate label. That's the validator doing its job. We fixed the shard assignment, kept the strict check, and the next run passed.",
+      "A shared storage mount refused permission, so we moved to node-local scratch with hash-checked handoffs."
+    ],
+    "interaction": "The four test runs appear left to right, failure included, then the four fixes.",
+    "evidence": "Runs 1–4 on Nov 15; run 3 failed at the merge step.",
+    "transition": "And here's that final run."
+  },
+  "twoNodeRun": {
+    "durationSeconds": 45,
+    "main": "Two nodes simulated and trained at the same time, merged verified labels, then fine-tuned one model across both GPUs.",
+    "talkingPoints": [
+      "Phase one: on each node, ForeFire ran on the CPUs while the surrogate trained on the GPU, overlapping about 7 seconds on each node in this short run.",
+      "Then a barrier: we verified 126 fresh labels and merged them into training. Validation and test stayed untouched.",
+      "Phase two: one model, two GPU ranks, PyTorch DDP over NCCL. Both ranks ended with byte-identical weights. The whole job took 1 minute 40 seconds.",
+      "This was a short proof run; we're not claiming a speedup yet."
+    ],
+    "interaction": "Press → to build: ① both nodes, ② verify + merge, ③ distributed fine-tuning and the summary stats.",
+    "evidence": "Two-node test run on Nov 15 (run 4); DDP summary and per-node phase summaries.",
+    "transition": "So where does that leave us?"
   }
 }

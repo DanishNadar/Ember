@@ -1,0 +1,53 @@
+version: v4
+
+# CPU-only provenance and compatibility gate for the production labeller.
+# This produces a bounded, unpublished probe shard; it is not a research
+# dataset and may not be used for training.
+volumes:
+  label-probe:
+    ingress:
+      - source:
+          uri: fb://user/ember/publications/ember_init_v2.1_source.tar.gz
+        destination:
+          uri: file://ember_init_v2.1_source.tar.gz
+      - source:
+          uri: fb://user/ember/publications/parallel_surrogate_training-forefire_research_v2.tar.gz
+        destination:
+          uri: file://parallel_surrogate_training-forefire_research_v2.tar.gz
+    egress:
+      - source:
+          uri: file://forefire_label_probe.tar.gz
+        destination:
+          uri: fb://user/ember/preflight/forefire_label_probe.tar.gz
+    size: 4GiB
+    use: team15-scratch
+
+jobs:
+  forefire-label-probe:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+    mounts:
+      /work:
+        volume: label-probe
+    resource:
+      cpu:
+        cores: 4
+      memory:
+        size: 8GiB
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+      export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+      mkdir -p /work/source /work/code /work/output
+      tar -xzf /work/ember_init_v2.1_source.tar.gz -C /work/source
+      tar -xzf /work/parallel_surrogate_training-forefire_research_v2.tar.gz -C /work/code
+      python3 -m pip install --no-cache-dir forefire==2.6.0 netCDF4==1.7.4
+      PYTHONPATH=/work/source/dataset timeout 10m python3 /work/code/experiments/parallel_surrogate_training/generate_forefire_shard.py \
+        --output /work/output/corsica_probe --source-root /work/source/dataset/ember_init_v2 \
+        --source corsica/train --split train --workers 4 --max-samples 8 \
+        --dataset-version forefire_research_v1_probe \
+        --source-bundle-sha256 0b94adea5f450a7cb4b9b6b3198a66b0f6fab6424107b689a5c13b5e2474e5cd \
+        --code-bundle-sha256 8b73985980e6a1c5b67edf6cfb208652dc31c911788cf663084a083ec8f4351e
+      test -s /work/output/corsica_probe/complete.json
+      test -s /work/output/corsica_probe/generation_report.json
+      tar -czf /work/forefire_label_probe.tar.gz -C /work/output corsica_probe

@@ -1,0 +1,20 @@
+{
+  "status": "complete",
+  "samples": [
+    {
+      "file": "test-000-montana_timber-test-000000.npz",
+      "split": "test",
+      "sha256": "6da7bce037368e94d3c55a8c4c99c9cd66002230611d71dc6eeabf1cf9354120"
+    },
+    {
+      "file": "train-000-corsica-train-000000.npz",
+      "split": "train",
+      "sha256": "b22966a35ec023c8d1a72b8d6805cc5367c591937f7fc8d3b7a215ec78e2522b"
+    },
+    {
+      "file": "val-000-texas_panhandle-val-000000.npz",
+      "split": "val",
+      "sha256": "fb0d1642b6e8bbb5f9fa30c0847d60066c4cbe1f4ad71cc396acac72767e6d0a"
+    }
+  ]
+}

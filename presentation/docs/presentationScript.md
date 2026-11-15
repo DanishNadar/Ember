@@ -1,6 +1,6 @@
 # Project Ember — Presentation Script
 
-Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 7:20 for 17 scenes; questions in Explore mode (`E`).
+Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 4:15 for 9 scenes; questions in Explore mode (`E`).
 Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds · `N` notes · `P` presenter.
 
 ## 01 · The Spark (~15 s)
@@ -24,17 +24,7 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 **Evidence:** Illustrative only; condition panel values drive the toy model and are labeled as such.
 **Transition:** “A physics simulator answers exactly one of these questions at a time.”
 
-## 03 · One Simulation Isn't Enough (~20 s)
-**Message:** A simulation is one answer to one set of assumptions. Covering the uncertainty takes many runs.
-- On the left: one deterministic run with its input assumptions.
-- Each uncertain input we vary multiplies the number of runs: 1, then 3, then 9, then 27.
-- A simulated trajectory is a model of what could happen under assumptions, not a record of what will happen.
-
-**Do:** Press → twice to grow the scenario tree one level at a time.
-**Evidence:** Conceptual diagram. Branch counts show combinatorics, not measured workloads.
-**Transition:** “And every branch costs compute.”
-
-## 04 · The Computational Challenge (~15 s)
+## 03 · The Computational Challenge (~15 s)
 **Message:** Each question we ask adds another independent simulation job.
 - Scenario requests pile up faster than a fixed pool of workers can drain them.
 - This is normalized and conceptual: no timings are shown here because none are claimed.
@@ -44,134 +34,60 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 **Evidence:** Normalized conceptual animation. Measured runtimes appear only on the Performance slide.
 **Transition:** “That question is Project Ember.”
 
-## 05 · Meet Project Ember (~25 s)
-**Message:** Ember is a pipeline: physics teaches, AI learns, Fuzzball coordinates, and we explore.
-- Simulation generates examples. Examples become a dataset. A U-Net-style surrogate learns from it.
-- We evaluate against held-out simulator outputs. Fuzzball runs every stage as one workflow on our two GB10 nodes.
-- Each status chip shows what is implemented and what is proposed.
+## 04 · The Idea (~25 s)
+**Message:** Let physics teach, let AI learn: a simulator makes labeled examples, a neural surrogate learns from them.
+- ForeFire is a real fire-spread physics simulator. It is accurate, but each run answers one 'what if' and costs CPU time.
+- Each run becomes a labeled example: conditions in, where and when the fire arrives out.
+- A U-Net learns that mapping on the GPU, so new scenarios can be answered in one forward pass. And we run simulation and training at the same time across two nodes.
 
-**Do:** The pipeline draws itself. Click 'Neural surrogate' to open its card (role, inputs, outputs, compute, status), then click 'Fuzzball orchestration'.
-**Evidence:** Status chips come from snapshot.components. Until confirmed they read 'unconfirmed'.
-**Transition:** “Before the science, here's the stack we built it on.”
+**Do:** The three stages and the loop build in on their own.
+**Evidence:** Concept diagram.
+**Transition:** “So what did we actually feed it?”
 
-## 06 · Built on the Hackathon Stack (~30 s)
-**Message:** Ember uses the whole hackathon stack: NVIDIA GB10 hardware, CIQ's RLC Pro AI, and Fuzzball as the backbone.
-- Bottom up: 2 × Lenovo ThinkStation PGX with NVIDIA GB10, running RLC Pro AI 9.8 with the CUDA stack ready on first boot.
-- Fuzzball Substrate runs our containers on both nodes, Orchestrate schedules them, and volumes carry shards and checkpoints between stages.
-- We drove it through the Fuzzball CLI, web UI and MCP server.
-- Each chip says how we used that layer. Green means used, and logs upgrade it to verified.
+## 05 · The Data (~30 s)
+**Message:** Real ForeFire simulations on real terrain, with a strict held-out test set.
+- We prepared about 26,000 candidate conditions and kept 2,880 completed ForeFire simulations: 2,400 train, 300 validation, 180 test.
+- Each sample is a 320 by 320 grid of 40-meter cells, about 13 km square, with 19 input channels: fuel, moisture, slope, wind including a mid-run shift, and the ignition.
+- The model predicts two things over 60 minutes: which cells burn and when the fire arrives. The test set is never used to train or pick the model.
 
-**Do:** Layers build bottom-up. Click 'Fuzzball Orchestrate', then 'Fuzzball volumes' to show what's provided vs how Ember uses it.
-**Evidence:** Environment facts are cited to the organizers' SC26 Hackathon Introduction deck. Usage status comes from data/verified/ecosystemUsage.json, and only Fuzzball logs upgrade it to 'verified'.
-**Transition:** “Now the science, starting with the physics.”
+**Do:** Let the split bar and fact tiles animate in.
+**Evidence:** File counts checked directly, Nov 15.
+**Transition:** “Here's how well the model learned it.”
 
-## 07 · The Physics Engine (~25 s)
-**Message:** First, we let physics teach. The simulator produces the ground truth the surrogate learns from.
-- Name the simulator exactly as configured (ForeFire, or our simplified simulator, as the badge states).
-- Inputs: initial burned area, wind, fuel, moisture and slope layers. Output: burned-area masks over time.
-- Use the scrubber to show progression.
+## 06 · How Close Did AI Get? (~35 s)
+**Message:** On 180 simulations it never saw, the surrogate matches the physics reasonably well and errs on the cautious side.
+- Precision 0.78: when it says a cell burns, it is usually right. Recall 0.55: it misses some burned area. Dice 0.65, IoU 0.48.
+- Arrival time is off by about 7 minutes on average over a 60-minute horizon.
+- It trained in about 11 minutes on a single GPU and the whole model is under 2 MB.
+- To be clear: this is agreement with the simulator, not real-world forecast accuracy.
 
-**Do:** Press play, then drag the time scrubber. Toggle 'Environment layers' and 'Progression lines'.
-**Evidence:** With a recorded replay ingested, frames are simulator output (orange badge). Otherwise the viewer shows a labeled illustrative stand-in.
-**Transition:** “Each of those frames becomes a training lesson.”
+**Do:** None; bars animate in.
+**Evidence:** 180-sample held-out ForeFire test (run 1).
+**Transition:** “Getting the system to scale was the hard part.”
 
-## 08 · From Simulation to Data (~20 s)
-**Message:** Every completed simulation becomes supervised training examples: input channels in, future mask out.
-- One snapshot splits into aligned channels: burned mask, wind U/V, fuel, moisture, slope.
-- The target is the burned-area mask at a fixed horizon later.
-- We split by scenario, not by frame, so test scenarios are never seen in training.
+## 07 · What Broke and How We Fixed It (~45 s)
+**Message:** Most of our time went into making physics and AI run together on real hardware. Four problems stood out.
+- We couldn't reach the Fuzzball cluster off-site, so we built and proved each stage in small test runs first and staged the Fuzzball workflow for the on-site GB10 nodes.
+- ForeFire and PyTorch lived in incompatible Python environments, so we built a launcher that gives each its own runtime on the same node.
+- Our first full two-node run failed: the merge step rejected a duplicate label. That's the validator doing its job. We fixed the shard assignment, kept the strict check, and the next run passed.
+- A shared storage mount refused permission, so we moved to node-local scratch with hash-checked handoffs.
 
-**Do:** Press → to explode the snapshot into channels, then again to show the dataset split.
-**Evidence:** Split counts come from data/manifest.json. Thumbnails are illustrative unless real samples are ingested.
-**Transition:** “Now the model learns from those pairs.”
+**Do:** The four test runs appear left to right, failure included, then the four fixes.
+**Evidence:** Runs 1–4 on Nov 15; run 3 failed at the merge step.
+**Transition:** “And here's that final run.”
 
-## 09 · The Neural Surrogate (~25 s)
-**Message:** A lightweight U-Net learns the mapping from conditions to the next fire extent.
-- The encoder compresses spatial context, and the decoder rebuilds a full-resolution mask.
-- Skip connections keep fine edges of the fire front.
-- The spec panel reads from model metadata: parameter count, resolution, training config, device.
+## 08 · Two Nodes, One Model (~45 s)
+**Message:** Two nodes simulated and trained at the same time, merged verified labels, then fine-tuned one model across both GPUs.
+- Phase one: on each node, ForeFire ran on the CPUs while the surrogate trained on the GPU, overlapping about 7 seconds on each node in this short run.
+- Then a barrier: we verified 126 fresh labels and merged them into training. Validation and test stayed untouched.
+- Phase two: one model, two GPU ranks, PyTorch DDP over NCCL. Both ranks ended with byte-identical weights. The whole job took 1 minute 40 seconds.
+- This was a short proof run; we're not claiming a speedup yet.
 
-**Do:** Toggle 'Architecture / Prediction' at the top right. Prediction view shows real held-out predictions when ingested.
-**Evidence:** All numbers come from model metadata and the checkpoint. A dash means not yet ingested.
-**Transition:** “Training and simulation have to run somewhere. Here's the cluster.”
+**Do:** Press → to build: ① both nodes, ② verify + merge, ③ distributed fine-tuning and the summary stats.
+**Evidence:** Two-node test run on Nov 15 (run 4); DDP summary and per-node phase summaries.
+**Transition:** “So where does that leave us?”
 
-## 10 · The Two-Node Experiment (~30 s)
-**Message:** Two GB10 nodes, one continuous experiment: simulation produces while training consumes, then both nodes fine-tune the surrogate together.
-- Planned architecture: Node A generates simulation shards, and Node B trains and evaluates.
-- Once the base surrogate is trained, both GB10s join for distributed fine-tuning: one model, data-parallel across Node A and Node B, with gradients synchronized between them.
-- Fuzzball Orchestrate coordinates dependencies, and shards move through a Fuzzball volume. Both nodes run RLC Pro AI 9.8 and Fuzzball Substrate.
-- Switch to Verified Execution to show what the logs actually recorded, including placement.
-
-**Do:** Start in 'Planned architecture', then click 'Verified execution'. If logs are ingested it shows real job placement. Otherwise it says so.
-**Evidence:** Verified view is built only from Fuzzball workflow logs (snapshot.workflow).
-**Transition:** “Here's how we told Fuzzball to do that: the workflow itself.”
-
-## 11 · One Fuzzball Workflow (~35 s)
-**Message:** The entire experiment is one declarative Fuzzball workflow, which is why it's reproducible and scales across both nodes.
-- ① A persistent Fuzzball volume is shared by every job on both nodes.
-- ② Simulation fans out as a task-array: one scenario shard per task.
-- ③ depends-on with status RUNNING lets the dataset build and training start while simulation is still producing. That's our producer–consumer overlap.
-- ④ Training and evaluation request nvidia.com/gpu, so Orchestrate places them on a GB10 GPU.
-- We validate, start, watch and pull logs with the Fuzzball CLI.
-
-**Do:** Press → three times to step through the four highlights, or click any callout.
-**Evidence:** Until the team's real Fuzzfile is ingested this shows a reference template written to the documented v4 syntax (labeled). Once ingested, the real file is shown verbatim.
-**Transition:** “And here is what happened when we ran it.”
-
-## 12 · Fuzzball Orchestration (~25 s)
-**Message:** Fuzzball turned the experiment into a recorded, dependency-aware run we can replay and reproduce.
-- Each bar is a recorded job, with start, end, state and node.
-- Arrows show dependencies. Training starts only when its data exists.
-- Fuzzball orchestrates. It does not optimize the model.
-
-**Do:** Hover a bar for job details. Point out overlap between simulation and training if present.
-**Evidence:** Timeline is reconstructed from recorded workflow logs. It is labeled 'Recorded playback', never live.
-**Transition:** “So did the AI actually learn the physics?”
-
-## 13 · The Moment of Truth (~40 s)
-**Message:** On held-out simulated scenarios, here's how closely the surrogate matches the simulator, including where it misses.
-- Left: simulator reference. Middle: surrogate prediction. Right: error map (orange = over-predicted, cyan = missed).
-- Read the IoU, precision, recall and F2 for the held-out split.
-- Show a hard case on purpose. Honesty about failure modes is part of the result.
-- This is fidelity to simulation, not real-world forecast skill.
-
-**Do:** Click through the scenario selector, including the weakest example.
-**Evidence:** metrics/results.json via snapshot.fidelity. Per-example metrics are recomputed from masks when masks are provided.
-**Transition:** “Accuracy is half the story. Did we save compute?”
-
-## 14 · The Performance Reveal (~35 s)
-**Message:** We report three separate accelerations, and training cost on its own.
-- Surrogate acceleration: simulator runtime vs neural inference per scenario.
-- Parallel throughput: one node vs two nodes.
-- Workflow acceleration: sequential vs overlapping pipeline.
-- We never multiply these into one headline number. Training cost is shown separately, so the comparison is honest.
-
-**Do:** Point at each of the three cards in turn. Any card without measurements shows 'Awaiting'.
-**Evidence:** Each card cites snapshot.benchmarks.source. Speedups are computed only when both measurements exist.
-**Transition:** “Faster evaluation changes which questions we can afford to ask.”
-
-## 15 · What Compute Unlocks (~25 s)
-**Message:** More compute means more scenarios, and an ensemble shows where outcomes agree and where they don't.
-- One footprint, then many footprints, then an agreement map.
-- Agreement is the fraction of ensemble members that burn a cell. It is not a calibrated probability.
-- This is a proposed extension unless an ensemble result is ingested (see badge).
-
-**Do:** Drag 'Ensemble size' from 1 to 24, then toggle 'Agreement heatmap'. Optionally select individual members.
-**Evidence:** Marked as proposed future work and illustrative unless snapshot.ensemble exists.
-**Transition:** “So what did we actually build?”
-
-## 16 · Built for Every Criterion (~30 s)
-**Message:** Ember was built against all four official criteria, and the deck shows evidence for each.
-- Technical execution: a complete simulate → learn → evaluate system, recorded as a Fuzzball workflow.
-- Ecosystem utility: NVIDIA GB10, CIQ RLC Pro AI and the full Fuzzball platform, each with its usage status.
-- Value and impact: faster what-if exploration for wildfire research, with honest limits.
-- Innovation: a physics-trained surrogate plus producer–consumer overlap across two nodes.
-
-**Do:** Sweep left to right across the four columns. A green check means an ingested artifact backs it.
-**Evidence:** Criteria text is quoted from the organizers' deck (pp. 3, 5). Checks are derived from the snapshot, never typed in.
-**Transition:** “So here's where Ember goes next.”
-
-## 17 · The Next Frontier (~25 s)
+## 09 · The Next Frontier (~25 s)
 **Message:** We didn't replace physics. We made it reusable.
 - Read the checkmarks: only evidenced contributions are marked complete.
 - Point at 'Built with': Fuzzball, CIQ, NVIDIA, Lenovo and VAST, the hackathon stack we built on.

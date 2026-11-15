@@ -1,0 +1,67 @@
+version: v4
+
+# Candidate A integration smoke test only.  It runs one epoch over the tiny
+# forefire_demo_v2 dataset, requests one GPU, and exports its artifacts.  It
+# must never be used to make an accuracy, model-selection, or speed claim.
+volumes:
+  smoke-input:
+    ingress:
+      - source:
+          uri: fb://user/ember/publications/forefire_demo_v2.tar.gz
+        destination:
+          uri: file://forefire_demo_v2.tar.gz
+      - source:
+          uri: fb://user/ember/publications/parallel_surrogate_training-forefire_demo_v2.tar.gz
+        destination:
+          uri: file://parallel_surrogate_training-forefire_demo_v2.tar.gz
+      - source:
+          uri: fb://user/ember/publications/forefire_demo_v2_experiment_configs.tar.gz
+        destination:
+          uri: file://forefire_demo_v2_experiment_configs.tar.gz
+    egress:
+      - source:
+          uri: file://candidate_A_smoke.tar.gz
+        destination:
+          uri: fb://user/ember/smoke/candidate_A_forefire_demo_v2.tar.gz
+    size: 4GiB
+    use: team15-scratch
+
+jobs:
+  candidate-a-smoke:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+    mounts:
+      /work:
+        volume: smoke-input
+    resource:
+      cpu:
+        cores: 2
+      devices:
+        nvidia.com/gpu: 1
+      memory:
+        size: 8GiB
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+      export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONUNBUFFERED=1
+      mkdir -p /work/dataset /work/code
+      tar -xzf /work/forefire_demo_v2.tar.gz -C /work/dataset
+      tar -xzf /work/parallel_surrogate_training-forefire_demo_v2.tar.gz -C /work/code
+      tar -xzf /work/forefire_demo_v2_experiment_configs.tar.gz -C /work
+      python3 - <<'PY'
+      import json
+      from pathlib import Path
+
+      experiment = Path("/work/forefire_demo_v2_experiment")
+      config = json.loads((experiment / "candidate_A.json").read_text())
+      config.update(epochs=1, batch_size=1, cpu_threads=2)
+      (experiment / "candidate_A_smoke.json").write_text(json.dumps(config, indent=2))
+      PY
+      timeout 10m bash /work/code/parallel_surrogate_training/run_pgx.sh \
+        /work/forefire_demo_v2_experiment/candidate_A_smoke.json \
+        /work/candidate_A_smoke \
+        /work/forefire_demo_v2_experiment/snapshot.json
+      test -s /work/candidate_A_smoke/best.pt
+      test -s /work/candidate_A_smoke/last.pt
+      test -s /work/candidate_A_smoke/events.jsonl
+      tar -czf /work/candidate_A_smoke.tar.gz -C /work candidate_A_smoke

@@ -1,25 +1,36 @@
 "use client";
 import { motion } from "framer-motion";
-import { CircleCheck, CircleDashed, Telescope, ShieldAlert } from "lucide-react";
+import { CircleCheck, Telescope, ShieldAlert } from "lucide-react";
 import { SlideFrame } from "@/components/presentation/SlideFrame";
 import { Reveal } from "@/components/presentation/Reveal";
 import { SparkSequence } from "@/components/visualizations/SparkSequence";
 import { EmberWordmark } from "@/components/visualizations/EmberLogo";
 import { useSceneClock } from "@/hooks/useSceneClock";
 import { FuzzballLogo, CiqLogo, PartnerStrip } from "@/components/visualizations/BrandMarks";
-import { deriveContributions, futureDirections } from "@/lib/contributions";
+import { dataset, surrogate, twoNodeRun } from "@/data/verified/measuredResults";
 import type { SlideProps } from "./slideTypes";
 
-export function Slide14Conclusion({ step, isActive, isPreview, reducedMotion, data }: SlideProps) {
-  const contributions = deriveContributions(data);
+const demonstrated = [
+  { label: `Surrogate trained on ${dataset.train.toLocaleString("en-US")} real ForeFire simulations`, evidence: `held-out IoU ${surrogate.iou.toFixed(2)} · Dice ${surrogate.dice.toFixed(2)} · arrival error ~${Math.round(surrogate.arrivalMaeSeconds / 60)} min` },
+  { label: "Physics and AI running at the same time on two nodes", evidence: "CPU ForeFire + GPU training per node, measured overlap" },
+  { label: "Fresh labels verified and merged safely", evidence: `+${twoNodeRun.newLabels} train samples · test set untouched` },
+  { label: "One model fine-tuned across two GPUs", evidence: `${twoNodeRun.backend} DDP · identical final weights on both ranks` },
+];
+
+const nextSteps = [
+  "Run the same workflow under Fuzzball on the two GB10 nodes",
+  "Benchmark one vs two nodes on identical work",
+  "Larger, terrain-independent evaluation",
+  "Real environmental data and physics-informed learning",
+];
+
+export function Slide14Conclusion({ step, isActive, isPreview, reducedMotion }: SlideProps) {
   const outroTime = useSceneClock({ isActive: isActive && step >= 1, isPreview, reducedMotion, settledTime: 11, resetKey: step });
-  const demonstratedCount = contributions.filter((c) => c.demonstrated).length;
 
   return (
     <>
       <motion.div className="absolute inset-0" initial={false} animate={{ opacity: step >= 1 ? 0 : 1 }} transition={{ duration: reducedMotion ? 0 : 0.6 }}>
         <SlideFrame
-          sceneNumber={14}
           kicker="Conclusion · the next frontier"
           headline={<>We didn&apos;t replace physics. <span className="emberText">We made it reusable.</span></>}
           reducedMotion={reducedMotion}
@@ -28,15 +39,15 @@ export function Slide14Conclusion({ step, isActive, isPreview, reducedMotion, da
             <div className="glassPanel rounded-2xl p-7">
               <div className="fontMono mb-4 flex justify-between text-[14px] uppercase tracking-[0.2em] text-mute">
                 <span>What we demonstrated</span>
-                <span>{demonstratedCount}/{contributions.length} evidenced{data.isFixture ? " · FIXTURE" : ""}</span>
+                <span>Measured · Nov 15</span>
               </div>
               <ul className="space-y-3.5">
-                {contributions.map((c) => (
+                {demonstrated.map((c) => (
                   <li key={c.label} className="flex items-start gap-4">
-                    {c.demonstrated ? <CircleCheck size={28} className={data.isFixture ? "text-[#FFB547]" : "text-[#35D6A0]"} /> : <CircleDashed size={28} className="text-dim" />}
+                    <CircleCheck size={28} className="text-[#35D6A0]" />
                     <div>
-                      <div className={`text-[23px] ${c.demonstrated ? "text-ink" : "text-mute"}`}>{c.label}</div>
-                      <div className="fontMono text-[14px] text-mute">{c.demonstrated ? `evidence: ${c.evidence}` : `awaiting · ${c.evidence}`}</div>
+                      <div className="text-[23px] text-ink">{c.label}</div>
+                      <div className="fontMono text-[14px] text-mute">{c.evidence}</div>
                     </div>
                   </li>
                 ))}
@@ -51,9 +62,9 @@ export function Slide14Conclusion({ step, isActive, isPreview, reducedMotion, da
             </div>
             <div className="flex flex-col gap-6">
               <div className="glassPanel rounded-2xl p-7">
-                <div className="fontMono mb-4 flex items-center gap-2 text-[14px] uppercase tracking-[0.2em] text-[#A78BFA]"><Telescope size={16} /> Proposed future work</div>
+                <div className="fontMono mb-4 flex items-center gap-2 text-[14px] uppercase tracking-[0.2em] text-[#A78BFA]"><Telescope size={16} /> Next</div>
                 <ul className="space-y-2.5">
-                  {futureDirections.map((f) => <li key={f} className="text-[21px] text-ink/90">→ {f}</li>)}
+                  {nextSteps.map((f) => <li key={f} className="text-[21px] text-ink/90">→ {f}</li>)}
                 </ul>
               </div>
               <div className="fontDisplay text-[28px] font-medium leading-snug text-ink">

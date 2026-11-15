@@ -1,0 +1,62 @@
+version: v4
+
+# Read-only verification of the immutable demonstration publication.  This
+# intentionally requests no GPU and writes only to its ephemeral work volume.
+volumes:
+  verification-input:
+    ingress:
+      - source:
+          uri: fb://user/ember/publications/forefire_demo_v2.tar.gz
+        destination:
+          uri: file://forefire_demo_v2.tar.gz
+      - source:
+          uri: fb://user/ember/publications/parallel_surrogate_training-forefire_demo_v2.tar.gz
+        destination:
+          uri: file://parallel_surrogate_training-forefire_demo_v2.tar.gz
+    size: 2GiB
+    use: team15-scratch
+
+jobs:
+  verify-publication:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+    mounts:
+      /work:
+        volume: verification-input
+    resource:
+      cpu:
+        cores: 2
+      memory:
+        size: 4GiB
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+      mkdir -p /work/dataset /work/code
+      tar -xzf /work/forefire_demo_v2.tar.gz -C /work/dataset
+      tar -xzf /work/parallel_surrogate_training-forefire_demo_v2.tar.gz -C /work/code
+      python3 - <<'PY'
+      import json
+      from pathlib import Path
+
+      dataset = Path("/work/dataset/forefire_demo_v2")
+      config_source = Path("/work/code/parallel_surrogate_training/config.json")
+      config = json.loads(config_source.read_text())
+      config["data_dir"] = str(dataset / "ready")
+      Path("/work/verify_config.json").write_text(json.dumps(config))
+      snapshot = json.loads((dataset / "dataset_snapshot.json").read_text())
+      assert snapshot["dataset_version"] == "forefire_demo_v2"
+      print(json.dumps({"dataset_version": snapshot["dataset_version"], "status": snapshot["status"]}))
+      PY
+      python3 /work/code/parallel_surrogate_training/check_data.py --config /work/verify_config.json
+      python3 - <<'PY'
+      import hashlib
+      import json
+      from pathlib import Path
+
+      dataset = Path("/work/dataset/forefire_demo_v2")
+      snapshot = json.loads((dataset / "dataset_snapshot.json").read_text())
+      manifest = dataset / "ready/batch_000/complete.json"
+      actual = hashlib.sha256(manifest.read_bytes()).hexdigest()
+      assert actual == snapshot["published_manifest"]["sha256"], (actual, snapshot["published_manifest"]["sha256"])
+      print(json.dumps({"manifest_sha256_verified": actual, "status": "publication_readable"}))
+      PY

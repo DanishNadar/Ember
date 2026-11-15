@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .venv/
 venv/
 __pycache__/
@@ -9,3 +10,10 @@ artifacts/experiments/
 artifacts/local/
 reports/observatory/*/
 reports/observatory/*.zip
+=======
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+>>>>>>> c9e4bf0 (presentation update)
