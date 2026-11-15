@@ -235,7 +235,7 @@
     ],
     "interaction": "Let the split bar and fact tiles animate in.",
     "evidence": "File counts checked directly, Nov 15.",
-    "transition": "Here's how well the model learned it."
+    "transition": "We didn't start there."
   },
   "surrogateResults": {
     "durationSeconds": 35,
@@ -247,7 +247,7 @@
       "To be clear: this is agreement with the simulator, not real-world forecast accuracy."
     ],
     "interaction": "None; bars animate in.",
-    "evidence": "180-sample held-out ForeFire test (run 1).",
+    "evidence": "Earlier held-out evaluation on 180 ForeFire test simulations (separate from runs 1–4).",
     "transition": "Getting the system to scale was the hard part."
   },
   "journey": {
@@ -275,5 +275,17 @@
     "interaction": "Press → to build: ① both nodes, ② verify + merge, ③ distributed fine-tuning and the summary stats.",
     "evidence": "Two-node test run on Nov 15 (run 4); DDP summary and per-node phase summaries.",
     "transition": "So where does that leave us?"
+  },
+  "scaleUp": {
+    "durationSeconds": 25,
+    "main": "Our first prototype learned from one region; scaling up the physics data made its timing much sharper.",
+    "talkingPoints": [
+      "The prototype trained on 508 Texas simulations and was scored on 32 validation scenarios: arrival time off by about 10.5 minutes.",
+      "We scaled to 2,880 simulations across multiple regions. Arrival-time error dropped to about 7 minutes, a third lower, on a test set more than five times larger that the model never saw.",
+      "Burn-area overlap held steady at about 0.48 to 0.49 even though the test got much broader. These are different test sets, so this shows the trend, not a controlled A/B."
+    ],
+    "interaction": "Columns and stat cards animate in.",
+    "evidence": "Prototype: 32-scenario validation. Scaled: 180-scenario held-out test. Different channels, regions and splits.",
+    "transition": "Here's the scaled model in detail."
   }
 }

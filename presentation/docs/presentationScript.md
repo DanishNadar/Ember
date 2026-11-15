@@ -1,6 +1,6 @@
 # Project Ember — Presentation Script
 
-Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 4:15 for 9 scenes; questions in Explore mode (`E`).
+Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 4:40 for 10 scenes; questions in Explore mode (`E`).
 Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds · `N` notes · `P` presenter.
 
 ## 01 · The Spark (~15 s)
@@ -52,9 +52,19 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 
 **Do:** Let the split bar and fact tiles animate in.
 **Evidence:** File counts checked directly, Nov 15.
-**Transition:** “Here's how well the model learned it.”
+**Transition:** “We didn't start there.”
 
-## 06 · How Close Did AI Get? (~35 s)
+## 06 · Scaling Up (~25 s)
+**Message:** Our first prototype learned from one region; scaling up the physics data made its timing much sharper.
+- The prototype trained on 508 Texas simulations and was scored on 32 validation scenarios: arrival time off by about 10.5 minutes.
+- We scaled to 2,880 simulations across multiple regions. Arrival-time error dropped to about 7 minutes, a third lower, on a test set more than five times larger that the model never saw.
+- Burn-area overlap held steady at about 0.48 to 0.49 even though the test got much broader. These are different test sets, so this shows the trend, not a controlled A/B.
+
+**Do:** Columns and stat cards animate in.
+**Evidence:** Prototype: 32-scenario validation. Scaled: 180-scenario held-out test. Different channels, regions and splits.
+**Transition:** “Here's the scaled model in detail.”
+
+## 07 · How Close Did AI Get? (~35 s)
 **Message:** On 180 simulations it never saw, the surrogate matches the physics reasonably well and errs on the cautious side.
 - Precision 0.78: when it says a cell burns, it is usually right. Recall 0.55: it misses some burned area. Dice 0.65, IoU 0.48.
 - Arrival time is off by about 7 minutes on average over a 60-minute horizon.
@@ -62,10 +72,10 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 - To be clear: this is agreement with the simulator, not real-world forecast accuracy.
 
 **Do:** None; bars animate in.
-**Evidence:** 180-sample held-out ForeFire test (run 1).
+**Evidence:** Earlier held-out evaluation on 180 ForeFire test simulations (separate from runs 1–4).
 **Transition:** “Getting the system to scale was the hard part.”
 
-## 07 · What Broke and How We Fixed It (~45 s)
+## 08 · What Broke and How We Fixed It (~45 s)
 **Message:** Most of our time went into making physics and AI run together on real hardware. Four problems stood out.
 - We couldn't reach the Fuzzball cluster off-site, so we built and proved each stage in small test runs first and staged the Fuzzball workflow for the on-site GB10 nodes.
 - ForeFire and PyTorch lived in incompatible Python environments, so we built a launcher that gives each its own runtime on the same node.
@@ -76,7 +86,7 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 **Evidence:** Runs 1–4 on Nov 15; run 3 failed at the merge step.
 **Transition:** “And here's that final run.”
 
-## 08 · Two Nodes, One Model (~45 s)
+## 09 · Two Nodes, One Model (~45 s)
 **Message:** Two nodes simulated and trained at the same time, merged verified labels, then fine-tuned one model across both GPUs.
 - Phase one: on each node, ForeFire ran on the CPUs while the surrogate trained on the GPU, overlapping about 7 seconds on each node in this short run.
 - Then a barrier: we verified 126 fresh labels and merged them into training. Validation and test stayed untouched.
@@ -87,7 +97,7 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 **Evidence:** Two-node test run on Nov 15 (run 4); DDP summary and per-node phase summaries.
 **Transition:** “So where does that leave us?”
 
-## 09 · The Next Frontier (~25 s)
+## 10 · The Next Frontier (~25 s)
 **Message:** We didn't replace physics. We made it reusable.
 - Read the checkmarks: only evidenced contributions are marked complete.
 - Point at 'Built with': Fuzzball, CIQ, NVIDIA, Lenovo and VAST, the hackathon stack we built on.

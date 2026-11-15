@@ -18,7 +18,25 @@ export const dataset = {
   simulator: "ForeFire 2.6.0",
 } as const;
 
-/** Winning two-head U-Net on the 180-sample held-out ForeFire test (run 1). */
+/**
+ * First prototype: smaller, single-region dataset. Validation numbers on 32 scenarios.
+ * Not a controlled comparison with the scaled model (different channels, regions, split, sizes).
+ */
+export const prototype = {
+  scenariosAttempted: 512,
+  scenariosPassed: 508,
+  region: "Texas",
+  channels: 22,
+  epochs: 30,
+  bestEpoch: 29,
+  evalSamples: 32,
+  iou: 0.4903,
+  arrivalMaeSeconds: 630.4,
+  emptyPredictions: 0,
+  trainMinutes: 15.21,
+} as const;
+
+/** Winning two-head U-Net on the 180-sample held-out ForeFire test (an earlier evaluation run, separate from runs 1–4). */
 export const surrogate = {
   testSamples: 180,
   iou: 0.47965,

@@ -29,7 +29,7 @@ export function SlideData({ isActive, isPreview, reducedMotion }: SlideProps) {
     <SlideFrame
       kicker="The data"
       headline={<>Real physics. <span className="emberText">Real labels.</span></>}
-      lede={`Every training example is a genuine ${dataset.simulator} run on real terrain: ${dataset.regions.join(", ")}.`}
+      lede={`Every training example is a genuine ${dataset.simulator} run on real terrain, including ${dataset.regions.join(", ")}.`}
       aside={<EvidenceBadge kind="verified" detail="file counts checked · Nov 15" />}
       reducedMotion={reducedMotion}
     >
