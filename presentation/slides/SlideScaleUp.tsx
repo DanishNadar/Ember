@@ -32,7 +32,7 @@ export function SlideScaleUp({ isActive, isPreview, reducedMotion }: SlideProps)
     {
       tag: "② Scaled",
       color: "#FFB547",
-      trained: `${fmt(scaledTotal)} simulations, multiple regions`,
+      trained: `~${Math.round(scaledTotal / 1000)}k simulations, multiple regions`,
       scored: `${surrogate.testSamples} unseen test simulations`,
       iou: surrogate.iou,
       dice: surrogate.dice as number | null,

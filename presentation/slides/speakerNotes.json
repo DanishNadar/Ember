@@ -229,7 +229,7 @@
     "durationSeconds": 30,
     "main": "Real ForeFire simulations on real terrain, with a strict held-out test set.",
     "talkingPoints": [
-      "We prepared about 26,000 candidate conditions and kept 2,880 completed ForeFire simulations: 2,400 train, 300 validation, 180 test.",
+      "We prepared about 26,000 candidate conditions and kept roughly 3,000 completed ForeFire simulations: 2,400 train, 300 validation, 180 test.",
       "The terrain is real: 7 regions from Corsica to Montana, elevations from sea level to about 2,900 meters, and 28 standard US fuel types from grass to timber. Arizona is held out entirely, never trained on.",
       "Each sample is a 13 km square at 40-meter resolution with 19 input channels, predicting where and when the fire arrives over 60 minutes. The test set is never used to train or pick the model."
     ],
@@ -261,7 +261,7 @@
     ],
     "interaction": "The four test runs appear left to right, failure included, then the four fixes.",
     "evidence": "Runs 1–4 on Nov 15; run 3 failed at the merge step.",
-    "transition": "And here's that final run."
+    "transition": "So where does that leave us?"
   },
   "twoNodeRun": {
     "durationSeconds": 45,
@@ -281,7 +281,7 @@
     "main": "Three generations of the model, each sharper than the last.",
     "talkingPoints": [
       "Our prototype trained on 508 simulations from one region: arrival time off by about 10.5 minutes, IoU 0.49.",
-      "Scaling to 2,880 simulations across multiple regions cut arrival error to about 7 minutes, holding overlap steady on a test five times bigger.",
+      "Scaling to roughly 3,000 simulations across multiple regions cut arrival error to about 7 minutes, holding overlap steady on a test five times bigger.",
       "Then we fine-tuned it across two GPUs with fresh simulator labels. The latest model: arrival error about 6.6 minutes, IoU 0.52, Dice 0.68. That's 37% less timing error than the prototype.",
       "Each stage is scored on its own unseen set; the latest score uses a small 12-simulation test, so we read it as a strong signal, not a final benchmark."
     ],

@@ -43,7 +43,7 @@ export function SlideData({ isActive, isPreview, reducedMotion }: SlideProps) {
           </Reveal>
           <Reveal show={time > 0.7} reducedMotion={reducedMotion}>
             <div className="fontMono text-[16px] uppercase tracking-[0.2em] text-mute">Completed, retained simulations</div>
-            <div className="fontMono text-[88px] font-semibold leading-tight text-[#FFB547]">{fmt(total)}</div>
+            <div className="fontMono text-[88px] font-semibold leading-tight text-[#FFB547]">~{Math.round(total / 1000)}k</div>
           </Reveal>
           <div>
             <div className="flex h-14 overflow-hidden rounded-xl bg-white/5">

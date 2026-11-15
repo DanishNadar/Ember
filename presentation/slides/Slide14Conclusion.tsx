@@ -17,6 +17,12 @@ const demonstrated = [
   { label: "One model fine-tuned across two GPUs", evidence: `${twoNodeRun.backend} DDP · identical final weights on both ranks` },
 ];
 
+const team = [
+  { name: "Cadence Centers", qr: "/images/team/cadence-qr.png" },
+  { name: "Danish Nadar", qr: "/images/team/danish-qr.png" },
+  { name: "Sashank Reddy Kadiveti", qr: "/images/team/sashank-qr.png" },
+];
+
 const nextSteps = [
   "Run the same workflow under Fuzzball on the two GB10 nodes",
   "Benchmark one vs two nodes on identical work",
@@ -85,25 +91,38 @@ export function Slide14Conclusion({ step, isActive, isPreview, reducedMotion }: 
         <div className="absolute inset-0 bg-void">
           <SparkSequence time={outroTime} showFutures={false} />
           <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 30% 50%, rgba(8,11,16,0.92) 0%, rgba(8,11,16,0.55) 45%, rgba(8,11,16,0.1) 75%)" }} />
-          <div className="absolute left-[120px] top-1/2 -translate-y-1/2">
+          <div className="absolute left-[110px] top-1/2 w-[860px] -translate-y-1/2">
             <Reveal show={outroTime > 2.8} reducedMotion={reducedMotion}>
               <EmberWordmark scale={1.25} />
             </Reveal>
             <Reveal show={outroTime > 3.8} reducedMotion={reducedMotion} className="mt-10">
-              <div className="fontDisplay max-w-[1000px] text-[44px] font-medium leading-tight text-ink">
+              <div className="fontDisplay text-[44px] font-medium leading-tight text-ink">
                 From one simulation to a scalable scientific-AI workflow.
               </div>
             </Reveal>
             <Reveal show={outroTime > 4.8} reducedMotion={reducedMotion} className="mt-8">
               <div className="fontMono text-[20px] uppercase tracking-[0.3em] text-mute">Thank you · Questions?</div>
             </Reveal>
-            <Reveal show={outroTime > 5.6} reducedMotion={reducedMotion} className="mt-14 flex items-center gap-8">
+            <Reveal show={outroTime > 5.6} reducedMotion={reducedMotion} className="mt-14 flex flex-wrap items-center gap-x-8 gap-y-5">
               <span className="fontMono text-[14px] uppercase tracking-[0.2em] text-mute">Orchestrated with</span>
               <FuzzballLogo height={88} />
               <CiqLogo height={34} />
               <PartnerStrip height={44} className="opacity-85" />
             </Reveal>
           </div>
+          <Reveal show={outroTime > 4.4} reducedMotion={reducedMotion} className="absolute right-[90px] top-1/2 -translate-y-1/2">
+            <div className="fontMono mb-5 text-center text-[16px] uppercase tracking-[0.28em] text-mute">Connect with the team</div>
+            <div className="flex gap-5">
+              {team.map((m) => (
+                <div key={m.name} className="glassPanel flex w-[226px] flex-col items-center rounded-2xl p-4">
+                  <div className="rounded-xl bg-white p-3">
+                    <img src={m.qr} alt={`LinkedIn QR code for ${m.name}`} width={172} height={172} style={{ width: 172, height: 172, imageRendering: "pixelated" }} />
+                  </div>
+                  <div className="fontDisplay mt-3 text-center text-[20px] font-semibold leading-tight text-ink">{m.name}</div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
       ) : null}
     </>

@@ -1,6 +1,6 @@
 # Project Ember — Presentation Script
 
-Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 4:40 for 10 scenes; questions in Explore mode (`E`).
+Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 3:55 for 9 scenes; questions in Explore mode (`E`).
 Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds · `N` notes · `P` presenter.
 
 ## 01 · The Spark (~15 s)
@@ -46,7 +46,7 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 
 ## 05 · The Data (~30 s)
 **Message:** Real ForeFire simulations on real terrain, with a strict held-out test set.
-- We prepared about 26,000 candidate conditions and kept 2,880 completed ForeFire simulations: 2,400 train, 300 validation, 180 test.
+- We prepared about 26,000 candidate conditions and kept roughly 3,000 completed ForeFire simulations: 2,400 train, 300 validation, 180 test.
 - The terrain is real: 7 regions from Corsica to Montana, elevations from sea level to about 2,900 meters, and 28 standard US fuel types from grass to timber. Arizona is held out entirely, never trained on.
 - Each sample is a 13 km square at 40-meter resolution with 19 input channels, predicting where and when the fire arrives over 60 minutes. The test set is never used to train or pick the model.
 
@@ -57,7 +57,7 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 ## 06 · Scaling Up (~25 s)
 **Message:** Three generations of the model, each sharper than the last.
 - Our prototype trained on 508 simulations from one region: arrival time off by about 10.5 minutes, IoU 0.49.
-- Scaling to 2,880 simulations across multiple regions cut arrival error to about 7 minutes, holding overlap steady on a test five times bigger.
+- Scaling to roughly 3,000 simulations across multiple regions cut arrival error to about 7 minutes, holding overlap steady on a test five times bigger.
 - Then we fine-tuned it across two GPUs with fresh simulator labels. The latest model: arrival error about 6.6 minutes, IoU 0.52, Dice 0.68. That's 37% less timing error than the prototype.
 - Each stage is scored on its own unseen set; the latest score uses a small 12-simulation test, so we read it as a strong signal, not a final benchmark.
 
@@ -85,20 +85,9 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 
 **Do:** The four test runs appear left to right, failure included, then the four fixes.
 **Evidence:** Runs 1–4 on Nov 15; run 3 failed at the merge step.
-**Transition:** “And here's that final run.”
-
-## 09 · Two Nodes, One Model (~45 s)
-**Message:** Two nodes simulated and trained at the same time, merged verified labels, then fine-tuned one model across both GPUs.
-- Phase one: on each node, ForeFire ran on the CPUs while the surrogate trained on the GPU, overlapping about 7 seconds on each node in this short run.
-- Then a barrier: we verified 126 fresh labels and merged them into training. Validation and test stayed untouched.
-- Phase two: one model, two GPU ranks, PyTorch DDP over NCCL. Both ranks ended with byte-identical weights. The whole job took 1 minute 40 seconds.
-- This was a short proof run; we're not claiming a speedup yet.
-
-**Do:** Press → to build: ① both nodes, ② verify + merge, ③ distributed fine-tuning and the summary stats.
-**Evidence:** Two-node test run on Nov 15 (run 4); DDP summary and per-node phase summaries.
 **Transition:** “So where does that leave us?”
 
-## 10 · The Next Frontier (~25 s)
+## 09 · The Next Frontier (~25 s)
 **Message:** We didn't replace physics. We made it reusable.
 - Read the checkmarks: only evidenced contributions are marked complete.
 - Point at 'Built with': Fuzzball, CIQ, NVIDIA, Lenovo and VAST, the hackathon stack we built on.
