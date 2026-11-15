@@ -47,22 +47,23 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 ## 05 · The Data (~30 s)
 **Message:** Real ForeFire simulations on real terrain, with a strict held-out test set.
 - We prepared about 26,000 candidate conditions and kept 2,880 completed ForeFire simulations: 2,400 train, 300 validation, 180 test.
-- Each sample is a 320 by 320 grid of 40-meter cells, about 13 km square, with 19 input channels: fuel, moisture, slope, wind including a mid-run shift, and the ignition.
-- The model predicts two things over 60 minutes: which cells burn and when the fire arrives. The test set is never used to train or pick the model.
+- The terrain is real: 7 regions from Corsica to Montana, elevations from sea level to about 2,900 meters, and 28 standard US fuel types from grass to timber. Arizona is held out entirely, never trained on.
+- Each sample is a 13 km square at 40-meter resolution with 19 input channels, predicting where and when the fire arrives over 60 minutes. The test set is never used to train or pick the model.
 
 **Do:** Let the split bar and fact tiles animate in.
 **Evidence:** File counts checked directly, Nov 15.
 **Transition:** “We didn't start there.”
 
 ## 06 · Scaling Up (~25 s)
-**Message:** Our first prototype learned from one region; scaling up the physics data made its timing much sharper.
-- The prototype trained on 508 Texas simulations and was scored on 32 validation scenarios: arrival time off by about 10.5 minutes.
-- We scaled to 2,880 simulations across multiple regions. Arrival-time error dropped to about 7 minutes, a third lower, on a test set more than five times larger that the model never saw.
-- Burn-area overlap held steady at about 0.48 to 0.49 even though the test got much broader. These are different test sets, so this shows the trend, not a controlled A/B.
+**Message:** Three generations of the model, each sharper than the last.
+- Our prototype trained on 508 simulations from one region: arrival time off by about 10.5 minutes, IoU 0.49.
+- Scaling to 2,880 simulations across multiple regions cut arrival error to about 7 minutes, holding overlap steady on a test five times bigger.
+- Then we fine-tuned it across two GPUs with fresh simulator labels. The latest model: arrival error about 6.6 minutes, IoU 0.52, Dice 0.68. That's 37% less timing error than the prototype.
+- Each stage is scored on its own unseen set; the latest score uses a small 12-simulation test, so we read it as a strong signal, not a final benchmark.
 
-**Do:** Columns and stat cards animate in.
-**Evidence:** Prototype: 32-scenario validation. Scaled: 180-scenario held-out test. Different channels, regions and splits.
-**Transition:** “Here's the scaled model in detail.”
+**Do:** The three stages build left to right, then the highlight cards.
+**Evidence:** Prototype: 32-scenario validation. Scaled: 180-simulation held-out test. Fine-tuned: 12-simulation reserved test (run 4). Different test sets, not a controlled A/B.
+**Transition:** “Let's look closer at what the model gets right.”
 
 ## 07 · How Close Did AI Get? (~35 s)
 **Message:** On 180 simulations it never saw, the surrogate matches the physics reasonably well and errs on the cautious side.

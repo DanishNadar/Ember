@@ -14,7 +14,10 @@ export const dataset = {
   grid: 320,
   cellMeters: 40,
   horizonMinutes: 60,
-  regions: ["Corsica", "Southern California", "Northern California", "Great Basin"],
+  regions: 7, // Corsica, SoCal, NorCal, Great Basin, Texas Panhandle, Montana + Arizona held out
+  heldOutRegion: "Arizona", // never trained on
+  elevationMeters: [0, 2_924], // real elevation data across all regions
+  fuelTypes: 28, // standard US fuel models (Scott & Burgan / LANDFIRE), 6 families
   simulator: "ForeFire 2.6.0",
 } as const;
 
@@ -63,7 +66,21 @@ export const twoNodeRun = {
   backend: "NCCL",
   worldSize: 2,
   weightSha: "6c1660c6…903c87",
-  smokeTest: { samples: 12, iou: 0.5184, dice: 0.6829 },
+} as const;
+
+/**
+ * Latest model: the scaled checkpoint fine-tuned across two GPUs on 174 train samples
+ * (48 staged + 126 fresh labels), scored on 12 reserved test simulations (run 4 test_metrics.json).
+ * Small test: validation IoU in the same run was ~0.18, so treat as a promising signal, not a benchmark.
+ */
+export const fineTuned = {
+  testSamples: 12,
+  trainSamples: 174,
+  iou: 0.51843784,
+  dice: 0.68285685,
+  precision: 0.69373308,
+  recall: 0.67231638,
+  arrivalMaeSeconds: 396.9521,
 } as const;
 
 /** How we got there: the runs that mark each step, including the failure. */

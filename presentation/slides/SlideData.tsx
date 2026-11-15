@@ -18,10 +18,12 @@ export function SlideData({ isActive, isPreview, reducedMotion }: SlideProps) {
     { label: "Held-out test", value: dataset.test, color: "#48D8FF" },
   ];
   const facts = [
-    { value: String(dataset.channels), label: "input channels", hint: "fuel, moisture, terrain slope, wind + a mid-run wind shift, ignition" },
+    { value: String(dataset.regions), label: "real regions", hint: `Corsica to Montana · ${dataset.heldOutRegion} held out` },
+    { value: String(dataset.fuelTypes), label: "fuel types", hint: "grass, shrub, timber, slash" },
+    { value: `0–${fmt(dataset.elevationMeters[1])} m`, label: "real elevation", hint: "coastal hills to steep mountains" },
+    { value: String(dataset.channels), label: "input channels", hint: "fuel, moisture, slope, wind, ignition" },
     { value: `${dataset.grid}×${dataset.grid}`, label: "grid", hint: `${dataset.cellMeters} m cells · ${(dataset.grid * dataset.cellMeters) / 1000} km square` },
     { value: `${dataset.horizonMinutes} min`, label: "forecast horizon", hint: "per simulation" },
-    { value: "2", label: "targets", hint: "burned area + arrival time" },
   ];
   const showBar = time > 1.2;
 
@@ -29,7 +31,7 @@ export function SlideData({ isActive, isPreview, reducedMotion }: SlideProps) {
     <SlideFrame
       kicker="The data"
       headline={<>Real physics. <span className="emberText">Real labels.</span></>}
-      lede={`Every training example is a genuine ${dataset.simulator} run on real terrain, including ${dataset.regions.join(", ")}.`}
+      lede={`Every training example is a genuine ${dataset.simulator} run on real elevation and fuel maps, from the Mediterranean coast to the Montana mountains.`}
       aside={<EvidenceBadge kind="verified" detail="file counts checked · Nov 15" />}
       reducedMotion={reducedMotion}
     >
@@ -69,13 +71,13 @@ export function SlideData({ isActive, isPreview, reducedMotion }: SlideProps) {
             </Reveal>
           </div>
         </div>
-        <div className="grid grid-cols-2 content-center gap-5">
+        <div className="grid grid-cols-2 content-center gap-4">
           {facts.map((f, k) => (
-            <Reveal key={f.label} show={time > 1.6 + k * 0.3} reducedMotion={reducedMotion}>
-              <div className="glassPanel rounded-2xl p-6">
-                <div className="fontMono text-[48px] font-semibold leading-none text-ink">{f.value}</div>
-                <div className="fontMono mt-3 text-[16px] uppercase tracking-[0.18em] text-[#FFB547]">{f.label}</div>
-                <div className="mt-2 text-[19px] text-mute">{f.hint}</div>
+            <Reveal key={f.label} show={time > 1.6 + k * 0.2} reducedMotion={reducedMotion}>
+              <div className="glassPanel rounded-2xl px-6 py-5">
+                <div className="fontMono text-[42px] font-semibold leading-none text-ink">{f.value}</div>
+                <div className="fontMono mt-2.5 text-[15px] uppercase tracking-[0.18em] text-[#FFB547]">{f.label}</div>
+                <div className="mt-1.5 text-[18px] text-mute">{f.hint}</div>
               </div>
             </Reveal>
           ))}
