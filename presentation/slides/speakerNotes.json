@@ -174,17 +174,16 @@
     "transition": "Thank you. Questions?"
   },
   "hackathonStack": {
-    "durationSeconds": 30,
-    "main": "Ember uses the whole hackathon stack: NVIDIA GB10 hardware, CIQ's RLC Pro AI, and Fuzzball as the backbone.",
+    "durationSeconds": 35,
+    "main": "Every layer of the hackathon stack does real work in Ember.",
     "talkingPoints": [
-      "Bottom up: 2 × Lenovo ThinkStation PGX with NVIDIA GB10, running RLC Pro AI 9.8 with the CUDA stack ready on first boot.",
-      "Fuzzball Substrate runs our containers on both nodes, Orchestrate schedules them, and volumes carry shards and checkpoints between stages.",
-      "We drove it through the Fuzzball CLI, web UI and MCP server.",
-      "Each chip says how we used that layer. Green means used, and logs upgrade it to verified."
+      "On top is Ember: ForeFire physics feeds a U-Net surrogate, and one model is fine-tuned across both GPUs with PyTorch DDP over NCCL, ending with identical weights on both ranks.",
+      "Fuzzball orchestrated our workflows: we used the CLI to package and submit them, Orchestrate scheduled them, Substrate ran our ARM64 containers on both GB10 nodes, and our scratch volume moved data in and out when the NFS mount failed.",
+      "Underneath: RLC Pro AI 9.8 with CUDA preinstalled, on two Lenovo ThinkStation PGX nodes with NVIDIA GB10 Grace Blackwell chips."
     ],
-    "interaction": "Layers build bottom-up. Click 'Fuzzball Orchestrate', then 'Fuzzball volumes' to show what's provided vs how Ember uses it.",
-    "evidence": "Environment facts are cited to the organizers' SC26 Hackathon Introduction deck. Usage status comes from data/verified/ecosystemUsage.json, and only Fuzzball logs upgrade it to 'verified'.",
-    "transition": "Now the science, starting with the physics."
+    "interaction": "The stack builds bottom-up. Click 'Ember' to show the DDP pipeline, then 'Fuzzball Orchestrate'.",
+    "evidence": "Fuzzball usage from the Nov 14 Fuzzball training workflows (orchestration/fuzzball/RESULTS.md).",
+    "transition": "So where does that leave us?"
   },
   "fuzzfile": {
     "durationSeconds": 35,
@@ -248,7 +247,7 @@
     ],
     "interaction": "None; bars animate in.",
     "evidence": "Earlier held-out evaluation on 180 ForeFire test simulations (separate from runs 1–4).",
-    "transition": "So where does that leave us?"
+    "transition": "Here's the stack that made it run."
   },
   "journey": {
     "durationSeconds": 45,

@@ -19,7 +19,7 @@ describe("ecosystem status", () => {
     const { snapshot } = buildPresentationData(real);
     expect(layerStatus("orchestrate", snapshot).status).toBe("verified");
     expect(layerStatus("hardware", snapshot).status).toBe("verified"); // fixture jobs span node-a and node-b
-    expect(layerStatus("storage", snapshot).status).toBe("unconfirmed"); // VAST never inferred
+    expect(["unconfirmed", "environment"]).toContain(layerStatus("storage", snapshot).status); // VAST use never inferred
   });
   it("carries the four official criteria", () => {
     expect(judgingCriteria.map((c) => c.title)).toEqual([

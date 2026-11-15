@@ -41,7 +41,7 @@ export function SlideHackathonStack({ isActive, isPreview, reducedMotion, data }
     <SlideFrame
       kicker="Built on the hackathon stack"
       headline={<>Every layer, <span style={{ color: fuzzballGreen }}>put to work.</span></>}
-      lede="NVIDIA hardware, CIQ's software stack and Fuzzball orchestration, with Ember on top."
+      lede="NVIDIA hardware, CIQ's software stack and Fuzzball orchestration, with our surrogate and DDP pipeline on top. Click a layer for details."
       accent={fuzzballGreen}
       aside={<div className="flex items-center gap-8"><FuzzballLogo height={96} /><CiqLogo height={40} /></div>}
       reducedMotion={reducedMotion}
@@ -111,7 +111,6 @@ export function SlideHackathonStack({ isActive, isPreview, reducedMotion, data }
             <StatusPill status={status.status} />
             {status.detail ? <span className="fontMono text-[13px] text-mute">{status.detail}</span> : null}
           </div>
-          <div className="fontMono text-[12px] leading-snug text-dim">Status comes from data/verified/ecosystemUsage.json and is upgraded to "verified" only by ingested Fuzzball logs.</div>
         </motion.div>
       </div>
     </SlideFrame>

@@ -1,6 +1,6 @@
 # Project Ember — Presentation Script
 
-Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 3:10 for 8 scenes; questions in Explore mode (`E`).
+Generated from `slides/speakerNotes.json` (run `npm run docs:script`). Target ≈ 3:45 for 9 scenes; questions in Explore mode (`E`).
 Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds · `N` notes · `P` presenter.
 
 ## 01 · The Spark (~15 s)
@@ -74,9 +74,19 @@ Keys: `→`/`Space` next build · `Shift+→` skip builds · `S` reveal builds �
 
 **Do:** None; bars animate in.
 **Evidence:** Earlier held-out evaluation on 180 ForeFire test simulations (separate from runs 1–4).
+**Transition:** “Here's the stack that made it run.”
+
+## 08 · Built on the Hackathon Stack (~35 s)
+**Message:** Every layer of the hackathon stack does real work in Ember.
+- On top is Ember: ForeFire physics feeds a U-Net surrogate, and one model is fine-tuned across both GPUs with PyTorch DDP over NCCL, ending with identical weights on both ranks.
+- Fuzzball orchestrated our workflows: we used the CLI to package and submit them, Orchestrate scheduled them, Substrate ran our ARM64 containers on both GB10 nodes, and our scratch volume moved data in and out when the NFS mount failed.
+- Underneath: RLC Pro AI 9.8 with CUDA preinstalled, on two Lenovo ThinkStation PGX nodes with NVIDIA GB10 Grace Blackwell chips.
+
+**Do:** The stack builds bottom-up. Click 'Ember' to show the DDP pipeline, then 'Fuzzball Orchestrate'.
+**Evidence:** Fuzzball usage from the Nov 14 Fuzzball training workflows (orchestration/fuzzball/RESULTS.md).
 **Transition:** “So where does that leave us?”
 
-## 08 · The Next Frontier (~25 s)
+## 09 · The Next Frontier (~25 s)
 **Message:** We didn't replace physics. We made it reusable.
 - Read the checkmarks: only evidenced contributions are marked complete.
 - Point at 'Built with': Fuzzball, CIQ, NVIDIA, Lenovo and VAST, the hackathon stack we built on.

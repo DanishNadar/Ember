@@ -4,6 +4,7 @@ import { Slide01Spark } from "./Slide01Spark";
 import { Slide02HumanProblem } from "./Slide02HumanProblem";
 import { Slide04ComputeChallenge } from "./Slide04ComputeChallenge";
 import { Slide14Conclusion } from "./Slide14Conclusion";
+import { SlideHackathonStack } from "./SlideHackathonStack";
 import { SlideIdea } from "./SlideIdea";
 import { SlideData } from "./SlideData";
 import { SlideSurrogateResults } from "./SlideSurrogateResults";
@@ -17,5 +18,6 @@ export const slides: SlideDefinition[] = [
   { id: "data", title: "The Data", takeaway: "~3k real ForeFire simulations, 19 channels, strict held-out test.", chapter: "Approach", accent: "#FFB547", steps: 1, evidence: ["verified"], Component: SlideData },
   { id: "scaleUp", title: "Scaling Up", takeaway: "Prototype → scaled → two-GPU fine-tune: arrival error 10.5 → 6.6 min, IoU 0.49 → 0.52.", chapter: "Evidence", accent: "#48D8FF", steps: 1, evidence: ["verified"], Component: SlideScaleUp },
   { id: "surrogateResults", title: "How Close Did AI Get?", takeaway: "Held-out IoU 0.48, Dice 0.65, precision 0.78, ~7 min arrival error.", chapter: "Evidence", accent: "#48D8FF", steps: 1, evidence: ["verified"], Component: SlideSurrogateResults },
+  { id: "hackathonStack", title: "Built on the Hackathon Stack", takeaway: "Surrogate + DDP on Fuzzball, RLC Pro AI and two NVIDIA GB10 nodes: every layer put to work.", chapter: "System", accent: "#11A66E", steps: 1, evidence: ["verified"], Component: SlideHackathonStack },
   { id: "conclusion", title: "The Next Frontier", takeaway: "We didn't replace physics. We made it reusable.", chapter: "Outlook", accent: "#FF6B35", steps: 2, evidence: ["verified", "proposed"], Component: Slide14Conclusion },
 ];

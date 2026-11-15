@@ -1,14 +1,41 @@
 {
   "$comment": "Team-edited. Set each layer's status to how Ember ACTUALLY used it: teamStated (we used it), planned (in our design, not yet run), environment (provided to every team), unconfirmed. Orchestrate/Substrate/hardware upgrade to 'verified' automatically when Fuzzball logs are ingested.",
   "layers": {
-    "ember": { "status": "teamStated", "detail": "this project" },
-    "interfaces": { "status": "planned", "detail": "set to teamStated once you've used the CLI / UI / MCP server" },
-    "orchestrate": { "status": "teamStated", "detail": "brief: Fuzzball orchestrates Ember's computational workflows" },
-    "volumes": { "status": "planned", "detail": "set to teamStated if shards/checkpoints moved through Fuzzball volumes" },
-    "substrate": { "status": "teamStated", "detail": "jobs execute on Fuzzball Substrate" },
-    "containers": { "status": "planned", "detail": "list your image URIs in the Fuzzfile" },
-    "os": { "status": "environment", "detail": "RLC Pro AI 9.8 on both GB10 systems" },
-    "hardware": { "status": "environment", "detail": "two GB10 systems per team" },
-    "storage": { "status": "unconfirmed", "detail": "confirm whether VAST Data backed your volumes" }
+    "ember": {
+      "status": "teamStated",
+      "detail": "this project"
+    },
+    "interfaces": {
+      "status": "teamStated",
+      "detail": "Fuzzball CLI v4.3.1"
+    },
+    "orchestrate": {
+      "status": "teamStated",
+      "detail": "3 Ember workflows submitted"
+    },
+    "volumes": {
+      "status": "teamStated",
+      "detail": "team scratch volume + object cache"
+    },
+    "substrate": {
+      "status": "teamStated",
+      "detail": "ran on both GB10 nodes"
+    },
+    "containers": {
+      "status": "teamStated",
+      "detail": "ARM64 PyTorch/CUDA image"
+    },
+    "os": {
+      "status": "environment",
+      "detail": "RLC Pro AI 9.8 on both GB10 systems"
+    },
+    "hardware": {
+      "status": "teamStated",
+      "detail": "two GB10 nodes, parallel training"
+    },
+    "storage": {
+      "status": "environment",
+      "detail": "hackathon partner"
+    }
   }
 }
