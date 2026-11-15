@@ -1,0 +1,142 @@
+version: v4
+
+volumes:
+  ddp-stage:
+    use: team15
+    size: 20GiB
+
+    ingress:
+      - source:
+          uri: fb://user/ember/ddp-3000/data-complete.tar
+        destination:
+          uri: file://data-complete.tar
+        policy:
+          timeout:
+            execute: 1h
+
+      - source:
+          uri: fb://user/ember/ddp-3000/code-v2.tgz
+        destination:
+          uri: file://code.tgz
+
+      - source:
+          uri: fb://user/ember/ddp-3000/finetune.yaml
+        destination:
+          uri: file://finetune.yaml
+
+      - source:
+          uri: fb://user/ember/ddp-3000/pretrained.pt
+        destination:
+          uri: file://pretrained.pt
+
+    egress:
+      - source:
+          uri: file://ddp-results-20261115.tgz
+        destination:
+          uri: fb://user/ember/ddp-3000/ddp-results-20261115.tgz
+        policy:
+          timeout:
+            execute: 30m
+
+jobs:
+  gb10-finetune:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+
+    mounts:
+      /work: ddp-stage
+
+    resource:
+      cpu:
+        cores: 1
+      memory:
+        size: 16GiB
+      devices:
+        nvidia.com/gpu: 1
+
+    multinode:
+      nodes: 2
+      implementation: openmpi
+
+    policy:
+      timeout:
+        execute: 3h
+
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+
+      export RANK="$OMPI_COMM_WORLD_RANK"
+      export WORLD_SIZE="$OMPI_COMM_WORLD_SIZE"
+      export LOCAL_RANK="$OMPI_COMM_WORLD_LOCAL_RANK"
+      export MASTER_PORT=29500
+      export NCCL_DEBUG=WARN
+      export PYTHONUNBUFFERED=1
+      export OMP_NUM_THREADS=1
+
+      echo "DDP_START rank=$RANK world=$WORLD_SIZE host=$(hostname)"
+      nvidia-smi --query-gpu=name --format=csv,noheader
+
+      test "$WORLD_SIZE" -eq 2
+
+      if [ "$RANK" -eq 0 ]; then
+        trap 'touch /work/.ddp-failed' ERR
+
+        hostname > /work/.ddp-master-host
+
+        echo "STAGING_DATASET"
+        mkdir -p /work/data /work/code
+
+        tar -xf /work/data-complete.tar -C /work/data
+        tar -xzf /work/code.tgz -C /work/code
+
+        SAMPLE_COUNT=$(find /work/data -type f -name '*.npz' | wc -l)
+        echo "DATASET_SAMPLES=$SAMPLE_COUNT"
+        test "$SAMPLE_COUNT" -eq 3000
+
+        touch /work/.ddp-ready
+        echo "DATASET_READY"
+      else
+        echo "WAITING_FOR_DATASET"
+
+        for i in $(seq 1 900); do
+          if [ -f /work/.ddp-failed ]; then
+            echo "DATASET_STAGING_FAILED"
+            exit 1
+          fi
+
+          if [ -f /work/.ddp-ready ]; then
+            break
+          fi
+
+          sleep 2
+        done
+
+        test -f /work/.ddp-ready
+      fi
+
+      export MASTER_ADDR="$(cat /work/.ddp-master-host)"
+      echo "DDP_RENDEZVOUS rank=$RANK master=$MASTER_ADDR:$MASTER_PORT"
+
+      test -f /work/finetune.yaml
+      test -f /work/pretrained.pt
+      test -f /work/code/train_arrival_ddp.py
+
+      cd /work/code
+
+      python3 -u train_arrival_ddp.py \
+        --config /work/finetune.yaml \
+        --output /work/ddp-output \
+        --resume /work/pretrained.pt \
+        --epochs 1
+
+      echo "DDP_TRAINING_FINISHED rank=$RANK"
+
+      if [ "$RANK" -eq 0 ]; then
+        tar -czf /work/ddp-results-20261115.tgz \
+          -C /work \
+          ddp-output finetune.yaml
+
+        echo "DDP_RESULTS_READY"
+        ls -lh /work/ddp-results-20261115.tgz
+      fi

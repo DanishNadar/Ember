@@ -39,3 +39,17 @@ trained and evaluated the direct-arrival model on 144 genuine ForeFire simulatio
 The [Observatory notebook](notebooks/Ember_Observatory.ipynb) replays saved results
 and can explicitly monitor jobs. Use `python scripts/export_observatory.py` to
 create a versioned local report; publishing requires a separate approved action.
+
+### Two-Node Distributed Fine-Tuning — November 15, 2026
+
+Project Ember successfully executed synchronized PyTorch DistributedDataParallel fine-tuning across two NVIDIA GB10 GPUs on separate nodes, orchestrated by Fuzzball v4 with OpenMPI and NCCL.
+
+The experiment used a 19-channel U-Net wildfire arrival-time model initialized from a pretrained checkpoint. A dataset of 3,000 ForeFire simulations was staged on shared NFS storage. Training used one process per GPU, distributed sampling, synchronized gradients, and rank-zero checkpointing.
+
+**Configuration:** 2 nodes, 2 GPUs, batch size 2 per rank, learning rate 0.0001, one fine-tuning epoch.
+
+**Validation results:** Loss 0.03390, IoU 0.3668, Dice 0.5367, precision 86.93%, recall 38.82%, and arrival-time MAE 498.27 seconds.
+
+**Execution:** Training took 142.3 seconds, with 13.4 seconds for validation. Both ranks exited successfully, and the resulting checkpoint was exported through Fuzzball object storage.
+
+This run demonstrates functional multi-node GPU training. It does not establish performance improvement over the pretrained baseline or independent test-set generalization. The pretrained checkpoint does not contain historical split identities, so historical held-out status remains unverified.

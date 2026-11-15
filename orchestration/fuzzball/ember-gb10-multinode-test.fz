@@ -1,0 +1,63 @@
+version: v4
+
+jobs:
+  gb10-multinode-test:
+    image:
+      uri: docker://nvcr.io/nvidia/pytorch:26.10-py3
+
+    resource:
+      cpu:
+        cores: 1
+      memory:
+        size: 16GiB
+      devices:
+        nvidia.com/gpu: 1
+
+    multinode:
+      nodes: 2
+      implementation: openmpi
+
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+
+      export RANK="$OMPI_COMM_WORLD_RANK"
+      export WORLD_SIZE="$OMPI_COMM_WORLD_SIZE"
+      export LOCAL_RANK="$OMPI_COMM_WORLD_LOCAL_RANK"
+      export MASTER_ADDR="gb10-multinode-test-1"
+      export MASTER_PORT=29500
+
+      export NCCL_DEBUG=WARN
+      export PYTHONUNBUFFERED=1
+
+      python3 - <<'INNER'
+      import os
+      import socket
+      from datetime import timedelta
+      import torch
+      import torch.distributed as dist
+
+      rank = int(os.environ["RANK"])
+      world = int(os.environ["WORLD_SIZE"])
+
+      assert world == 2, f"Expected 2 ranks, got {world}"
+      torch.cuda.set_device(0)
+
+      print(f"START rank={rank} host={socket.gethostname()}", flush=True)
+
+      dist.init_process_group(
+          backend="nccl",
+          init_method="env://",
+          timeout=timedelta(seconds=120),
+      )
+
+      value = torch.tensor([float(rank + 1)], device="cuda")
+      dist.all_reduce(value, op=dist.ReduceOp.SUM)
+      torch.cuda.synchronize()
+
+      result = value.item()
+      print(f"NCCL_SUCCESS rank={rank} result={result}", flush=True)
+      assert result == 3.0
+
+      dist.destroy_process_group()
+      INNER

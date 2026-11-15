@@ -53,7 +53,12 @@ def load_pair(path, cfg):
 def discover(cfg):
     paths, owner = {}, {}
     for split in ("train", "val", "test"):
-        files = sorted((Path(cfg["data_dir"]) / split).glob("*.npz"))
+        root = Path(cfg["data_dir"])
+        files = sorted(set(
+            root.glob(f"{split}/*.npz")
+        ) | set(
+            root.glob(f"*/{split}/*.npz")
+        ))
         if not files:
             raise ValueError(f"No ForeFire NPZ files under {cfg['data_dir']}/{split}")
         paths[split] = files
